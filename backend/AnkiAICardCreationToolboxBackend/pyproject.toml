@@ -1,0 +1,81 @@
+[project]
+name = "ankiaicardcreationtoolboxbackend"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "fastapi[standard]>=0.131.0",
+    #"langchain>=1.2.10",
+    "langchain-openai>=1.1.10",
+    #"langgraph>=1.0.9",
+    "pip>=26.0.1",
+    "deepagents>=0.4.3",
+    "python-dotenv>=1.2.1",
+    "requests>=2.32.0",
+    "trafilatura>=2.0.0",
+    "zstandard>=0.22.0",
+]
+
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+    "httpx>=0.28.1", # required for fastapi testing
+    "pytest-xdist>=3.8.0",
+    "ruff>=0.11.0",
+    "ty>=0.0.1",
+]
+
+
+
+[project.scripts]
+ankiaicardcreationtoolboxbackend = "ankiaicardcreationtoolboxbackend:main"
+invoke_best_practices_of_formulating_knowledge = "ankiaicardcreationtoolboxbackend:invoke_best_practices_of_formulating_knowledge"
+invoke_anki_formatting_guidelines = "ankiaicardcreationtoolboxbackend:invoke_anki_formatting_guidelines"
+invoke_knowledge_base_creation = "ankiaicardcreationtoolboxbackend:invoke_knowledge_base_creation"
+
+
+
+[build-system]
+requires = ["uv_build>=0.9.26,<0.11.0"]
+build-backend = "uv_build"
+
+
+[tool.uv.workspace]
+members = [
+    "ankiaicardcreationtoolboxbackend",
+]
+
+[tool.uv]
+default-groups = "all"
+
+[tool.ruff]
+target-version = "py314"
+line-length = 120
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "N",    # pep8-naming
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "SIM",  # flake8-simplify
+    "TCH",  # flake8-type-checking
+    "D",    # pydocstyle
+]
+ignore = []
+fixable = ["ALL"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["ankiaicardcreationtoolboxbackend"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ty.environment]
+root = ["src"]
+
