@@ -39,6 +39,14 @@ gcloud projects add-iam-policy-binding "$PROJECT_ID" \
 gcloud projects add-iam-policy-binding "$PROJECT_ID" \
   --member="serviceAccount:githubactionsa@${PROJECT_ID}.iam.gserviceaccount.com" \
   --role="roles/run.admin"
+
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+  --member="serviceAccount:githubactionsa@${PROJECT_ID}.iam.gserviceaccount.com" \
+  --role="roles/iam.serviceAccountAdmin"
+
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+  --member="serviceAccount:githubactionsa@${PROJECT_ID}.iam.gserviceaccount.com" \
+  --role="roles/secretmanager.admin"
 ```
 
 
