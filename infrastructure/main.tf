@@ -21,6 +21,10 @@ provider "google" {
   zone    = "us-central1-c"
 }
 
+locals {
+  github_actions_service_account = "githubactionsa@${var.project}.iam.gserviceaccount.com"
+}
+
 variable "project" {
   type = string
 }
@@ -67,6 +71,12 @@ resource "google_service_account" "backend_runtime" {
   display_name = "Backend Cloud Run runtime"
 }
 
+resource "google_service_account_iam_member" "github_actions_backend_runtime_user" {
+  service_account_id = google_service_account.backend_runtime.name
+  role               = "roles/iam.serviceAccountUser"
+  member             = "serviceAccount:${local.github_actions_service_account}"
+}
+
 resource "google_secret_manager_secret" "openai" {
   secret_id = "openai"
 
@@ -75,4 +85,11 @@ resource "google_secret_manager_secret" "openai" {
   }
 
   depends_on = [google_project_service.secretmanager]
+}
+
+resource "google_secret_manager_secret_iam_member" "backend_runtime_openai_accessor" {
+  project   = var.project
+  secret_id = google_secret_manager_secret.openai.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.backend_runtime.email}"
 }
