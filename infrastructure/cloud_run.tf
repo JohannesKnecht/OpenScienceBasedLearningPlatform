@@ -1,5 +1,5 @@
 resource "google_cloud_run_v2_service" "backend_service" {
-  name                 = "${random_id.default.hex}-backend-service"
+  name                 = "${var.project}-backend-service"
   location             = "us-central1"
   deletion_protection  = false
   ingress              = "INGRESS_TRAFFIC_ALL"
@@ -28,7 +28,7 @@ resource "google_cloud_run_v2_service" "backend_service" {
 }
 
 resource "google_cloud_run_v2_service" "frontend_service" {
-  name                 = "${random_id.default.hex}-frontend-service"
+  name                 = "${var.project}-frontend-service"
   location             = "us-central1"
   deletion_protection  = false
   ingress              = "INGRESS_TRAFFIC_ALL"
