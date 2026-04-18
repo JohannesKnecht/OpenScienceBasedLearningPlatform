@@ -10,7 +10,7 @@ env:
   TERRAFORM_BACKEND_BUCKET: f618ad7356200906-terraform-remote-backend
   FE_IMAGE_NAME: ankiaicardcreationtoolboxfrontend
   BE_IMAGE_NAME: ankiaicardcreationtoolboxbackend
-  PROJECT: ankiaicardcreationtoolbox
+  PROJECT: osblptest
   LOCATION: us-central1
   REGISTRY: us-central1-docker.pkg.dev
   REPOSITORY: ankiaicardcreationtoolbox/f618ad7356200906-repository
