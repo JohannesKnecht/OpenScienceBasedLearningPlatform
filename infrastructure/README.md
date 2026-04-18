@@ -12,6 +12,7 @@ REPO_ID="1205863955"
 (curl -sfL -H "Accept: application/json" "https://api.github.com/repos/${REPO}" | jq .id)
 WORKLOAD_IDENTITY_POOL_ID="projects/485236032574/locations/global/workloadIdentityPools/github"
 (see below)
+TERRAFORM_BUCKET="osblptest-terraform-backend"
 
 
 1 ) Enable APIs
@@ -107,3 +108,15 @@ gcloud iam workload-identity-pools create "$POOL_ID" \
         service_account: 'githubactionsa@osblptest.iam.gserviceaccount.com'
         workload_identity_provider: 'projects/485236032574/locations/global/workloadIdentityPools/github/providers/osblp-repo'
     ```
+
+
+10) terraform bucket permissions
+gcloud storage buckets add-iam-policy-binding gs://$TERRAFORM_BUCKET \
+  --member="serviceAccount:githubactionsa@${PROJECT_ID}.iam.gserviceaccount.com" \
+  --role="roles/storage.objectViewer" \
+  --project="$PROJECT_ID"
+
+gcloud storage buckets add-iam-policy-binding gs://$TERRAFORM_BUCKET \
+  --member="serviceAccount:githubactionsa@${PROJECT_ID}.iam.gserviceaccount.com" \
+  --role="roles/storage.objectAdmin" \
+  --project="$PROJECT_ID"
