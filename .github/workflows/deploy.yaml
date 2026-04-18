@@ -300,11 +300,8 @@ jobs:
           cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:buildcache,mode=max
 
 
-      - name: 'Create Secret in Secret Manager'
+      - name: 'Add Secret Version in Secret Manager'
         run: |
-          if ! gcloud secrets describe openai --project="${{ env.PROJECT }}" ; then
-            printf "%s" "$OPENAI_API_KEY" | gcloud secrets create openai --data-file=- --project="${{ env.PROJECT }}"
-          fi
           printf "%s" "$OPENAI_API_KEY" | gcloud secrets versions add openai --data-file=- --project="${{ env.PROJECT }}"
 
       - name: 'Deploy be to Cloud Run'
