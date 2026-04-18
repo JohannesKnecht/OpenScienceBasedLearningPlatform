@@ -13,7 +13,9 @@ env:
   PROJECT: osblptest
   LOCATION: us-central1
   REGISTRY: us-central1-docker.pkg.dev
-  REPOSITORY: ankiaicardcreationtoolbox/f618ad7356200906-repository
+  REPOSITORY: osblptest/osblptest-repository
+  INITIAL_BACKEND_IMAGE: us-docker.pkg.dev/cloudrun/container/hello
+  INITIAL_FRONTEND_IMAGE: us-docker.pkg.dev/cloudrun/container/hello
 
 
 jobs:
@@ -165,23 +167,23 @@ jobs:
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform apply -auto-approve -input=false -var="project=$PROJECT"
+        run: terraform apply -auto-approve -input=false -var="project=$PROJECT" -var="backend_image=$INITIAL_BACKEND_IMAGE" -var="frontend_image=$INITIAL_FRONTEND_IMAGE"
 
 
       - name: Capture Terraform output
         id: terraform-output
         run: |
           BACKEND_URL=$(terraform output -raw backend_url)
-          echo "BACKEND_URL=$BACKEND_URL" >> $GITHUB_OUTPUT
+          echo "backend_url=$BACKEND_URL" >> $GITHUB_OUTPUT
           
           FRONTEND_URL=$(terraform output -raw frontend_url)
-          echo "FRONTEND_URL=$FRONTEND_URL" >> $GITHUB_OUTPUT
+          echo "frontend_url=$FRONTEND_URL" >> $GITHUB_OUTPUT
           
           BACKEND_NAME=$(terraform output -raw backend_name)
-          echo "BACKEND_NAME=$BACKEND_NAME" >> $GITHUB_OUTPUT
+          echo "backend_name=$BACKEND_NAME" >> $GITHUB_OUTPUT
           
           FRONTEND_NAME=$(terraform output -raw frontend_name)
-          echo "FRONTEND_NAME=$FRONTEND_NAME" >> $GITHUB_OUTPUT
+          echo "frontend_name=$FRONTEND_NAME" >> $GITHUB_OUTPUT
   
 
   BuildPushDeployFE:
@@ -316,7 +318,7 @@ jobs:
     concurrency:
       group: deployment-group
       cancel-in-progress: false
-    needs: [ BuildPushDeployFE, BuildPushDeployBE ]
+    needs: [ terraform, BuildPushDeployFE, BuildPushDeployBE ]
     name: "Test Deployment"
     runs-on: ubuntu-latest
     permissions:
@@ -331,10 +333,10 @@ jobs:
           sleep 120
       - name: 'Test Frontend Deployment'
         run: |
-          curl --fail --silent --show-error --location --max-time 30 "https://f618ad7356200906-frontend-service-y55vgiciiq-uc.a.run.app"
+          curl --fail --silent --show-error --location --max-time 30 "${{ needs.terraform.outputs.frontend_url }}"
       - name: 'Test Backend Deployment'
         run: |
           curl --fail --show-error --location \
-            -X POST "https://f618ad7356200906-backend-service-y55vgiciiq-uc.a.run.app/create_cards" \
+            -X POST "${{ needs.terraform.outputs.backend_url }}/create_cards" \
             -H "Content-Type: application/json" \
             -d '{"text":"Anki Karten zur Funktionsweise von HTTP"}'

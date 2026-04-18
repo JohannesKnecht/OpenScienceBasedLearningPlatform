@@ -23,8 +23,14 @@ variable "project" {
   type = string
 }
 
-resource "random_id" "default" {
-  byte_length = 8
+variable "backend_image" {
+  type    = string
+  default = "us-docker.pkg.dev/cloudrun/container/hello"
+}
+
+variable "frontend_image" {
+  type    = string
+  default = "us-docker.pkg.dev/cloudrun/container/hello"
 }
 
 
