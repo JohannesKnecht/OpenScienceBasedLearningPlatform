@@ -35,6 +35,10 @@ gcloud iam service-accounts create githubactionsa \
 gcloud projects add-iam-policy-binding "$PROJECT_ID" \
   --member="serviceAccount:githubactionsa@${PROJECT_ID}.iam.gserviceaccount.com" \
   --role="roles/writer"
+
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+  --member="serviceAccount:githubactionsa@${PROJECT_ID}.iam.gserviceaccount.com" \
+  --role="roles/run.admin"
 ```
 
 
@@ -103,4 +107,3 @@ gcloud iam workload-identity-pools create "$POOL_ID" \
         service_account: 'githubactionsa@osblptest.iam.gserviceaccount.com'
         workload_identity_provider: 'projects/485236032574/locations/global/workloadIdentityPools/github/providers/osblp-repo'
     ```
-
