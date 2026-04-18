@@ -1,27 +1,102 @@
 # Infrastructure
 Infrastructure is handled using Terraform.
 
-# Related urls
-https://developer.hashicorp.com/terraform/tutorials/gcp-get-started/google-cloud-platform-build
+See
+https://github.com/google-github-actions/auth#indirect-wif
 
-https://docs.cloud.google.com/docs/terraform/resource-management/store-state?hl=de
+PROJECT_ID="osblptest"
+PROJECT_NUMBER="485236032574"
+POOL_ID="github"
+REPO="JohannesKnecht/OpenScienceBasedLearningPlatform" 
+REPO_ID="1205863955" 
+(curl -sfL -H "Accept: application/json" "https://api.github.com/repos/${REPO}" | jq .id)
+WORKLOAD_IDENTITY_POOL_ID="projects/485236032574/locations/global/workloadIdentityPools/github"
+(see below)
 
 
-# Create Service Account
-PROJECT_ID=ankiaicardcreationtoolbox
-SA_NAME=ankiaicardcreationtoolboxsa
-gcloud iam service-accounts create $SA_NAME \
-  --display-name "ankiaicardcreationtoolboxbackend service account" \
-  --project @$PROJECT_ID
-gcloud projects add-iam-policy-binding $PROJECT_ID \
-  --member="serviceAccount:$SA_NAME@$PROJECT_ID.iam.gserviceaccount.com" \
+1 ) Enable APIs
+gcloud services enable \
+  iam.googleapis.com \
+  cloudresourcemanager.googleapis.com \
+  sts.googleapis.com \
+  iamcredentials.googleapis.com \
+  run.googleapis.com \
+  artifactregistry.googleapis.com \
+  --project="$PROJECT_ID"
+
+2) Create SA
+gcloud iam service-accounts create githubactionsa \
+  --project="$PROJECT_ID" \
+  --display-name="GitHub action SA"
+
+3) Give SA roles
+
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+  --member="serviceAccount:githubactionsa@${PROJECT_ID}.iam.gserviceaccount.com" \
   --role="roles/editor"
-gcloud iam service-accounts keys create cicd.json \
-  --iam-account=$SA_NAME@$PROJECT_ID.iam.gserviceaccount.com
+
+4) create pool
 
 
-# Give cloud run access to secret. todo: add to iac
-COMPUTE_SERVICE_ACCOUNT=<id>-compute@developer.gserviceaccount.com
-gcloud secrets add-iam-policy-binding openai \
-  --member="serviceAccount:$COMPUTE_SERVICE_ACCOUNT" \
-  --role="roles/secretmanager.secretAccessor"
+gcloud iam workload-identity-pools create "$POOL_ID" \
+  --project="$PROJECT_ID" \
+  --location="global" \
+  --display-name="GitHub Actions Pool"
+
+
+5.  Get the full ID of the Workload Identity **Pool** (optional as static)
+
+    ```sh
+    gcloud iam workload-identity-pools describe "github" \
+      --project="${PROJECT_ID}" \
+      --location="global" \
+      --format="value(name)"
+    ```
+
+
+7.  Create a Workload Identity **Provider** in that pool:
+
+    ```sh
+    gcloud iam workload-identity-pools providers create-oidc "osblp-repo" \
+      --project="${PROJECT_ID}" \
+      --location="global" \
+      --workload-identity-pool="github" \
+      --display-name="My GitHub repo Provider" \
+      --attribute-mapping="google.subject=assertion.sub,attribute.actor=assertion.actor,attribute.repository=assertion.repository,attribute.repository_id=assertion.repository_id" \
+      --attribute-condition="assertion.repository_id == '${REPO_ID}'" \
+      --issuer-uri="https://token.actions.githubusercontent.com"
+    ```
+
+
+
+8.  Allow authentications from the Workload Identity Pool to your Google Cloud
+    Service Account.
+
+    gcloud iam service-accounts add-iam-policy-binding "githubactionsa@${PROJECT_ID}.iam.gserviceaccount.com" \
+      --project="${PROJECT_ID}" \
+      --role="roles/iam.workloadIdentityUser" \
+      --member="principalSet://iam.googleapis.com/${WORKLOAD_IDENTITY_POOL_ID}/attribute.repository/${REPO}"
+    ```
+
+
+9.  Extract the Workload Identity **Provider** resource name:
+
+    ```sh
+
+
+    gcloud iam workload-identity-pools providers describe "osblp-repo" \
+      --project="${PROJECT_ID}" \
+      --location="global" \
+      --workload-identity-pool="github" \
+      --format="value(name)"
+    ```
+
+    Use this value as the `workload_identity_provider` value in the GitHub
+    Actions YAML:
+
+    ```yaml
+    - uses: 'google-github-actions/auth@v3'
+      with:
+        service_account: 'githubactionsa@osblptest.iam.gserviceaccount.com'
+        workload_identity_provider: 'projects/485236032574/locations/global/workloadIdentityPools/github/providers/osblp-repo'
+    ```
