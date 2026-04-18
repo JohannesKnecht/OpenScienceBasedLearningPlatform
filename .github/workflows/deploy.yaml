@@ -7,7 +7,7 @@ on:
   pull_request:
 
 env:
-  TERRAFORM_BACKEND_BUCKET: f618ad7356200906-terraform-remote-backend
+  TERRAFORM_BACKEND_BUCKET: osblptest-terraform-backend
   FE_IMAGE_NAME: ankiaicardcreationtoolboxfrontend
   BE_IMAGE_NAME: ankiaicardcreationtoolboxbackend
   PROJECT: osblptest
