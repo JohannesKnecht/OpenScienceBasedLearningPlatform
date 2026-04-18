@@ -31,9 +31,16 @@ gcloud iam service-accounts create githubactionsa \
 
 3) Give SA roles
 
+```sh
 gcloud projects add-iam-policy-binding "$PROJECT_ID" \
   --member="serviceAccount:githubactionsa@${PROJECT_ID}.iam.gserviceaccount.com" \
   --role="roles/editor"
+
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+  --member="serviceAccount:githubactionsa@${PROJECT_ID}.iam.gserviceaccount.com" \
+  --role="roles/storage.objectViewer"
+```
+
 
 4) create pool
 
