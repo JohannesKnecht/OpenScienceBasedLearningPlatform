@@ -1,4 +1,6 @@
 terraform {
+  backend "gcs" {}
+
   required_providers {
     google = {
       source  = "hashicorp/google"
@@ -45,8 +47,8 @@ resource "time_sleep" "wait_60_seconds" {
   create_duration = "60s"
 }
 
-resource "google_project_service" "container_registry" {
-  service    = "containerregistry.googleapis.com"
+resource "google_project_service" "artifact_registry" {
+  service    = "artifactregistry.googleapis.com"
   depends_on = [time_sleep.wait_60_seconds]
 }
 
