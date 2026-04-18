@@ -186,6 +186,11 @@ jobs:
           
           FRONTEND_NAME=$(terraform output -raw frontend_name)
           echo "frontend_name=$FRONTEND_NAME" >> $GITHUB_OUTPUT
+
+      - name: Log Terraform URLs
+        run: |
+          echo "Backend URL: ${{ steps.terraform-output.outputs.backend_url }}"
+          echo "Frontend URL: ${{ steps.terraform-output.outputs.frontend_url }}"
   
 
   BuildPushDeployFE:
