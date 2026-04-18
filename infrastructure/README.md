@@ -34,7 +34,7 @@ gcloud iam service-accounts create githubactionsa \
 ```sh
 gcloud projects add-iam-policy-binding "$PROJECT_ID" \
   --member="serviceAccount:githubactionsa@${PROJECT_ID}.iam.gserviceaccount.com" \
-  --role="roles/editor"
+  --role="roles/writer"
 ```
 
 
