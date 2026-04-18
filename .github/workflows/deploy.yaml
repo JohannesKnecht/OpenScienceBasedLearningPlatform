@@ -14,8 +14,10 @@ env:
   LOCATION: us-central1
   REGISTRY: us-central1-docker.pkg.dev
   REPOSITORY: osblptest/osblptest-repository
-  INITIAL_BACKEND_IMAGE: us-docker.pkg.dev/cloudrun/container/hello
-  INITIAL_FRONTEND_IMAGE: us-docker.pkg.dev/cloudrun/container/hello
+  # BACKEND_IMAGE: us-central1-docker.pkg.dev/osblptest/osblptest-repository/ankiaicardcreationtoolboxbackend:latest
+  BACKEND_IMAGE: us-docker.pkg.dev/cloudrun/container/hello
+  # FRONTEND_MAGE: us-central1-docker.pkg.dev/osblptest/osblptest-repository/ankiaicardcreationtoolboxfrontend:latest
+  FRONTEND_MAGE: us-docker.pkg.dev/cloudrun/container/hello
 
 
 jobs:
@@ -167,7 +169,7 @@ jobs:
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform apply -auto-approve -input=false -var="project=$PROJECT" -var="backend_image=$INITIAL_BACKEND_IMAGE" -var="frontend_image=$INITIAL_FRONTEND_IMAGE"
+        run: terraform apply -auto-approve -input=false -var="project=$PROJECT" -var="backend_image=$BACKEND_IMAGE" -var="frontend_image=$FRONTEND_MAGE"
 
 
       - name: Capture Terraform output
