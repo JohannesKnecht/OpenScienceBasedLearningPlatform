@@ -21,6 +21,10 @@ provider "google" {
   zone    = "us-central1-c"
 }
 
+data "google_project" "current" {
+  project_id = var.project
+}
+
 variable "project" {
   type = string
 }
@@ -60,4 +64,10 @@ resource "google_project_service" "run" {
 resource "google_project_service" "secretmanager" {
   service    = "secretmanager.googleapis.com"
   depends_on = [time_sleep.wait_60_seconds]
+}
+
+resource "google_project_iam_member" "default_compute_secret_accessor" {
+  project = var.project
+  role    = "roles/secretmanager.secretAccessor"
+  member  = "serviceAccount:${data.google_project.current.number}-compute@developer.gserviceaccount.com"
 }
