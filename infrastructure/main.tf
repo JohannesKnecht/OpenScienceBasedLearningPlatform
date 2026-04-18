@@ -14,9 +14,13 @@ terraform {
 
 
 provider "google" {
-  project = "osblptest"
+  project = var.project
   region  = "us-central1"
   zone    = "us-central1-c"
+}
+
+variable "project" {
+  type = string
 }
 
 resource "random_id" "default" {
