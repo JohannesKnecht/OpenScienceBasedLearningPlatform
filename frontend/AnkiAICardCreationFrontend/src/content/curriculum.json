@@ -2,16 +2,16 @@
   "schemaVersion": "1.0",
   "metadata": {
     "projectName": "Open Mastery Graph",
-    "defaultLocale": "de",
+    "defaultLocale": "en",
     "contentLicense": "CC BY 4.0",
     "contributionModel": "Public GitHub pull requests against a single curriculum JSON"
   },
   "tracks": [
     {
       "id": "informatics-foundations",
-      "title": "Informatik Grundlagen",
-      "tagline": "Open-source Mastery Learning fuer Computational Thinking.",
-      "description": "Ein erstes offenes Informatik-Curriculum mit prerequisite graph, Lesson Checks, Reviews und lokalem Mastery-State.",
+      "title": "Computer Science Foundations",
+      "tagline": "Open-source mastery learning for computational thinking.",
+      "description": "An initial open computer science curriculum with a prerequisite graph, lesson checks, reviews, and local mastery state.",
       "courseIds": [
         "computational-thinking-core"
       ],
@@ -27,8 +27,8 @@
       "id": "computational-thinking-core",
       "trackId": "informatics-foundations",
       "title": "Computational Thinking Core",
-      "tagline": "Vom Programmverlauf zu Bedingungen, Schleifen und Debugging.",
-      "description": "Dieser Beispielkurs zeigt, wie offene Inhalte spaeter von der Community entlang eines Skill-Graphs erweitert werden koennen.",
+      "tagline": "From program flow to conditions, loops, and debugging.",
+      "description": "This sample course shows how open content can later be extended by the community along a shared skill graph.",
       "moduleIds": [
         "program-state",
         "control-flow",
@@ -45,7 +45,7 @@
       "courseId": "computational-thinking-core",
       "badge": "Module 01",
       "title": "Program State",
-      "summary": "Lerne, wie Programme Schritt fuer Schritt Zustand veraendern.",
+      "summary": "Learn how programs change state step by step.",
       "lessonIds": [
         "read-sequential-programs",
         "tracking-variables"
@@ -60,7 +60,7 @@
       "courseId": "computational-thinking-core",
       "badge": "Module 02",
       "title": "Control Flow",
-      "summary": "Verstehe, wie Bedingungen und Schleifen den Programmfluss steuern.",
+      "summary": "Understand how conditions and loops control program flow.",
       "lessonIds": [
         "boolean-branches",
         "loop-tracing"
@@ -75,7 +75,7 @@
       "courseId": "computational-thinking-core",
       "badge": "Module 03",
       "title": "Debugging Mindset",
-      "summary": "Baue ein reproduzierbares Vorgehen fuer Fehlersuche statt Raten auf.",
+      "summary": "Build a reproducible debugging process instead of guessing.",
       "lessonIds": [
         "debugging-hypotheses"
       ],
@@ -87,8 +87,8 @@
   "skills": [
     {
       "id": "read-sequential-program",
-      "title": "Sequenziellen Programmablauf lesen",
-      "description": "Kann einen linearen Programmablauf Schritt fuer Schritt nachvollziehen.",
+      "title": "Read sequential program flow",
+      "description": "Can trace a linear program flow step by step.",
       "prerequisiteSkillIds": [],
       "lessonIds": [
         "read-sequential-programs"
@@ -110,8 +110,8 @@
     },
     {
       "id": "track-variable-state",
-      "title": "Variablenzustand verfolgen",
-      "description": "Kann nach mehreren Zuweisungen den aktuellen Wert einer Variablen bestimmen.",
+      "title": "Track variable state",
+      "description": "Can determine the current value of a variable after multiple assignments.",
       "prerequisiteSkillIds": [
         "read-sequential-program"
       ],
@@ -135,8 +135,8 @@
     },
     {
       "id": "branch-on-boolean",
-      "title": "Boolesche Verzweigungen auswerten",
-      "description": "Kann vorhersagen, welcher Zweig einer if/else-Entscheidung ausgefuehrt wird.",
+      "title": "Evaluate boolean branches",
+      "description": "Can predict which branch of an if/else decision will execute.",
       "prerequisiteSkillIds": [
         "track-variable-state"
       ],
@@ -160,8 +160,8 @@
     },
     {
       "id": "trace-simple-loops",
-      "title": "Einfache Schleifen nachvollziehen",
-      "description": "Kann Schleifeniteration und Endzustand bei einfachen Beispielen bestimmen.",
+      "title": "Trace simple loops",
+      "description": "Can determine loop iterations and final state in simple examples.",
       "prerequisiteSkillIds": [
         "branch-on-boolean"
       ],
@@ -185,8 +185,8 @@
     },
     {
       "id": "isolate-bug-with-hypothesis",
-      "title": "Fehler mit Hypothesen isolieren",
-      "description": "Kann einen Bug mit reproduce-isolate-inspect statt Raten angehen.",
+      "title": "Isolate bugs with hypotheses",
+      "description": "Can approach a bug with reproduce-isolate-inspect instead of guessing.",
       "prerequisiteSkillIds": [
         "track-variable-state"
       ],
@@ -213,9 +213,9 @@
     {
       "id": "read-sequential-programs",
       "moduleId": "program-state",
-      "title": "Sequenzielle Programme lesen",
-      "summary": "Programme laufen nicht magisch, sondern in einer exakt definierten Reihenfolge.",
-      "objective": "Nach dieser Lektion kannst du einen linearen Ablauf lesen und Input, Verarbeitung und Output trennen.",
+      "title": "Read sequential programs",
+      "summary": "Programs do not run magically. They execute in a precisely defined order.",
+      "objective": "After this lesson, you will be able to read a linear flow and separate input, processing, and output.",
       "estimatedMinutes": 10,
       "skillIds": [
         "read-sequential-program"
@@ -224,22 +224,22 @@
       "sections": [
         {
           "id": "sequential-core",
-          "title": "Programme sind ausfuehrbare Anweisungen",
+          "title": "Programs are executable instructions",
           "body": [
-            "Ein Computer interpretiert keine Absicht. Er fuehrt genau die Anweisungen aus, die im Programm stehen.",
-            "Wenn du Code liest, hilft ein simples Raster: Was kommt rein, was wird veraendert, was kommt am Ende raus?"
+            "A computer does not interpret intent. It executes exactly the instructions written in the program.",
+            "When reading code, a simple lens helps: what comes in, what changes, and what comes out at the end?"
           ],
-          "checkpoint": "Warum kann schon das Vertauschen zweier Zeilen den gesamten Output aendern?"
+          "checkpoint": "Why can swapping just two lines completely change the output?"
         }
       ],
       "workedExamples": [
         {
           "id": "seq-example-1",
-          "prompt": "input lesen -> verdoppeln -> Ergebnis ausgeben",
+          "prompt": "read input -> double it -> output result",
           "steps": [
-            "Ein Wert kommt ins Programm hinein.",
-            "Der Wert wird mit 2 multipliziert.",
-            "Der neue Wert wird ausgegeben."
+            "A value enters the program.",
+            "The value is multiplied by 2.",
+            "The new value is output."
           ]
         }
       ],
@@ -252,9 +252,9 @@
     {
       "id": "tracking-variables",
       "moduleId": "program-state",
-      "title": "Variablenzustand verfolgen",
-      "summary": "Variablen speichern Zustand. Gute Entwickler lesen Zuweisungen wie Zustandstransformationen.",
-      "objective": "Du kannst den finalen Wert einer Variablen nach mehreren Updates bestimmen.",
+      "title": "Track variable state",
+      "summary": "Variables store state. Strong programmers read assignments as state transformations.",
+      "objective": "You can determine the final value of a variable after multiple updates.",
       "estimatedMinutes": 12,
       "skillIds": [
         "track-variable-state"
@@ -265,12 +265,12 @@
       "sections": [
         {
           "id": "variable-core",
-          "title": "Zuweisung aendert den Zustand",
+          "title": "Assignment changes state",
           "body": [
-            "Bei `score = score + 1` wird nicht Mathematik betrieben, sondern Zustand transformiert.",
-            "Lies jede Zuweisung als: alten Wert holen, Operation ausfuehren, neuen Wert speichern."
+            "In `score = score + 1`, you are not doing algebra. You are transforming state.",
+            "Read every assignment as: retrieve the old value, perform an operation, store the new value."
           ],
-          "checkpoint": "Welche zwei Informationen brauchst du, um den finalen Variablenwert vorherzusagen?"
+          "checkpoint": "Which two pieces of information do you need to predict the final variable value?"
         }
       ],
       "workedExamples": [
@@ -278,9 +278,9 @@
           "id": "var-example-1",
           "prompt": "coins = 4; coins = coins + 2",
           "steps": [
-            "Startwert coins = 4",
+            "Initial value: coins = 4",
             "4 + 2 = 6",
-            "Neuer Zustand: coins = 6"
+            "New state: coins = 6"
           ]
         }
       ],
@@ -293,9 +293,9 @@
     {
       "id": "boolean-branches",
       "moduleId": "control-flow",
-      "title": "Boolesche Verzweigungen",
-      "summary": "Bedingungen teilen den Programmfluss in moegliche Wege.",
-      "objective": "Du kannst vorhersagen, welcher Zweig einer if/else-Struktur ausgefuehrt wird.",
+      "title": "Boolean branches",
+      "summary": "Conditions split program flow into possible paths.",
+      "objective": "You can predict which branch of an if/else structure will execute.",
       "estimatedMinutes": 11,
       "skillIds": [
         "branch-on-boolean"
@@ -306,12 +306,12 @@
       "sections": [
         {
           "id": "branch-core",
-          "title": "Bedingungen sind Entscheidungen",
+          "title": "Conditions are decisions",
           "body": [
-            "Eine Bedingung bewertet einen Ausdruck zu `true` oder `false`.",
-            "Danach laeuft genau der Zweig weiter, dessen Bedingung erfuellt ist."
+            "A condition evaluates an expression to `true` or `false`.",
+            "After that, exactly the branch whose condition is satisfied continues running."
           ],
-          "checkpoint": "Warum sind Bedingungen die Grundlage fuer jedes reaktive Programmverhalten?"
+          "checkpoint": "Why are conditions the basis of reactive program behavior?"
         }
       ],
       "workedExamples": [
@@ -319,9 +319,9 @@
           "id": "branch-example-1",
           "prompt": "if temperature > 30 then warm else cool",
           "steps": [
-            "Bedingung lesen.",
-            "Wert einsetzen.",
-            "True- oder False-Zweig bestimmen."
+            "Read the condition.",
+            "Substitute the value.",
+            "Determine the true or false branch."
           ]
         }
       ],
@@ -334,9 +334,9 @@
     {
       "id": "loop-tracing",
       "moduleId": "control-flow",
-      "title": "Schleifen nachvollziehen",
-      "summary": "Schleifen komprimieren Wiederholung. Der Trick ist, Iterationen sauber zu simulieren.",
-      "objective": "Du kannst einfache Schleifen per Hand simulieren und den Endzustand bestimmen.",
+      "title": "Trace loops",
+      "summary": "Loops compress repetition. The key skill is simulating iterations carefully.",
+      "objective": "You can simulate simple loops by hand and determine the final state.",
       "estimatedMinutes": 14,
       "skillIds": [
         "trace-simple-loops"
@@ -347,12 +347,12 @@
       "sections": [
         {
           "id": "loop-core",
-          "title": "Schleifen sind strukturierte Wiederholung",
+          "title": "Loops are structured repetition",
           "body": [
-            "Schleifen ersetzen Copy-Paste durch wiederholte Ausfuehrung nach klaren Regeln.",
-            "Beim Tracing notierst du am besten pro Iteration den Zaehler und alle veraenderten Variablen."
+            "Loops replace copy-paste with repeated execution under clear rules.",
+            "When tracing, it helps to write down the counter and every changed variable for each iteration."
           ],
-          "checkpoint": "Was solltest du pro Iteration mitschreiben, um die Schleife nicht zu verlieren?"
+          "checkpoint": "What should you write down for each iteration so you do not lose track of the loop?"
         }
       ],
       "workedExamples": [
@@ -375,9 +375,9 @@
     {
       "id": "debugging-hypotheses",
       "moduleId": "debugging-mindset",
-      "title": "Debugging mit Hypothesen",
-      "summary": "Gutes Debugging ist strukturierte Untersuchung, nicht hektisches Umschreiben.",
-      "objective": "Du kannst einen Bug mit reproduce, isolate, inspect, verify systematisch angehen.",
+      "title": "Debugging with hypotheses",
+      "summary": "Good debugging is structured investigation, not frantic rewriting.",
+      "objective": "You can approach a bug systematically with reproduce, isolate, inspect, and verify.",
       "estimatedMinutes": 9,
       "skillIds": [
         "isolate-bug-with-hypothesis"
@@ -388,22 +388,22 @@
       "sections": [
         {
           "id": "debug-core",
-          "title": "Von Vermutungen zu Pruefschritten",
+          "title": "From guesses to testable steps",
           "body": [
-            "Statt wahllos Code zu aendern, formulierst du eine Hypothese ueber die Fehlerursache.",
-            "Danach reduzierst du Unsicherheit: reproduzieren, isolieren, Zustand ansehen, fixen, verifizieren."
+            "Instead of changing code at random, form a hypothesis about the cause of the bug.",
+            "Then reduce uncertainty: reproduce, isolate, inspect state, fix, verify."
           ],
-          "checkpoint": "Warum ist Isolieren oft wirksamer als direktes Umprogrammieren?"
+          "checkpoint": "Why is isolating a bug often more effective than immediately rewriting code?"
         }
       ],
       "workedExamples": [
         {
           "id": "debug-example-1",
-          "prompt": "Ein Zaehler ist am Ende 1 statt 3.",
+          "prompt": "A counter ends at 1 instead of 3.",
           "steps": [
-            "Bug reproduzieren.",
-            "Zustand nach jeder Aenderung protokollieren.",
-            "Abweichung auf eine bestimmte Zeile eingrenzen."
+            "Reproduce the bug.",
+            "Log the state after each change.",
+            "Narrow the mismatch down to a specific line."
           ]
         }
       ],
@@ -419,7 +419,7 @@
       "id": "diagnostic-computational-thinking",
       "type": "diagnostic",
       "title": "Entry diagnostic",
-      "description": "Bestimmt, welche Basisskills bereits vorhanden sind und welche zuerst geuebt werden sollten.",
+      "description": "Determines which core skills already exist and which ones should be practiced first.",
       "skillIds": [
         "read-sequential-program",
         "track-variable-state",
@@ -432,45 +432,45 @@
           "id": "diag-seq-1",
           "skillId": "read-sequential-program",
           "type": "multiple-choice",
-          "prompt": "Was beschreibt einen sequenziellen Programmablauf am besten?",
+          "prompt": "Which statement best describes sequential program flow?",
           "options": [
-            "Der Computer waehlt zufaellig eine passende Zeile aus",
-            "Der Computer arbeitet die Anweisungen in definierter Reihenfolge ab",
-            "Der Computer fuehrt nur die letzte Zeile aus"
+            "The computer randomly picks a suitable line",
+            "The computer executes instructions in a defined order",
+            "The computer only executes the last line"
           ],
-          "correctAnswer": "Der Computer arbeitet die Anweisungen in definierter Reihenfolge ab",
-          "explanation": "Ein sequenzielles Programm folgt einer festen Reihenfolge von Schritten."
+          "correctAnswer": "The computer executes instructions in a defined order",
+          "explanation": "A sequential program follows a fixed sequence of steps."
         },
         {
           "id": "diag-var-1",
           "skillId": "track-variable-state",
           "type": "text",
-          "prompt": "`x = 2`; danach `x = x + 5`. Welchen Endwert hat `x`?",
-          "placeholder": "Endwert",
+          "prompt": "`x = 2`; then `x = x + 5`. What is the final value of `x`?",
+          "placeholder": "Final value",
           "acceptedAnswers": [
             "7"
           ],
-          "explanation": "Der alte Wert 2 wird gelesen, 5 addiert und wieder gespeichert."
+          "explanation": "The old value 2 is read, 5 is added, and the result is stored again."
         },
         {
           "id": "diag-branch-1",
           "skillId": "branch-on-boolean",
           "type": "multiple-choice",
-          "prompt": "Wenn `score = 12` und die Bedingung `score > 10` lautet, welcher Zweig laeuft?",
+          "prompt": "If `score = 12` and the condition is `score > 10`, which branch runs?",
           "options": [
-            "Der true-Zweig",
-            "Der false-Zweig",
-            "Keiner von beiden"
+            "The true branch",
+            "The false branch",
+            "Neither branch"
           ],
-          "correctAnswer": "Der true-Zweig",
-          "explanation": "12 ist groesser als 10."
+          "correctAnswer": "The true branch",
+          "explanation": "12 is greater than 10."
         },
         {
           "id": "diag-loop-1",
           "skillId": "trace-simple-loops",
           "type": "text",
-          "prompt": "`sum = 0`; dann addiert eine Schleife `1`, `2` und `3`. Was ist der Endwert von `sum`?",
-          "placeholder": "Endwert",
+          "prompt": "`sum = 0`; then a loop adds `1`, `2`, and `3`. What is the final value of `sum`?",
+          "placeholder": "Final value",
           "acceptedAnswers": [
             "6"
           ],
@@ -480,14 +480,14 @@
           "id": "diag-debug-1",
           "skillId": "isolate-bug-with-hypothesis",
           "type": "multiple-choice",
-          "prompt": "Was ist der beste erste Schritt beim Debugging?",
+          "prompt": "What is the best first step in debugging?",
           "options": [
-            "Viele Zeilen gleichzeitig aendern",
-            "Den Fehler reproduzieren und Zustand inspizieren",
-            "Das gesamte Modul loeschen"
+            "Change many lines at once",
+            "Reproduce the bug and inspect state",
+            "Delete the whole module"
           ],
-          "correctAnswer": "Den Fehler reproduzieren und Zustand inspizieren",
-          "explanation": "Ohne reproduzierbaren Fehler fehlt die Grundlage fuer gezielte Analyse."
+          "correctAnswer": "Reproduce the bug and inspect state",
+          "explanation": "Without a reproducible bug, there is no solid basis for targeted analysis."
         }
       ],
       "passRule": {
@@ -502,8 +502,8 @@
     {
       "id": "assessment-read-sequential-programs",
       "type": "lesson-check",
-      "title": "Lesson check: Sequenzielle Programme lesen",
-      "description": "Prueft, ob ein linearer Ablauf Schritt fuer Schritt gelesen werden kann.",
+      "title": "Lesson check: Read sequential programs",
+      "description": "Checks whether a linear flow can be read step by step.",
       "skillIds": [
         "read-sequential-program"
       ],
@@ -513,31 +513,31 @@
           "id": "seq-assess-1",
           "skillId": "read-sequential-program",
           "type": "multiple-choice",
-          "prompt": "Welcher Schritt kommt in einem einfachen Programmfluss zuerst?",
+          "prompt": "Which step comes first in a simple program flow?",
           "options": [
-            "Output erzeugen",
-            "Input lesen",
-            "Fenster schliessen"
+            "Produce output",
+            "Read input",
+            "Close the window"
           ],
-          "correctAnswer": "Input lesen",
-          "explanation": "Ohne Input oder Startzustand kann noch keine Verarbeitung stattfinden."
+          "correctAnswer": "Read input",
+          "explanation": "Without input or an initial state, no processing can happen yet."
         },
         {
           "id": "seq-assess-2",
           "skillId": "read-sequential-program",
           "type": "order",
-          "prompt": "Ordne die Schritte eines einfachen Ablaufs.",
+          "prompt": "Put the steps of a simple flow in order.",
           "options": [
-            "Output ausgeben",
-            "Input lesen",
-            "Daten verarbeiten"
+            "Output result",
+            "Read input",
+            "Process data"
           ],
           "correctOrder": [
-            "Input lesen",
-            "Daten verarbeiten",
-            "Output ausgeben"
+            "Read input",
+            "Process data",
+            "Output result"
           ],
-          "explanation": "Das typische Grundmuster lautet Input, Verarbeitung, Output."
+          "explanation": "The standard pattern is input, processing, output."
         }
       ],
       "passRule": {
@@ -552,8 +552,8 @@
     {
       "id": "assessment-tracking-variables",
       "type": "lesson-check",
-      "title": "Lesson check: Variablenzustand verfolgen",
-      "description": "Prueft, ob Zuweisungen als Zustandsaenderungen gelesen werden koennen.",
+      "title": "Lesson check: Track variable state",
+      "description": "Checks whether assignments can be read as state changes.",
       "skillIds": [
         "track-variable-state"
       ],
@@ -563,25 +563,25 @@
           "id": "var-assess-1",
           "skillId": "track-variable-state",
           "type": "text",
-          "prompt": "`coins = 4`; danach `coins = coins + 2`. Wie lautet der Endwert?",
-          "placeholder": "Endwert",
+          "prompt": "`coins = 4`; then `coins = coins + 2`. What is the final value?",
+          "placeholder": "Final value",
           "acceptedAnswers": [
             "6"
           ],
-          "explanation": "4 wird gelesen, 2 addiert und das Ergebnis gespeichert."
+          "explanation": "4 is read, 2 is added, and the result is stored."
         },
         {
           "id": "var-assess-2",
           "skillId": "track-variable-state",
           "type": "multiple-choice",
-          "prompt": "Was beschreibt `score = score + 1` korrekt?",
+          "prompt": "Which statement correctly describes `score = score + 1`?",
           "options": [
-            "Eine ungueltige Zeile",
-            "Der Zustand von `score` wird um 1 erhoeht",
-            "`score` wird geloescht"
+            "An invalid line",
+            "The state of `score` increases by 1",
+            "`score` is deleted"
           ],
-          "correctAnswer": "Der Zustand von `score` wird um 1 erhoeht",
-          "explanation": "Der vorhandene Wert wird gelesen, veraendert und wieder gespeichert."
+          "correctAnswer": "The state of `score` increases by 1",
+          "explanation": "The existing value is read, changed, and stored again."
         }
       ],
       "passRule": {
@@ -596,8 +596,8 @@
     {
       "id": "assessment-boolean-branches",
       "type": "lesson-check",
-      "title": "Lesson check: Boolesche Verzweigungen",
-      "description": "Prueft, ob Bedingungen zu korrekten Zweigen fuehren.",
+      "title": "Lesson check: Boolean branches",
+      "description": "Checks whether conditions lead to the correct branch.",
       "skillIds": [
         "branch-on-boolean"
       ],
@@ -607,25 +607,25 @@
           "id": "branch-assess-1",
           "skillId": "branch-on-boolean",
           "type": "multiple-choice",
-          "prompt": "Wenn `temperature = 31` und `temperature > 30`, welcher Zweig laeuft?",
+          "prompt": "If `temperature = 31` and `temperature > 30`, which branch runs?",
           "options": [
-            "True-Zweig",
-            "False-Zweig",
-            "Kein Zweig"
+            "True branch",
+            "False branch",
+            "No branch"
           ],
-          "correctAnswer": "True-Zweig",
-          "explanation": "31 ist groesser als 30."
+          "correctAnswer": "True branch",
+          "explanation": "31 is greater than 30."
         },
         {
           "id": "branch-assess-2",
           "skillId": "branch-on-boolean",
           "type": "text",
-          "prompt": "Ein boolescher Ausdruck ergibt immer `true` oder ...",
-          "placeholder": "Fehlendes Wort",
+          "prompt": "A boolean expression always evaluates to `true` or ...",
+          "placeholder": "Missing word",
           "acceptedAnswers": [
             "false"
           ],
-          "explanation": "Boolesche Ausdruecke haben genau zwei moegliche Ergebnisse."
+          "explanation": "Boolean expressions have exactly two possible outcomes."
         }
       ],
       "passRule": {
@@ -640,8 +640,8 @@
     {
       "id": "assessment-loop-tracing",
       "type": "lesson-check",
-      "title": "Lesson check: Schleifen nachvollziehen",
-      "description": "Prueft, ob einfache Wiederholungen simuliert werden koennen.",
+      "title": "Lesson check: Trace loops",
+      "description": "Checks whether simple repetition can be simulated.",
       "skillIds": [
         "trace-simple-loops"
       ],
@@ -651,25 +651,25 @@
           "id": "loop-assess-1",
           "skillId": "trace-simple-loops",
           "type": "text",
-          "prompt": "`count = 0`; eine Schleife erhoeht `count` dreimal um 1. Wie lautet der Endwert?",
-          "placeholder": "Endwert",
+          "prompt": "`count = 0`; a loop increments `count` by 1 three times. What is the final value?",
+          "placeholder": "Final value",
           "acceptedAnswers": [
             "3"
           ],
-          "explanation": "0 wird in drei Iterationen zu 3."
+          "explanation": "0 becomes 3 after three iterations."
         },
         {
           "id": "loop-assess-2",
           "skillId": "trace-simple-loops",
           "type": "multiple-choice",
-          "prompt": "Welche Notiz hilft beim Tracing am meisten?",
+          "prompt": "Which note helps most when tracing a loop?",
           "options": [
-            "Nur die erste Zeile aufschreiben",
-            "Pro Iteration Zaehler und wichtige Variablen notieren",
-            "Die Schleife ignorieren"
+            "Write down only the first line",
+            "Record the counter and important variables for each iteration",
+            "Ignore the loop"
           ],
-          "correctAnswer": "Pro Iteration Zaehler und wichtige Variablen notieren",
-          "explanation": "So bleibt sichtbar, wie sich der Zustand von Runde zu Runde veraendert."
+          "correctAnswer": "Record the counter and important variables for each iteration",
+          "explanation": "That keeps the changing state visible from one round to the next."
         }
       ],
       "passRule": {
@@ -684,8 +684,8 @@
     {
       "id": "assessment-debugging-hypotheses",
       "type": "lesson-check",
-      "title": "Lesson check: Debugging mit Hypothesen",
-      "description": "Prueft, ob ein strukturierter Debugging-Workflow verstanden wurde.",
+      "title": "Lesson check: Debugging with hypotheses",
+      "description": "Checks whether a structured debugging workflow is understood.",
       "skillIds": [
         "isolate-bug-with-hypothesis"
       ],
@@ -695,33 +695,33 @@
           "id": "debug-assess-1",
           "skillId": "isolate-bug-with-hypothesis",
           "type": "multiple-choice",
-          "prompt": "Welcher Schritt kommt vor dem Fixen eines Bugs?",
+          "prompt": "Which step comes before fixing a bug?",
           "options": [
-            "Verifizieren ohne Test",
-            "Fehler reproduzieren und eingrenzen",
-            "Direkt deployen"
+            "Verify without testing",
+            "Reproduce and isolate the bug",
+            "Deploy immediately"
           ],
-          "correctAnswer": "Fehler reproduzieren und eingrenzen",
-          "explanation": "Vor dem Fixen muss klar sein, wo und wie der Fehler auftritt."
+          "correctAnswer": "Reproduce and isolate the bug",
+          "explanation": "Before fixing anything, it must be clear where and how the bug appears."
         },
         {
           "id": "debug-assess-2",
           "skillId": "isolate-bug-with-hypothesis",
           "type": "order",
-          "prompt": "Ordne den Debugging-Workflow.",
+          "prompt": "Put the debugging workflow in order.",
           "options": [
-            "Verifizieren",
-            "Isolieren",
-            "Reproduzieren",
-            "Fixen"
+            "Verify",
+            "Isolate",
+            "Reproduce",
+            "Fix"
           ],
           "correctOrder": [
-            "Reproduzieren",
-            "Isolieren",
-            "Fixen",
-            "Verifizieren"
+            "Reproduce",
+            "Isolate",
+            "Fix",
+            "Verify"
           ],
-          "explanation": "Ein klarer Ablauf reduziert Aktionismus und schafft Evidenz."
+          "explanation": "A clear workflow reduces random action and creates evidence."
         }
       ],
       "passRule": {
@@ -736,8 +736,8 @@
     {
       "id": "review-assessment-read-sequential-program",
       "type": "review",
-      "title": "Review: Sequenziellen Ablauf lesen",
-      "description": "Kurze Wiederholung fuer den Basis-Skill des linearen Ablaufs.",
+      "title": "Review: Read sequential flow",
+      "description": "Short review for the core skill of linear program flow.",
       "skillIds": [
         "read-sequential-program"
       ],
@@ -746,14 +746,14 @@
           "id": "review-seq-1",
           "skillId": "read-sequential-program",
           "type": "multiple-choice",
-          "prompt": "Welches Muster ist in vielen Programmen grundlegend?",
+          "prompt": "Which pattern is fundamental in many programs?",
           "options": [
-            "Input -> Verarbeitung -> Output",
+            "Input -> Processing -> Output",
             "Output -> Input -> Stop",
-            "Nur Output"
+            "Only output"
           ],
-          "correctAnswer": "Input -> Verarbeitung -> Output",
-          "explanation": "Das Grundmuster bleibt auch bei komplexeren Programmen sichtbar."
+          "correctAnswer": "Input -> Processing -> Output",
+          "explanation": "This basic pattern remains visible even in more complex programs."
         }
       ],
       "passRule": {
@@ -767,8 +767,8 @@
     {
       "id": "review-assessment-track-variable-state",
       "type": "review",
-      "title": "Review: Variablenzustand verfolgen",
-      "description": "Kurzreview fuer Zustandsaenderungen.",
+      "title": "Review: Track variable state",
+      "description": "Short review for state changes.",
       "skillIds": [
         "track-variable-state"
       ],
@@ -777,8 +777,8 @@
           "id": "review-var-1",
           "skillId": "track-variable-state",
           "type": "text",
-          "prompt": "`points = 10`; dann `points = points - 4`. Endwert?",
-          "placeholder": "Endwert",
+          "prompt": "`points = 10`; then `points = points - 4`. Final value?",
+          "placeholder": "Final value",
           "acceptedAnswers": [
             "6"
           ],
@@ -796,8 +796,8 @@
     {
       "id": "review-assessment-branch-on-boolean",
       "type": "review",
-      "title": "Review: Boolesche Verzweigungen",
-      "description": "Kurzreview fuer if/else-Verhalten.",
+      "title": "Review: Boolean branches",
+      "description": "Short review for if/else behavior.",
       "skillIds": [
         "branch-on-boolean"
       ],
@@ -806,12 +806,12 @@
           "id": "review-branch-1",
           "skillId": "branch-on-boolean",
           "type": "text",
-          "prompt": "Eine Bedingung ergibt `true` oder ...",
-          "placeholder": "Fehlendes Wort",
+          "prompt": "A condition evaluates to `true` or ...",
+          "placeholder": "Missing word",
           "acceptedAnswers": [
             "false"
           ],
-          "explanation": "Boolesche Entscheidungen sind binaer."
+          "explanation": "Boolean decisions are binary."
         }
       ],
       "passRule": {
@@ -825,8 +825,8 @@
     {
       "id": "review-assessment-trace-simple-loops",
       "type": "review",
-      "title": "Review: Schleifen nachvollziehen",
-      "description": "Kurzreview fuer einfache Schleifen-Simulation.",
+      "title": "Review: Trace loops",
+      "description": "Short review for simple loop simulation.",
       "skillIds": [
         "trace-simple-loops"
       ],
@@ -835,14 +835,14 @@
           "id": "review-loop-1",
           "skillId": "trace-simple-loops",
           "type": "multiple-choice",
-          "prompt": "Wozu dient Tracing bei Schleifen?",
+          "prompt": "What is tracing used for in loops?",
           "options": [
-            "Zum Raten des Endwerts",
-            "Zum systematischen Verfolgen jeder Iteration",
-            "Zum Loeschen aller Variablen"
+            "To guess the final value",
+            "To systematically follow each iteration",
+            "To delete all variables"
           ],
-          "correctAnswer": "Zum systematischen Verfolgen jeder Iteration",
-          "explanation": "Tracing reduziert Komplexitaet auf kontrollierte Zwischenschritte."
+          "correctAnswer": "To systematically follow each iteration",
+          "explanation": "Tracing reduces complexity to controlled intermediate steps."
         }
       ],
       "passRule": {
@@ -856,8 +856,8 @@
     {
       "id": "review-assessment-isolate-bug-with-hypothesis",
       "type": "review",
-      "title": "Review: Debugging mit Hypothesen",
-      "description": "Kurzreview fuer reproduzierbares Debugging.",
+      "title": "Review: Debugging with hypotheses",
+      "description": "Short review for reproducible debugging.",
       "skillIds": [
         "isolate-bug-with-hypothesis"
       ],
@@ -866,14 +866,14 @@
           "id": "review-debug-1",
           "skillId": "isolate-bug-with-hypothesis",
           "type": "multiple-choice",
-          "prompt": "Was reduziert Debugging-Unsicherheit am staerksten?",
+          "prompt": "What reduces debugging uncertainty most effectively?",
           "options": [
-            "Mehrere Veraenderungen gleichzeitig",
-            "Hypothese bilden und gezielt pruefen",
-            "Nur auf Glueck hoffen"
+            "Changing several things at once",
+            "Forming a hypothesis and testing it directly",
+            "Relying on luck"
           ],
-          "correctAnswer": "Hypothese bilden und gezielt pruefen",
-          "explanation": "Systematisches Testen ersetzt Raten durch Evidenz."
+          "correctAnswer": "Forming a hypothesis and testing it directly",
+          "explanation": "Systematic testing replaces guessing with evidence."
         }
       ],
       "passRule": {
@@ -889,35 +889,35 @@
     {
       "id": "review-read-sequential-program",
       "skillId": "read-sequential-program",
-      "title": "Review fuer sequenziellen Ablauf",
+      "title": "Review for sequential flow",
       "assessmentId": "review-assessment-read-sequential-program",
       "initialIntervalDays": 2
     },
     {
       "id": "review-track-variable-state",
       "skillId": "track-variable-state",
-      "title": "Review fuer Variablenzustand",
+      "title": "Review for variable state",
       "assessmentId": "review-assessment-track-variable-state",
       "initialIntervalDays": 3
     },
     {
       "id": "review-branch-on-boolean",
       "skillId": "branch-on-boolean",
-      "title": "Review fuer Bedingungen",
+      "title": "Review for conditions",
       "assessmentId": "review-assessment-branch-on-boolean",
       "initialIntervalDays": 3
     },
     {
       "id": "review-trace-simple-loops",
       "skillId": "trace-simple-loops",
-      "title": "Review fuer Schleifen-Simulation",
+      "title": "Review for loop simulation",
       "assessmentId": "review-assessment-trace-simple-loops",
       "initialIntervalDays": 4
     },
     {
       "id": "review-isolate-bug-with-hypothesis",
       "skillId": "isolate-bug-with-hypothesis",
-      "title": "Review fuer Debugging-Hypothesen",
+      "title": "Review for debugging hypotheses",
       "assessmentId": "review-assessment-isolate-bug-with-hypothesis",
       "initialIntervalDays": 4
     }
