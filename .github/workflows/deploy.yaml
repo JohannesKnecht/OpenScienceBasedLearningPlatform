@@ -2,9 +2,9 @@ name: "CICD"
 
 # Deployment strategy:
 #   pull_request  → deploys to the 'test' GitHub environment
-#   push to main  → deploys to the 'production' GitHub environment
+#   push to main  → deploys to the 'prod' GitHub environment
 #                   (configure required reviewers in GitHub environment settings
-#                   to enforce an approval gate before production goes live)
+#                   to enforce an approval gate before prod goes live)
 #
 # Both environments must be configured in GitHub → Settings → Environments
 # with the following variables:
@@ -340,14 +340,14 @@ jobs:
 
 
   # ============================================================
-  # PRODUCTION ENVIRONMENT — triggered on push to main
-  # Configure required reviewers in the 'production' GitHub environment
+  # prod ENVIRONMENT — triggered on push to main
+  # Configure required reviewers in the 'prod' GitHub environment
   # settings to enforce an approval gate before deployment proceeds.
   # ============================================================
 
   EnsureTerraformBackendExistsProd:
     if: github.event_name == 'push'
-    environment: production
+    environment: prod
     concurrency:
       group: deployment-prod
       cancel-in-progress: false
@@ -378,12 +378,12 @@ jobs:
 
   TerraformProd:
     if: github.event_name == 'push'
-    environment: production
+    environment: prod
     concurrency:
       group: deployment-prod
       cancel-in-progress: false
     needs: [EnsureTerraformBackendExistsProd]
-    name: "Terraform (Production)"
+    name: "Terraform (prod)"
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -447,12 +447,12 @@ jobs:
 
   BuildPushDeployFEProd:
     if: github.event_name == 'push'
-    environment: production
+    environment: prod
     concurrency:
       group: deployment-prod
       cancel-in-progress: false
     needs: [TerraformProd, TestFrontend]
-    name: "Build Push and Deploy Frontend (Production)"
+    name: "Build Push and Deploy Frontend (prod)"
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'
@@ -498,12 +498,12 @@ jobs:
 
   BuildPushDeployBEProd:
     if: github.event_name == 'push'
-    environment: production
+    environment: prod
     concurrency:
       group: deployment-prod
       cancel-in-progress: false
     needs: [TerraformProd, TestApi]
-    name: "Build Push and Deploy Backend (Production)"
+    name: "Build Push and Deploy Backend (prod)"
     runs-on: ubuntu-latest
     env:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -555,12 +555,12 @@ jobs:
 
   TestDeploymentProd:
     if: github.event_name == 'push'
-    environment: production
+    environment: prod
     concurrency:
       group: deployment-prod
       cancel-in-progress: false
     needs: [TerraformProd, BuildPushDeployFEProd, BuildPushDeployBEProd]
-    name: "Test Deployment (Production)"
+    name: "Test Deployment (prod)"
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'

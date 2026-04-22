@@ -4,15 +4,18 @@ Infrastructure is handled using Terraform.
 See
 https://github.com/google-github-actions/auth#indirect-wif
 
-PROJECT_ID="osblptest"
-PROJECT_NUMBER="485236032574"
-POOL_ID="github"
+Vars to manually set using gcp project info:
+PROJECT_ID=
+PROJECT_NUMBER=
+
+Other vars that need to be set:
+WORKLOAD_IDENTITY_POOL_ID="projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/github"
 REPO="JohannesKnecht/OpenScienceBasedLearningPlatform" 
 REPO_ID="1205863955" 
 (curl -sfL -H "Accept: application/json" "https://api.github.com/repos/${REPO}" | jq .id)
-WORKLOAD_IDENTITY_POOL_ID="projects/485236032574/locations/global/workloadIdentityPools/github"
-(see below)
 
+
+POOL_ID="github"
 
 1 ) Enable APIs
 gcloud services enable \
@@ -112,6 +115,6 @@ gcloud iam workload-identity-pools create "$POOL_ID" \
     ```yaml
     - uses: 'google-github-actions/auth@v3'
       with:
-        service_account: 'githubactionsa@osblptest.iam.gserviceaccount.com'
-        workload_identity_provider: 'projects/485236032574/locations/global/workloadIdentityPools/github/providers/osblp-repo'
+        service_account: 'githubactionsa@${PROJECT_ID}.iam.gserviceaccount.com'
+        workload_identity_provider: 'projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/github/providers/osblp-repo'
     ```
