@@ -184,8 +184,8 @@ jobs:
         run: |
           terraform apply -auto-approve -input=false \
             -var="project=${{ vars.PROJECT }}" \
-            -var="backend_image=us-docker.pkg.dev/cloudrun/container/hello" \
-            -var="frontend_image=us-docker.pkg.dev/cloudrun/container/hello"
+            -var="backend_image=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:test" \
+            -var="frontend_image=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.FE_IMAGE_NAME }}:test"
       - name: Capture Terraform output
         id: terraform-output
         run: |
@@ -419,8 +419,8 @@ jobs:
         run: |
           terraform apply -auto-approve -input=false \
             -var="project=${{ vars.PROJECT }}" \
-            -var="backend_image=us-docker.pkg.dev/cloudrun/container/hello" \
-            -var="frontend_image=us-docker.pkg.dev/cloudrun/container/hello"
+            -var="backend_image=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:latest" \
+            -var="frontend_image=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.FE_IMAGE_NAME }}:latest"
       - name: Capture Terraform output
         id: terraform-output
         run: |
