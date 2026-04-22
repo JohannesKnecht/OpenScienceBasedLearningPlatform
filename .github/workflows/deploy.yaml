@@ -102,14 +102,28 @@ jobs:
 
 
   # ============================================================
-  # TEST ENVIRONMENT — triggered on pull_request
+  # ENVIRONMENT DEPLOYMENT PIPELINE
+  #   pull_request -> test
+  #   push         -> prod
   # ============================================================
 
-  EnsureTerraformBackendExistsTest:
-    if: github.event_name == 'pull_request'
-    environment: test
+  EnsureTerraformBackendExists:
+    if: github.event_name == matrix.event_name
+    name: ${{ matrix.ensure_backend_name }}
+    strategy:
+      matrix:
+        include:
+          - event_name: pull_request
+            environment: test
+            concurrency_group: deployment-test
+            ensure_backend_name: EnsureTerraformBackendExistsTest
+          - event_name: push
+            environment: prod
+            concurrency_group: deployment-prod
+            ensure_backend_name: EnsureTerraformBackendExistsProd
+    environment: ${{ matrix.environment }}
     concurrency:
-      group: deployment-test
+      group: ${{ matrix.concurrency_group }}
       cancel-in-progress: false
     permissions:
       contents: 'read'
@@ -136,18 +150,34 @@ jobs:
             --project="${{ vars.PROJECT }}" \
             --location="${{ vars.LOCATION }}"
 
-  TerraformTest:
-    if: github.event_name == 'pull_request'
-    environment: test
+  Terraform:
+    if: github.event_name == matrix.event_name
+    name: ${{ matrix.terraform_name }}
+    strategy:
+      matrix:
+        include:
+          - event_name: pull_request
+            environment: test
+            concurrency_group: deployment-test
+            terraform_name: Terraform (Test)
+            image_tag: test
+          - event_name: push
+            environment: prod
+            concurrency_group: deployment-prod
+            terraform_name: Terraform (prod)
+            image_tag: latest
+    environment: ${{ matrix.environment }}
     concurrency:
-      group: deployment-test
+      group: ${{ matrix.concurrency_group }}
       cancel-in-progress: false
-    needs: [EnsureTerraformBackendExistsTest]
-    name: "Terraform (Test)"
+    needs: [EnsureTerraformBackendExists]
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./infrastructure
+    env:
+      IMAGE_TAG: ${{ matrix.image_tag }}
+      USE_FALLBACK_IMAGE: ${{ vars.USE_FALLBACK_IMAGE }}
     outputs:
       backend_url: ${{ steps.terraform-output.outputs.backend_url }}
       frontend_url: ${{ steps.terraform-output.outputs.frontend_url }}
@@ -184,14 +214,14 @@ jobs:
         run: terraform validate -no-color
       - name: Terraform Apply
         run: |
-          if [ "${{ vars.USE_FALLBACK_IMAGE }}" = "true" ]; then
+          if [ "$USE_FALLBACK_IMAGE" = "true" ]; then
             terraform apply -auto-approve -input=false \
               -var="project=${{ vars.PROJECT }}"
           else
             terraform apply -auto-approve -input=false \
               -var="project=${{ vars.PROJECT }}" \
-              -var="backend_image=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:test" \
-              -var="frontend_image=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.FE_IMAGE_NAME }}:test"
+              -var="backend_image=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:$IMAGE_TAG" \
+              -var="frontend_image=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.FE_IMAGE_NAME }}:$IMAGE_TAG"
           fi
       - name: Capture Terraform output
         id: terraform-output
@@ -205,15 +235,34 @@ jobs:
           echo "Backend URL: ${{ steps.terraform-output.outputs.backend_url }}"
           echo "Frontend URL: ${{ steps.terraform-output.outputs.frontend_url }}"
 
-  BuildPushDeployFETest:
-    if: github.event_name == 'pull_request'
-    environment: test
+  BuildPushDeployFE:
+    if: github.event_name == matrix.event_name
+    name: ${{ matrix.deploy_name }}
+    strategy:
+      matrix:
+        include:
+          - event_name: pull_request
+            environment: test
+            concurrency_group: deployment-test
+            deploy_name: Build Push and Deploy Frontend (Test)
+            image_tag: test
+            cache_tag: buildcache-test
+          - event_name: push
+            environment: prod
+            concurrency_group: deployment-prod
+            deploy_name: Build Push and Deploy Frontend (prod)
+            image_tag: latest
+            cache_tag: buildcache
+    environment: ${{ matrix.environment }}
     concurrency:
-      group: deployment-test
+      group: ${{ matrix.concurrency_group }}
       cancel-in-progress: false
-    needs: [TerraformTest, TestFrontend]
-    name: "Build Push and Deploy Frontend (Test)"
+    needs: [Terraform, TestFrontend]
     runs-on: ubuntu-latest
+    env:
+      CACHE_TAG: ${{ matrix.cache_tag }}
+      IMAGE_TAG: ${{ matrix.image_tag }}
+      SERVICE_NAME: ${{ needs.Terraform.outputs.frontend_name }}
     permissions:
       contents: 'read'
       id-token: 'write'
@@ -247,26 +296,44 @@ jobs:
           platforms: linux/amd64
           file: frontend/AnkiAICardCreationFrontend/Dockerfile
           push: true
-          tags: ${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.FE_IMAGE_NAME }}:test
-          cache-from: type=registry,ref=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.FE_IMAGE_NAME }}:buildcache-test
-          cache-to: type=registry,ref=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.FE_IMAGE_NAME }}:buildcache-test,mode=max
+          tags: ${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.FE_IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+          cache-from: type=registry,ref=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.FE_IMAGE_NAME }}:${{ env.CACHE_TAG }}
+          cache-to: type=registry,ref=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.FE_IMAGE_NAME }}:${{ env.CACHE_TAG }},mode=max
       - name: 'Deploy fe to Cloud Run'
         run: |
-          gcloud run deploy ${{ needs.TerraformTest.outputs.frontend_name }} \
-            --image ${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.FE_IMAGE_NAME }}:test \
-            --region ${{ vars.LOCATION }}
+          gcloud run deploy "$SERVICE_NAME" \
+            --image "${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.FE_IMAGE_NAME }}:${{ env.IMAGE_TAG }}" \
+            --region "${{ vars.LOCATION }}"
 
-  BuildPushDeployBETest:
-    if: github.event_name == 'pull_request'
-    environment: test
+  BuildPushDeployBE:
+    if: github.event_name == matrix.event_name
+    name: ${{ matrix.deploy_name }}
+    strategy:
+      matrix:
+        include:
+          - event_name: pull_request
+            environment: test
+            concurrency_group: deployment-test
+            deploy_name: Build Push and Deploy Backend (Test)
+            image_tag: test
+            cache_tag: buildcache-test
+          - event_name: push
+            environment: prod
+            concurrency_group: deployment-prod
+            deploy_name: Build Push and Deploy Backend (prod)
+            image_tag: latest
+            cache_tag: buildcache
+    environment: ${{ matrix.environment }}
     concurrency:
-      group: deployment-test
+      group: ${{ matrix.concurrency_group }}
       cancel-in-progress: false
-    needs: [TerraformTest, TestApi]
-    name: "Build Push and Deploy Backend (Test)"
+    needs: [Terraform, TestApi]
     runs-on: ubuntu-latest
     env:
+      CACHE_TAG: ${{ matrix.cache_tag }}
+      IMAGE_TAG: ${{ matrix.image_tag }}
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      SERVICE_NAME: ${{ needs.Terraform.outputs.backend_name }}
     permissions:
       contents: 'read'
       id-token: 'write'
@@ -300,268 +367,42 @@ jobs:
           platforms: linux/amd64
           file: backend/AnkiAICardCreationToolboxBackend/Dockerfile
           push: true
-          tags: ${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:test
-          cache-from: type=registry,ref=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:buildcache-test
-          cache-to: type=registry,ref=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:buildcache-test,mode=max
+          tags: ${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+          cache-from: type=registry,ref=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:${{ env.CACHE_TAG }}
+          cache-to: type=registry,ref=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:${{ env.CACHE_TAG }},mode=max
       - name: 'Add Secret Version in Secret Manager'
         run: |
           printf "%s" "$OPENAI_API_KEY" | gcloud secrets versions add openai --data-file=- --project="${{ vars.PROJECT }}"
       - name: 'Deploy be to Cloud Run'
         run: |
-          gcloud run deploy ${{ needs.TerraformTest.outputs.backend_name }} \
-            --image ${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:test \
+          gcloud run deploy "$SERVICE_NAME" \
+            --image "${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:${{ env.IMAGE_TAG }}" \
             --update-secrets=OPENAI_API_KEY=openai:latest \
-            --region ${{ vars.LOCATION }}
+            --region "${{ vars.LOCATION }}"
 
-  TestDeploymentTest:
-    if: github.event_name == 'pull_request'
-    environment: test
+  TestDeployment:
+    if: github.event_name == matrix.event_name
+    name: ${{ matrix.e2e_name }}
+    strategy:
+      matrix:
+        include:
+          - event_name: pull_request
+            environment: test
+            concurrency_group: deployment-test
+            e2e_name: Test Deployment (Test)
+          - event_name: push
+            environment: prod
+            concurrency_group: deployment-prod
+            e2e_name: Test Deployment (prod)
+    environment: ${{ matrix.environment }}
     concurrency:
-      group: deployment-test
+      group: ${{ matrix.concurrency_group }}
       cancel-in-progress: false
-    needs: [TerraformTest, BuildPushDeployFETest, BuildPushDeployBETest]
-    name: "Test Deployment (Test)"
-    runs-on: ubuntu-latest
-    permissions:
-      contents: 'read'
-    steps:
-      - uses: actions/checkout@v6
-      - name: 'Wait for function to start'
-        run: sleep 120
-      - name: 'Test Frontend Deployment'
-        run: |
-          curl --fail --silent --show-error --location --max-time 30 "${{ needs.TerraformTest.outputs.frontend_url }}"
-      - name: 'Test Backend Deployment'
-        run: |
-          curl --fail --show-error --location \
-            -X POST "${{ needs.TerraformTest.outputs.backend_url }}/create_cards" \
-            -H "Content-Type: application/json" \
-            -d '{"text":"Anki Karten zur Funktionsweise von HTTP"}'
-
-
-  # ============================================================
-  # prod ENVIRONMENT — triggered on push to main
-  # Configure required reviewers in the 'prod' GitHub environment
-  # settings to enforce an approval gate before deployment proceeds.
-  # ============================================================
-
-  EnsureTerraformBackendExistsProd:
-    if: github.event_name == 'push'
-    environment: prod
-    concurrency:
-      group: deployment-prod
-      cancel-in-progress: false
-    permissions:
-      contents: 'read'
-      id-token: 'write'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: hashicorp/setup-terraform@v4
-      - uses: 'google-github-actions/auth@v3'
-        with:
-          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
-          workload_identity_provider: ${{ vars.WIF_PROVIDER }}
-          create_credentials_file: true
-          export_environment_variables: true
-      - name: 'Set up Cloud SDK'
-        uses: 'google-github-actions/setup-gcloud@v3'
-      - name: 'Use gcloud CLI'
-        run: 'gcloud info'
-      - name: check/create bucket
-        run: |
-          gcloud storage buckets describe "gs://${{ vars.TERRAFORM_BACKEND_BUCKET }}" \
-            --project="${{ vars.PROJECT }}" \
-          || gcloud storage buckets create "gs://${{ vars.TERRAFORM_BACKEND_BUCKET }}" \
-            --project="${{ vars.PROJECT }}" \
-            --location="${{ vars.LOCATION }}"
-
-  TerraformProd:
-    if: github.event_name == 'push'
-    environment: prod
-    concurrency:
-      group: deployment-prod
-      cancel-in-progress: false
-    needs: [EnsureTerraformBackendExistsProd]
-    name: "Terraform (prod)"
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./infrastructure
-    outputs:
-      backend_url: ${{ steps.terraform-output.outputs.backend_url }}
-      frontend_url: ${{ steps.terraform-output.outputs.frontend_url }}
-      backend_name: ${{ steps.terraform-output.outputs.backend_name }}
-      frontend_name: ${{ steps.terraform-output.outputs.frontend_name }}
-    permissions:
-      contents: 'read'
-      id-token: 'write'
-      pull-requests: write
-    steps:
-      - uses: actions/checkout@v6
-      - uses: 'google-github-actions/auth@v3'
-        with:
-          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
-          workload_identity_provider: ${{ vars.WIF_PROVIDER }}
-          create_credentials_file: true
-          export_environment_variables: true
-      - name: 'Set up Cloud SDK'
-        uses: 'google-github-actions/setup-gcloud@v3'
-      - name: 'Use gcloud CLI'
-        run: 'gcloud info'
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v4
-        with:
-          terraform_wrapper: false
-      - name: Terraform Format
-        id: fmt
-        run: terraform fmt -check
-      - name: Terraform Init
-        id: init
-        run: terraform init -backend-config="bucket=${{ vars.TERRAFORM_BACKEND_BUCKET }}"
-      - name: Terraform Validate
-        id: validate
-        run: terraform validate -no-color
-      - name: Terraform Apply
-        run: |
-          if [ "${{ vars.USE_FALLBACK_IMAGE }}" = "true" ]; then
-            terraform apply -auto-approve -input=false \
-              -var="project=${{ vars.PROJECT }}"
-          else
-            terraform apply -auto-approve -input=false \
-              -var="project=${{ vars.PROJECT }}" \
-              -var="backend_image=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:latest" \
-              -var="frontend_image=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.FE_IMAGE_NAME }}:latest"
-          fi
-      - name: Capture Terraform output
-        id: terraform-output
-        run: |
-          echo "backend_url=$(terraform output -raw backend_url)" >> $GITHUB_OUTPUT
-          echo "frontend_url=$(terraform output -raw frontend_url)" >> $GITHUB_OUTPUT
-          echo "backend_name=$(terraform output -raw backend_name)" >> $GITHUB_OUTPUT
-          echo "frontend_name=$(terraform output -raw frontend_name)" >> $GITHUB_OUTPUT
-      - name: Log Terraform URLs
-        run: |
-          echo "Backend URL: ${{ steps.terraform-output.outputs.backend_url }}"
-          echo "Frontend URL: ${{ steps.terraform-output.outputs.frontend_url }}"
-
-  BuildPushDeployFEProd:
-    if: github.event_name == 'push'
-    environment: prod
-    concurrency:
-      group: deployment-prod
-      cancel-in-progress: false
-    needs: [TerraformProd, TestFrontend]
-    name: "Build Push and Deploy Frontend (prod)"
-    runs-on: ubuntu-latest
-    permissions:
-      contents: 'read'
-      id-token: 'write'
-    steps:
-      - uses: actions/checkout@v6
-      - id: auth
-        uses: 'google-github-actions/auth@v3'
-        with:
-          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
-          workload_identity_provider: ${{ vars.WIF_PROVIDER }}
-          create_credentials_file: true
-          export_environment_variables: true
-          access_token_lifetime: 300s
-          token_format: access_token
-      - name: 'Set up Cloud SDK'
-        uses: 'google-github-actions/setup-gcloud@v3'
-      - name: 'Use gcloud CLI'
-        run: 'gcloud info'
-      - name: 'Login to GCR'
-        uses: docker/login-action@v4
-        with:
-          registry: ${{ vars.REGISTRY }}
-          username: oauth2accesstoken
-          password: ${{ steps.auth.outputs.access_token }}
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
-      - name: 'Build and push fe Docker image'
-        uses: docker/build-push-action@v7
-        with:
-          context: frontend/AnkiAICardCreationFrontend
-          platforms: linux/amd64
-          file: frontend/AnkiAICardCreationFrontend/Dockerfile
-          push: true
-          tags: ${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.FE_IMAGE_NAME }}:latest
-          cache-from: type=registry,ref=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.FE_IMAGE_NAME }}:buildcache
-          cache-to: type=registry,ref=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.FE_IMAGE_NAME }}:buildcache,mode=max
-      - name: 'Deploy fe to Cloud Run'
-        run: |
-          gcloud run deploy ${{ needs.TerraformProd.outputs.frontend_name }} \
-            --image ${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.FE_IMAGE_NAME }}:latest \
-            --region ${{ vars.LOCATION }}
-
-  BuildPushDeployBEProd:
-    if: github.event_name == 'push'
-    environment: prod
-    concurrency:
-      group: deployment-prod
-      cancel-in-progress: false
-    needs: [TerraformProd, TestApi]
-    name: "Build Push and Deploy Backend (prod)"
+    needs: [Terraform, BuildPushDeployFE, BuildPushDeployBE]
     runs-on: ubuntu-latest
     env:
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-    permissions:
-      contents: 'read'
-      id-token: 'write'
-    steps:
-      - uses: actions/checkout@v6
-      - id: auth
-        uses: 'google-github-actions/auth@v3'
-        with:
-          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
-          workload_identity_provider: ${{ vars.WIF_PROVIDER }}
-          create_credentials_file: true
-          export_environment_variables: true
-          access_token_lifetime: 300s
-          token_format: access_token
-      - name: 'Set up Cloud SDK'
-        uses: 'google-github-actions/setup-gcloud@v3'
-      - name: 'Use gcloud CLI'
-        run: 'gcloud info'
-      - name: 'Login to GCR'
-        uses: docker/login-action@v4
-        with:
-          registry: ${{ vars.REGISTRY }}
-          username: oauth2accesstoken
-          password: ${{ steps.auth.outputs.access_token }}
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
-      - name: 'Build and push be Docker image'
-        uses: docker/build-push-action@v7
-        with:
-          context: backend/AnkiAICardCreationToolboxBackend/
-          platforms: linux/amd64
-          file: backend/AnkiAICardCreationToolboxBackend/Dockerfile
-          push: true
-          tags: ${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:latest
-          cache-from: type=registry,ref=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:buildcache
-          cache-to: type=registry,ref=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:buildcache,mode=max
-      - name: 'Add Secret Version in Secret Manager'
-        run: |
-          printf "%s" "$OPENAI_API_KEY" | gcloud secrets versions add openai --data-file=- --project="${{ vars.PROJECT }}"
-      - name: 'Deploy be to Cloud Run'
-        run: |
-          gcloud run deploy ${{ needs.TerraformProd.outputs.backend_name }} \
-            --image ${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:latest \
-            --update-secrets=OPENAI_API_KEY=openai:latest \
-            --region ${{ vars.LOCATION }}
-
-  TestDeploymentProd:
-    if: github.event_name == 'push'
-    environment: prod
-    concurrency:
-      group: deployment-prod
-      cancel-in-progress: false
-    needs: [TerraformProd, BuildPushDeployFEProd, BuildPushDeployBEProd]
-    name: "Test Deployment (prod)"
-    runs-on: ubuntu-latest
+      BACKEND_URL: ${{ needs.Terraform.outputs.backend_url }}
+      FRONTEND_URL: ${{ needs.Terraform.outputs.frontend_url }}
     permissions:
       contents: 'read'
     steps:
@@ -570,10 +411,10 @@ jobs:
         run: sleep 120
       - name: 'Test Frontend Deployment'
         run: |
-          curl --fail --silent --show-error --location --max-time 30 "${{ needs.TerraformProd.outputs.frontend_url }}"
+          curl --fail --silent --show-error --location --max-time 30 "$FRONTEND_URL"
       - name: 'Test Backend Deployment'
         run: |
           curl --fail --show-error --location \
-            -X POST "${{ needs.TerraformProd.outputs.backend_url }}/create_cards" \
+            -X POST "$BACKEND_URL/create_cards" \
             -H "Content-Type: application/json" \
             -d '{"text":"Anki Karten zur Funktionsweise von HTTP"}'
