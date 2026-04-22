@@ -15,6 +15,8 @@ name: "CICD"
 #   TERRAFORM_BACKEND_BUCKET - GCS bucket for Terraform state
 #   GCP_SERVICE_ACCOUNT      - Service account email for Workload Identity auth
 #   WIF_PROVIDER             - Full Workload Identity Federation provider resource name
+#   USE_FALLBACK_IMAGE       - (optional) set to 'true' to let Terraform use its default
+#                              container images instead of the images built in this pipeline
 # and the following secret:
 #   OPENAI_API_KEY
 
@@ -182,10 +184,15 @@ jobs:
         run: terraform validate -no-color
       - name: Terraform Apply
         run: |
-          terraform apply -auto-approve -input=false \
-            -var="project=${{ vars.PROJECT }}" \
-            -var="backend_image=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:test" \
-            -var="frontend_image=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.FE_IMAGE_NAME }}:test"
+          if [ "${{ vars.USE_FALLBACK_IMAGE }}" = "true" ]; then
+            terraform apply -auto-approve -input=false \
+              -var="project=${{ vars.PROJECT }}"
+          else
+            terraform apply -auto-approve -input=false \
+              -var="project=${{ vars.PROJECT }}" \
+              -var="backend_image=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:test" \
+              -var="frontend_image=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.FE_IMAGE_NAME }}:test"
+          fi
       - name: Capture Terraform output
         id: terraform-output
         run: |
@@ -417,10 +424,15 @@ jobs:
         run: terraform validate -no-color
       - name: Terraform Apply
         run: |
-          terraform apply -auto-approve -input=false \
-            -var="project=${{ vars.PROJECT }}" \
-            -var="backend_image=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:latest" \
-            -var="frontend_image=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.FE_IMAGE_NAME }}:latest"
+          if [ "${{ vars.USE_FALLBACK_IMAGE }}" = "true" ]; then
+            terraform apply -auto-approve -input=false \
+              -var="project=${{ vars.PROJECT }}"
+          else
+            terraform apply -auto-approve -input=false \
+              -var="project=${{ vars.PROJECT }}" \
+              -var="backend_image=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:latest" \
+              -var="frontend_image=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.FE_IMAGE_NAME }}:latest"
+          fi
       - name: Capture Terraform output
         id: terraform-output
         run: |
