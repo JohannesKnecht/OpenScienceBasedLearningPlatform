@@ -1,12 +1,14 @@
 name: "CICD"
 
 # Deployment strategy:
-#   pull_request  → deploys to the 'test' GitHub environment
-#   push to main  → deploys to the 'prod' GitHub environment
-#                   (configure required reviewers in GitHub environment settings
-#                   to enforce an approval gate before prod goes live)
+#   pull_request to dev  → deploys to the 'test' GitHub environment
+#   pull_request to main → deploys to the 'qa' GitHub environment
+#   push to dev          → deploys to the 'dev' GitHub environment
+#   push to main         → deploys to the 'prod' GitHub environment
+#                          (configure required reviewers in GitHub environment
+#                          settings to enforce an approval gate before prod goes live)
 #
-# Both environments must be configured in GitHub → Settings → Environments
+# All environments must be configured in GitHub → Settings → Environments
 # with the following variables:
 #   PROJECT                  - GCP project ID
 #   LOCATION                 - GCP region (e.g. us-central1)
@@ -23,8 +25,12 @@ name: "CICD"
 on:
   push:
     branches:
+      - dev
       - main
   pull_request:
+    branches:
+      - dev
+      - main
 
 env:
   FE_IMAGE_NAME: ankiaicardcreationtoolboxfrontend
@@ -69,7 +75,7 @@ jobs:
 
       - name: Run Tests
         env:
-          # PRs run with mocked LLM calls (empty key); pushes to main use the real API key.
+          # PRs run with mocked LLM calls (empty key); pushes use the real API key.
           OPENAI_API_KEY: ${{ github.event_name == 'push' && secrets.OPENAI_API_KEY || '' }}
         run: uv run pytest
 
@@ -103,21 +109,38 @@ jobs:
 
   # ============================================================
   # ENVIRONMENT DEPLOYMENT PIPELINE
-  #   pull_request -> test
-  #   push         -> prod
+  #   pull_request to dev  -> test
+  #   pull_request to main -> qa
+  #   push to dev          -> dev
+  #   push to main         -> prod
   # ============================================================
 
   EnsureTerraformBackendExists:
-    if: github.event_name == matrix.event_name
+    if: >
+      github.event_name == matrix.event_name &&
+      ((matrix.event_name == 'push' && github.ref_name == matrix.target_branch) ||
+      (matrix.event_name == 'pull_request' && github.base_ref == matrix.target_branch))
     name: ${{ matrix.ensure_backend_name }}
     strategy:
       matrix:
         include:
           - event_name: pull_request
+            target_branch: dev
             environment: test
             concurrency_group: deployment-test
             ensure_backend_name: EnsureTerraformBackendExistsTest
+          - event_name: pull_request
+            target_branch: main
+            environment: qa
+            concurrency_group: deployment-qa
+            ensure_backend_name: EnsureTerraformBackendExistsQa
           - event_name: push
+            target_branch: dev
+            environment: dev
+            concurrency_group: deployment-dev
+            ensure_backend_name: EnsureTerraformBackendExistsDev
+          - event_name: push
+            target_branch: main
             environment: prod
             concurrency_group: deployment-prod
             ensure_backend_name: EnsureTerraformBackendExistsProd
@@ -151,17 +174,34 @@ jobs:
             --location="${{ vars.LOCATION }}"
 
   Terraform:
-    if: github.event_name == matrix.event_name
+    if: >
+      github.event_name == matrix.event_name &&
+      ((matrix.event_name == 'push' && github.ref_name == matrix.target_branch) ||
+      (matrix.event_name == 'pull_request' && github.base_ref == matrix.target_branch))
     name: ${{ matrix.terraform_name }}
     strategy:
       matrix:
         include:
           - event_name: pull_request
+            target_branch: dev
             environment: test
             concurrency_group: deployment-test
             terraform_name: Terraform (Test)
             image_tag: test
+          - event_name: pull_request
+            target_branch: main
+            environment: qa
+            concurrency_group: deployment-qa
+            terraform_name: Terraform (QA)
+            image_tag: qa
           - event_name: push
+            target_branch: dev
+            environment: dev
+            concurrency_group: deployment-dev
+            terraform_name: Terraform (dev)
+            image_tag: dev
+          - event_name: push
+            target_branch: main
             environment: prod
             concurrency_group: deployment-prod
             terraform_name: Terraform (prod)
@@ -236,18 +276,37 @@ jobs:
           echo "Frontend URL: ${{ steps.terraform-output.outputs.frontend_url }}"
 
   BuildPushDeployFE:
-    if: github.event_name == matrix.event_name
+    if: >
+      github.event_name == matrix.event_name &&
+      ((matrix.event_name == 'push' && github.ref_name == matrix.target_branch) ||
+      (matrix.event_name == 'pull_request' && github.base_ref == matrix.target_branch))
     name: ${{ matrix.deploy_name }}
     strategy:
       matrix:
         include:
           - event_name: pull_request
+            target_branch: dev
             environment: test
             concurrency_group: deployment-test
             deploy_name: Build Push and Deploy Frontend (Test)
             image_tag: test
             cache_tag: buildcache-test
+          - event_name: pull_request
+            target_branch: main
+            environment: qa
+            concurrency_group: deployment-qa
+            deploy_name: Build Push and Deploy Frontend (QA)
+            image_tag: qa
+            cache_tag: buildcache-qa
           - event_name: push
+            target_branch: dev
+            environment: dev
+            concurrency_group: deployment-dev
+            deploy_name: Build Push and Deploy Frontend (dev)
+            image_tag: dev
+            cache_tag: buildcache-dev
+          - event_name: push
+            target_branch: main
             environment: prod
             concurrency_group: deployment-prod
             deploy_name: Build Push and Deploy Frontend (prod)
@@ -306,18 +365,37 @@ jobs:
             --region "${{ vars.LOCATION }}"
 
   BuildPushDeployBE:
-    if: github.event_name == matrix.event_name
+    if: >
+      github.event_name == matrix.event_name &&
+      ((matrix.event_name == 'push' && github.ref_name == matrix.target_branch) ||
+      (matrix.event_name == 'pull_request' && github.base_ref == matrix.target_branch))
     name: ${{ matrix.deploy_name }}
     strategy:
       matrix:
         include:
           - event_name: pull_request
+            target_branch: dev
             environment: test
             concurrency_group: deployment-test
             deploy_name: Build Push and Deploy Backend (Test)
             image_tag: test
             cache_tag: buildcache-test
+          - event_name: pull_request
+            target_branch: main
+            environment: qa
+            concurrency_group: deployment-qa
+            deploy_name: Build Push and Deploy Backend (QA)
+            image_tag: qa
+            cache_tag: buildcache-qa
           - event_name: push
+            target_branch: dev
+            environment: dev
+            concurrency_group: deployment-dev
+            deploy_name: Build Push and Deploy Backend (dev)
+            image_tag: dev
+            cache_tag: buildcache-dev
+          - event_name: push
+            target_branch: main
             environment: prod
             concurrency_group: deployment-prod
             deploy_name: Build Push and Deploy Backend (prod)
@@ -381,16 +459,31 @@ jobs:
             --region "${{ vars.LOCATION }}"
 
   TestDeployment:
-    if: github.event_name == matrix.event_name
+    if: >
+      github.event_name == matrix.event_name &&
+      ((matrix.event_name == 'push' && github.ref_name == matrix.target_branch) ||
+      (matrix.event_name == 'pull_request' && github.base_ref == matrix.target_branch))
     name: ${{ matrix.e2e_name }}
     strategy:
       matrix:
         include:
           - event_name: pull_request
+            target_branch: dev
             environment: test
             concurrency_group: deployment-test
             e2e_name: Test Deployment (Test)
+          - event_name: pull_request
+            target_branch: main
+            environment: qa
+            concurrency_group: deployment-qa
+            e2e_name: Test Deployment (QA)
           - event_name: push
+            target_branch: dev
+            environment: dev
+            concurrency_group: deployment-dev
+            e2e_name: Test Deployment (dev)
+          - event_name: push
+            target_branch: main
             environment: prod
             concurrency_group: deployment-prod
             e2e_name: Test Deployment (prod)
