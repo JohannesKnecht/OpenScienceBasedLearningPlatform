@@ -1,5 +1,12 @@
 # OpenScienceBasedLearningPlatform
 
+## Frontend Deployments
+
+- [Test](https://osblptest-frontend-service-y4beno3cra-uc.a.run.app)
+- [QA](https://osblpqa-frontend-service-rkhhwqwstq-uc.a.run.app)
+- [Dev](https://osblpdev-frontend-service-nwcnes23qq-uc.a.run.app)
+- [Prod](https://osblpprod-frontend-service-sbpdiz3esa-uc.a.run.app)
+
 <img alt="screenshot" src="img.png">
 
 ## Goal
@@ -37,13 +44,6 @@ The current content is only example content for informatics. The structure is mo
 - `docs`: project documentation for the content model and contribution workflow
 
 ## Quick Start
-
-### Hosted frontend
-
-- Test: `https://osblptest-frontend-service-y4beno3cra-uc.a.run.app`
-- QA: `https://osblpqa-frontend-service-rkhhwqwstq-uc.a.run.app`
-- Dev: `https://osblpdev-frontend-service-nwcnes23qq-uc.a.run.app`
-- Prod: `https://osblpprod-frontend-service-sbpdiz3esa-uc.a.run.app`
 
 ### Run the frontend locally
 
