@@ -125,7 +125,7 @@ jobs:
         working-directory: ./infrastructure
     env:
       IMAGE_TAG: ${{ inputs.environment == 'prod' && 'latest' || inputs.environment }}
-      USE_FALLBACK_IMAGE: ${{ vars.USE_FALLBACK_IMAGE }}
+      FALLBACK_IMAGE: us-docker.pkg.dev/cloudrun/container/hello
     outputs:
       backend_url: ${{ steps.terraform-output.outputs.backend_url }}
       frontend_url: ${{ steps.terraform-output.outputs.frontend_url }}
@@ -156,17 +156,36 @@ jobs:
         run: terraform init -backend-config="bucket=${{ vars.TERRAFORM_BACKEND_BUCKET }}"
       - name: Terraform Validate
         run: terraform validate -no-color
+      - name: Resolve Terraform images
+        id: resolve_images
+        run: |
+          backend_image="${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:$IMAGE_TAG"
+          frontend_image="${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.FE_IMAGE_NAME }}:$IMAGE_TAG"
+
+          if gcloud artifacts docker images describe "$backend_image" >/dev/null 2>&1; then
+            resolved_backend_image="$backend_image"
+            echo "Using backend image for Terraform apply: $backend_image"
+          else
+            resolved_backend_image="$FALLBACK_IMAGE"
+            echo "Backend image not found for Terraform apply, using fallback: $FALLBACK_IMAGE"
+          fi
+
+          if gcloud artifacts docker images describe "$frontend_image" >/dev/null 2>&1; then
+            resolved_frontend_image="$frontend_image"
+            echo "Using frontend image for Terraform apply: $frontend_image"
+          else
+            resolved_frontend_image="$FALLBACK_IMAGE"
+            echo "Frontend image not found for Terraform apply, using fallback: $FALLBACK_IMAGE"
+          fi
+
+          echo "backend_image=$resolved_backend_image" >> "$GITHUB_OUTPUT"
+          echo "frontend_image=$resolved_frontend_image" >> "$GITHUB_OUTPUT"
       - name: Terraform Apply
         run: |
-          if [ "$USE_FALLBACK_IMAGE" = "true" ]; then
-            terraform apply -auto-approve -input=false \
-              -var="project=${{ vars.PROJECT }}"
-          else
-            terraform apply -auto-approve -input=false \
-              -var="project=${{ vars.PROJECT }}" \
-              -var="backend_image=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:$IMAGE_TAG" \
-              -var="frontend_image=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.FE_IMAGE_NAME }}:$IMAGE_TAG"
-          fi
+          terraform apply -auto-approve -input=false \
+            -var="project=${{ vars.PROJECT }}" \
+            -var="backend_image=${{ steps.resolve_images.outputs.backend_image }}" \
+            -var="frontend_image=${{ steps.resolve_images.outputs.frontend_image }}"
       - name: Capture Terraform output
         id: terraform-output
         run: |
