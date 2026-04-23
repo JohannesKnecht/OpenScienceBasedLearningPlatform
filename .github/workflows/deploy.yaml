@@ -17,10 +17,16 @@ name: "CICD"
 #   TERRAFORM_BACKEND_BUCKET - GCS bucket for Terraform state
 #   GCP_SERVICE_ACCOUNT      - Service account email for Workload Identity auth
 #   WIF_PROVIDER             - Full Workload Identity Federation provider resource name
-#   USE_FALLBACK_IMAGE       - (optional) set to 'true' to let Terraform use its default
-#                              container images instead of the images built in this pipeline
 # and the following secret:
 #   OPENAI_API_KEY
+#
+# Image tagging strategy (per environment):
+#   test → :test   qa → :qa   dev → :dev   prod → :latest
+#
+# On first deployment the env-specific images do not exist yet, so Terraform
+# falls back to the public hello image.  Subsequent Terraform runs ignore the
+# image attribute (lifecycle.ignore_changes) to preserve whatever tag
+# gcloud run deploy has set.
 
 on:
   push:
@@ -187,21 +193,25 @@ jobs:
             environment: test
             concurrency_group: deployment-test
             terraform_name: Terraform (Test)
+            image_tag: test
           - event_name: pull_request
             target_branch: main
             environment: qa
             concurrency_group: deployment-qa
             terraform_name: Terraform (QA)
+            image_tag: qa
           - event_name: push
             target_branch: dev
             environment: dev
             concurrency_group: deployment-dev
             terraform_name: Terraform (dev)
+            image_tag: dev
           - event_name: push
             target_branch: main
             environment: prod
             concurrency_group: deployment-prod
             terraform_name: Terraform (prod)
+            image_tag: latest
     environment: ${{ matrix.environment }}
     concurrency:
       group: ${{ matrix.concurrency_group }}
@@ -220,6 +230,8 @@ jobs:
       contents: 'read'
       id-token: 'write'
       pull-requests: write
+    env:
+      IMAGE_TAG: ${{ matrix.image_tag }}
     steps:
       - uses: actions/checkout@v6
       - uses: 'google-github-actions/auth@v3'
@@ -247,8 +259,19 @@ jobs:
         run: terraform validate -no-color
       - name: Terraform Apply
         run: |
-          terraform apply -auto-approve -input=false \
-            -var="project=${{ vars.PROJECT }}"
+          FE_IMAGE="${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.FE_IMAGE_NAME }}:$IMAGE_TAG"
+          BE_IMAGE="${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:$IMAGE_TAG"
+          FE_EXISTS=$(gcloud artifacts docker images describe "$FE_IMAGE" --project="${{ vars.PROJECT }}" 2>/dev/null && echo true || echo false)
+          BE_EXISTS=$(gcloud artifacts docker images describe "$BE_IMAGE" --project="${{ vars.PROJECT }}" 2>/dev/null && echo true || echo false)
+          if [ "$FE_EXISTS" = "true" ] && [ "$BE_EXISTS" = "true" ]; then
+            terraform apply -auto-approve -input=false \
+              -var="project=${{ vars.PROJECT }}" \
+              -var="frontend_image=$FE_IMAGE" \
+              -var="backend_image=$BE_IMAGE"
+          else
+            terraform apply -auto-approve -input=false \
+              -var="project=${{ vars.PROJECT }}"
+          fi
       - name: Capture Terraform output
         id: terraform-output
         run: |
