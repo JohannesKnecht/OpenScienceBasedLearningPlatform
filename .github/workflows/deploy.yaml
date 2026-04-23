@@ -187,25 +187,21 @@ jobs:
             environment: test
             concurrency_group: deployment-test
             terraform_name: Terraform (Test)
-            image_tag: test
           - event_name: pull_request
             target_branch: main
             environment: qa
             concurrency_group: deployment-qa
             terraform_name: Terraform (QA)
-            image_tag: qa
           - event_name: push
             target_branch: dev
             environment: dev
             concurrency_group: deployment-dev
             terraform_name: Terraform (dev)
-            image_tag: dev
           - event_name: push
             target_branch: main
             environment: prod
             concurrency_group: deployment-prod
             terraform_name: Terraform (prod)
-            image_tag: latest
     environment: ${{ matrix.environment }}
     concurrency:
       group: ${{ matrix.concurrency_group }}
@@ -215,9 +211,6 @@ jobs:
     defaults:
       run:
         working-directory: ./infrastructure
-    env:
-      IMAGE_TAG: ${{ matrix.image_tag }}
-      USE_FALLBACK_IMAGE: ${{ vars.USE_FALLBACK_IMAGE }}
     outputs:
       backend_url: ${{ steps.terraform-output.outputs.backend_url }}
       frontend_url: ${{ steps.terraform-output.outputs.frontend_url }}
@@ -254,15 +247,8 @@ jobs:
         run: terraform validate -no-color
       - name: Terraform Apply
         run: |
-          if [ "$USE_FALLBACK_IMAGE" = "true" ]; then
-            terraform apply -auto-approve -input=false \
-              -var="project=${{ vars.PROJECT }}"
-          else
-            terraform apply -auto-approve -input=false \
-              -var="project=${{ vars.PROJECT }}" \
-              -var="backend_image=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:$IMAGE_TAG" \
-              -var="frontend_image=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.FE_IMAGE_NAME }}:$IMAGE_TAG"
-          fi
+          terraform apply -auto-approve -input=false \
+            -var="project=${{ vars.PROJECT }}"
       - name: Capture Terraform output
         id: terraform-output
         run: |
