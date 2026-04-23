@@ -40,7 +40,10 @@ The current content is only example content for informatics. The structure is mo
 
 ### Hosted frontend
 
-- Frontend URL: `https://osblptest-frontend-service-y4beno3cra-uc.a.run.app`
+- Test: `https://osblptest-frontend-service-y4beno3cra-uc.a.run.app`
+- QA: `https://osblpqa-frontend-service-rkhhwqwstq-uc.a.run.app`
+- Dev: `https://osblpdev-frontend-service-nwcnes23qq-uc.a.run.app`
+- Prod: `https://osblpprod-frontend-service-sbpdiz3esa-uc.a.run.app`
 
 ### Run the frontend locally
 
