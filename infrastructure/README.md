@@ -11,11 +11,11 @@ PROJECT_NUMBER=
 Other vars that need to be set:
 WORKLOAD_IDENTITY_POOL_ID="projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/github"
 REPO="JohannesKnecht/OpenScienceBasedLearningPlatform" 
-REPO_ID="1205863955" 
-(curl -sfL -H "Accept: application/json" "https://api.github.com/repos/${REPO}" | jq .id)
-
-
+REPO_ID="1205863955"
 POOL_ID="github"
+
+
+(curl -sfL -H "Accept: application/json" "https://api.github.com/repos/${REPO}" | jq .id)
 
 1 ) Enable APIs
 gcloud services enable \
@@ -25,6 +25,7 @@ gcloud services enable \
   iamcredentials.googleapis.com \
   run.googleapis.com \
   artifactregistry.googleapis.com \
+  secretmanager.googleapis.com \
   --project="$PROJECT_ID"
 
 2) Create SA
@@ -38,6 +39,14 @@ gcloud iam service-accounts create githubactionsa \
 gcloud projects add-iam-policy-binding "$PROJECT_ID" \
   --member="serviceAccount:githubactionsa@${PROJECT_ID}.iam.gserviceaccount.com" \
   --role="roles/writer"
+
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+  --member="serviceAccount:githubactionsa@${PROJECT_ID}.iam.gserviceaccount.com" \
+  --role="roles/storage.admin"
+
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+  --member="serviceAccount:githubactionsa@${PROJECT_ID}.iam.gserviceaccount.com" \
+  --role="roles/artifactregistry.admin"
 
 gcloud projects add-iam-policy-binding "$PROJECT_ID" \
   --member="serviceAccount:githubactionsa@${PROJECT_ID}.iam.gserviceaccount.com" \
