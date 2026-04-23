@@ -5,6 +5,10 @@ resource "google_cloud_run_v2_service" "backend_service" {
   ingress              = "INGRESS_TRAFFIC_ALL"
   invoker_iam_disabled = true
 
+  lifecycle {
+    ignore_changes = [template[0].containers[0].image]
+  }
+
 
   scaling {
     max_instance_count = 1
@@ -27,9 +31,6 @@ resource "google_cloud_run_v2_service" "backend_service" {
     }
   }
 
-  lifecycle {
-    ignore_changes = [template[0].containers[0].image]
-  }
 }
 
 resource "google_cloud_run_v2_service" "frontend_service" {
@@ -38,6 +39,10 @@ resource "google_cloud_run_v2_service" "frontend_service" {
   deletion_protection  = false
   ingress              = "INGRESS_TRAFFIC_ALL"
   invoker_iam_disabled = true
+
+  lifecycle {
+    ignore_changes = [template[0].containers[0].image]
+  }
 
   scaling {
     max_instance_count = 1
@@ -56,9 +61,6 @@ resource "google_cloud_run_v2_service" "frontend_service" {
     }
   }
 
-  lifecycle {
-    ignore_changes = [template[0].containers[0].image]
-  }
 }
 
 output "backend_url" {

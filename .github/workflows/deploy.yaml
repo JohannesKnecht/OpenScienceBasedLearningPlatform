@@ -17,8 +17,6 @@ name: "CICD"
 #   TERRAFORM_BACKEND_BUCKET - GCS bucket for Terraform state
 #   GCP_SERVICE_ACCOUNT      - Service account email for Workload Identity auth
 #   WIF_PROVIDER             - Full Workload Identity Federation provider resource name
-#   USE_FALLBACK_IMAGE       - (optional) set to 'true' to let Terraform use its default
-#                              container images instead of the images built in this pipeline
 # and the following secret:
 #   OPENAI_API_KEY
 
