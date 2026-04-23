@@ -32,6 +32,10 @@ on:
       - dev
       - main
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   DeployTest:
     if: github.event_name == 'pull_request' && github.base_ref == 'dev'
