@@ -161,31 +161,59 @@ jobs:
         run: |
           backend_image="${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:$IMAGE_TAG"
           frontend_image="${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.FE_IMAGE_NAME }}:$IMAGE_TAG"
+          backend_service_name="${{ vars.PROJECT }}-backend-service"
+          frontend_service_name="${{ vars.PROJECT }}-frontend-service"
 
           if gcloud artifacts docker images describe "$backend_image" >/dev/null 2>&1; then
             resolved_backend_image="$backend_image"
             echo "Using backend image for Terraform apply: $backend_image"
           else
-            resolved_backend_image="$FALLBACK_IMAGE"
-            echo "Backend image not found for Terraform apply, using fallback: $FALLBACK_IMAGE"
+            current_backend_image="$(gcloud run services describe "$backend_service_name" --region "${{ vars.LOCATION }}" --format='value(spec.template.spec.containers[0].image)' 2>/dev/null || true)"
+
+            if [ -n "$current_backend_image" ]; then
+              resolved_backend_image="$current_backend_image"
+              echo "Backend image not found for Terraform apply, using current service image: $current_backend_image"
+            else
+              resolved_backend_image="$FALLBACK_IMAGE"
+              echo "Backend image not found for Terraform apply, using fallback: $FALLBACK_IMAGE"
+            fi
           fi
 
           if gcloud artifacts docker images describe "$frontend_image" >/dev/null 2>&1; then
             resolved_frontend_image="$frontend_image"
             echo "Using frontend image for Terraform apply: $frontend_image"
           else
-            resolved_frontend_image="$FALLBACK_IMAGE"
-            echo "Frontend image not found for Terraform apply, using fallback: $FALLBACK_IMAGE"
+            current_frontend_image="$(gcloud run services describe "$frontend_service_name" --region "${{ vars.LOCATION }}" --format='value(spec.template.spec.containers[0].image)' 2>/dev/null || true)"
+
+            if [ -n "$current_frontend_image" ]; then
+              resolved_frontend_image="$current_frontend_image"
+              echo "Frontend image not found for Terraform apply, using current service image: $current_frontend_image"
+            else
+              resolved_frontend_image="$FALLBACK_IMAGE"
+              echo "Frontend image not found for Terraform apply, using fallback: $FALLBACK_IMAGE"
+            fi
+          fi
+
+          openai_secret_version="$(gcloud secrets versions list openai --project="${{ vars.PROJECT }}" --limit=1 --format='value(name)' 2>/dev/null || true)"
+
+          if [ -n "$openai_secret_version" ]; then
+            configure_openai_secret=true
+            echo "Terraform will manage the OpenAI secret reference."
+          else
+            configure_openai_secret=false
+            echo "Terraform will skip the OpenAI secret reference until a secret version exists."
           fi
 
           echo "backend_image=$resolved_backend_image" >> "$GITHUB_OUTPUT"
           echo "frontend_image=$resolved_frontend_image" >> "$GITHUB_OUTPUT"
+          echo "configure_openai_secret=$configure_openai_secret" >> "$GITHUB_OUTPUT"
       - name: Terraform Apply
         run: |
           terraform apply -auto-approve -input=false \
             -var="project=${{ vars.PROJECT }}" \
             -var="backend_image=${{ steps.resolve_images.outputs.backend_image }}" \
-            -var="frontend_image=${{ steps.resolve_images.outputs.frontend_image }}"
+            -var="frontend_image=${{ steps.resolve_images.outputs.frontend_image }}" \
+            -var="configure_openai_secret=${{ steps.resolve_images.outputs.configure_openai_secret }}"
       - name: Capture Terraform output
         id: terraform-output
         run: |
@@ -307,9 +335,47 @@ jobs:
             --update-secrets=OPENAI_API_KEY=openai:latest \
             --region "${{ vars.LOCATION }}"
 
+  TerraformSync:
+    name: Terraform Sync (${{ inputs.environment }})
+    needs: [Terraform, BuildPushDeployFE, BuildPushDeployBE]
+    environment: ${{ inputs.environment }}
+    concurrency:
+      group: deployment-${{ inputs.environment }}
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./infrastructure
+    env:
+      IMAGE_TAG: ${{ inputs.environment == 'prod' && 'latest' || inputs.environment }}
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    steps:
+      - uses: actions/checkout@v6
+      - uses: 'google-github-actions/auth@v3'
+        with:
+          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
+          workload_identity_provider: ${{ vars.WIF_PROVIDER }}
+          create_credentials_file: true
+          export_environment_variables: true
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_wrapper: false
+      - name: Terraform Init
+        run: terraform init -backend-config="bucket=${{ vars.TERRAFORM_BACKEND_BUCKET }}"
+      - name: Terraform Apply
+        run: |
+          terraform apply -auto-approve -input=false \
+            -var="project=${{ vars.PROJECT }}" \
+            -var="backend_image=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:$IMAGE_TAG" \
+            -var="frontend_image=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.FE_IMAGE_NAME }}:$IMAGE_TAG" \
+            -var="configure_openai_secret=true"
+
   TestDeployment:
     name: Test Deployment (${{ inputs.environment }})
-    needs: [Terraform, BuildPushDeployFE, BuildPushDeployBE]
+    needs: [Terraform, TerraformSync]
     environment: ${{ inputs.environment }}
     concurrency:
       group: deployment-${{ inputs.environment }}

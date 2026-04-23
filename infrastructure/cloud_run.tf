@@ -5,10 +5,6 @@ resource "google_cloud_run_v2_service" "backend_service" {
   ingress              = "INGRESS_TRAFFIC_ALL"
   invoker_iam_disabled = true
 
-  lifecycle {
-    ignore_changes = [template[0].containers[0].image]
-  }
-
 
   scaling {
     max_instance_count = 1
@@ -19,6 +15,18 @@ resource "google_cloud_run_v2_service" "backend_service" {
     service_account = google_service_account.backend_runtime.email
     containers {
       image = var.backend_image
+      dynamic "env" {
+        for_each = var.configure_openai_secret ? [1] : []
+        content {
+          name = "OPENAI_API_KEY"
+          value_source {
+            secret_key_ref {
+              secret  = google_secret_manager_secret.openai.secret_id
+              version = "latest"
+            }
+          }
+        }
+      }
       ports {
         container_port = 8080
       }
@@ -39,10 +47,6 @@ resource "google_cloud_run_v2_service" "frontend_service" {
   deletion_protection  = false
   ingress              = "INGRESS_TRAFFIC_ALL"
   invoker_iam_disabled = true
-
-  lifecycle {
-    ignore_changes = [template[0].containers[0].image]
-  }
 
   scaling {
     max_instance_count = 1

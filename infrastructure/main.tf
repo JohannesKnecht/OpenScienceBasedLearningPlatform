@@ -39,6 +39,11 @@ variable "frontend_image" {
   default = "us-docker.pkg.dev/cloudrun/container/hello"
 }
 
+variable "configure_openai_secret" {
+  type    = bool
+  default = false
+}
+
 
 
 
