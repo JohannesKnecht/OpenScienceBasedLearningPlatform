@@ -1,22 +1,27 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
-import { getCourseModules, getModuleLessons, primaryCourse } from '../content'
+import { getCourse, getCourseModules, getLessonModule, getModuleLessons, primaryCourse } from '../content'
 import { useLearningProgress } from '../lib/progress'
 
-defineProps<{
+const props = defineProps<{
   currentLessonId: string
 }>()
 
 const { getLessonState } = useLearningProgress()
-const modules = primaryCourse ? getCourseModules(primaryCourse.id) : []
+const currentCourse = computed(() => {
+  const module = getLessonModule(props.currentLessonId)
+  return module ? getCourse(module.courseId) : primaryCourse
+})
+const modules = computed(() => (currentCourse.value ? getCourseModules(currentCourse.value.id) : []))
 </script>
 
 <template>
   <aside class="lesson-sidebar">
     <div class="lesson-sidebar__intro">
       <p class="lesson-sidebar__eyebrow">Skill graph</p>
-      <h2>{{ primaryCourse?.title }}</h2>
-      <p>{{ primaryCourse?.tagline }}</p>
+      <h2>{{ currentCourse?.title }}</h2>
+      <p>{{ currentCourse?.tagline }}</p>
     </div>
 
     <div v-for="module in modules" :key="module.id" class="lesson-sidebar__module">

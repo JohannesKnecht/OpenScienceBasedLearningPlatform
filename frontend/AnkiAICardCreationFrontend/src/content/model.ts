@@ -135,7 +135,6 @@ export interface CurriculumDocument {
   metadata: {
     projectName: string
     defaultLocale: string
-    contentLicense: string
     contributionModel: string
   }
   tracks: Track[]

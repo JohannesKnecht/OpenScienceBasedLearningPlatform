@@ -3,7 +3,7 @@ import { computed, watchEffect } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import LessonSidebar from '../components/LessonSidebar.vue'
 import ProgressPanel from '../components/ProgressPanel.vue'
-import { getLesson, getLessonPrerequisites, getNextLesson, getSkill, getLessonModule, primaryCourse } from '../content'
+import { getLesson, getLessonPrerequisites, getNextLesson, getSkill, getLessonModule } from '../content'
 import { useLearningProgress } from '../lib/progress'
 
 const route = useRoute()
@@ -13,7 +13,7 @@ const { touchLesson, isLessonUnlocked, isSkillMastered } = useLearningProgress()
 const lessonId = computed(() => route.params.lessonSlug as string)
 const lesson = computed(() => getLesson(lessonId.value))
 const module = computed(() => getLessonModule(lessonId.value))
-const nextLesson = computed(() => (primaryCourse && lesson.value ? getNextLesson(primaryCourse.id, lesson.value.id) : undefined))
+const nextLesson = computed(() => (module.value && lesson.value ? getNextLesson(module.value.courseId, lesson.value.id) : undefined))
 const missingPrerequisites = computed(() =>
   getLessonPrerequisites(lessonId.value).filter((skill) => !isSkillMastered(skill.id)),
 )
