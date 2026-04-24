@@ -4,7 +4,7 @@ import { RouterLink, useRoute, useRouter } from 'vue-router'
 import AssessmentRunner from '../components/AssessmentRunner.vue'
 import LessonSidebar from '../components/LessonSidebar.vue'
 import ProgressPanel from '../components/ProgressPanel.vue'
-import { getAssessment, getLesson, getLessonModule, getNextLesson, primaryCourse } from '../content'
+import { getAssessment, getLesson, getLessonModule, getNextLesson } from '../content'
 import type { AssessmentRunResult } from '../content/model'
 import { useLearningProgress } from '../lib/progress'
 
@@ -16,7 +16,7 @@ const lessonId = computed(() => route.params.lessonSlug as string)
 const lesson = computed(() => getLesson(lessonId.value))
 const module = computed(() => getLessonModule(lessonId.value))
 const assessment = computed(() => (lesson.value ? getAssessment(lesson.value.assessmentId) : undefined))
-const nextLesson = computed(() => (primaryCourse && lesson.value ? getNextLesson(primaryCourse.id, lesson.value.id) : undefined))
+const nextLesson = computed(() => (module.value && lesson.value ? getNextLesson(module.value.courseId, lesson.value.id) : undefined))
 const lastResult = ref<AssessmentRunResult | null>(null)
 
 watch(

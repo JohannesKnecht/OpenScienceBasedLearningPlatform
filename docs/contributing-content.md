@@ -1,65 +1,74 @@
 # Contributing Content
 
-## Ziel
+## Goal
 
-Inhalte sollen langfristig ueber Pull Requests in dieses Repository einfliessen.
+Content should eventually enter this repository through pull requests.
 
-Die wichtigste Arbeitsflaeche dafuer ist aktuell:
+The most important working file is currently:
 
 - `frontend/AnkiAICardCreationFrontend/src/content/curriculum.json`
 
-## Grundregeln
+For larger curriculum changes, also read:
 
-1. Keine kopierten proprietaeren Inhalte einreichen.
-2. Keine Marken oder Produkttexte anderer Plattformen uebernehmen.
-3. Inhalte muessen originell oder kompatibel lizenziert sein.
-4. Prerequisites immer auf Skill-Ebene modellieren.
-5. Lessons erklaeren, Assessments pruefen, Reviews wiederholen.
+- `docs/curriculum-workflow.md`
 
-## Erwartete Qualitaet fuer neue Inhalte
+## Ground Rules
 
-Neue Inhalte sollten:
+1. Do not submit copied proprietary content.
+2. Do not reuse brand or product text from other platforms.
+3. Content must be original or otherwise usable in this repository.
+4. Model prerequisites at the skill level.
+5. Lessons explain, assessments test, and reviews reinforce.
 
-- klare IDs haben
-- fachlich atomar sein
-- eine sinnvolle prerequisite-Struktur haben
-- auf das bestehende Curriculum referenzieren koennen
-- keine kaputten Referenzen einfuehren
+## Expected Quality For New Content
 
-## Empfohlener Ablauf fuer einen Beitrag
+New content should:
 
-1. Passende bestehende Skills und Modules ansehen.
-2. Neue Skill-IDs definieren.
-3. prerequisiteSkillIds festlegen.
-4. Lesson anlegen.
-5. Assessment anlegen.
-6. Review anlegen.
-7. Referenzen gegenseitig sauber verbinden.
+- have clear IDs
+- be subject-matter atomic
+- have a sensible prerequisite structure
+- reference the existing curriculum correctly
+- avoid broken references
 
-## Beim Bearbeiten der zentralen JSON-Datei beachten
+## Recommended Contribution Flow
 
-Da aktuell alles in einer grossen Datei liegt, bitte:
+1. Review the relevant existing skills and modules.
+2. Define new skill IDs.
+3. Set `prerequisiteSkillIds`.
+4. Add the lesson.
+5. Add the assessment.
+6. Add the review.
+7. Keep all cross-references consistent.
 
-- nur einen zusammenhaengenden Inhaltsbereich pro Pull Request aendern
-- IDs konsistent benennen
-- bestehende Sortierung respektieren
-- keine unnoetigen Umformatierungen machen
+## Editing The Central JSON File
 
-## Inhaltliche Leitfragen fuer Contributor
+Because the curriculum currently lives in one large file:
 
-Vor einem PR sollte klar sein:
+- change only one coherent content area per pull request
+- keep IDs consistent
+- respect the existing ordering
+- avoid unnecessary reformatting
+- do not use very large JSON patches or long inline heredocs
+- for all registered generators, run `npm run content:generate` and then `npm run content:validate` from the frontend directory
+- for CS1-only generator changes, `npm run content:generate-cs1` can be used directly
+- for ML1-only generator changes, `npm run content:generate-ml1` can be used directly
+- new domains should get their own generators or small patch sequences, not one giant JSON patch
 
-- Welche Skills werden neu eingefuehrt?
-- Welche bestehenden Skills sind prerequisites?
-- Woran erkennt das System spaeter Mastery?
-- Welcher Review-Mechanismus ist fuer diese Skills sinnvoll?
+## Content Questions For Contributors
 
-## Noch offene Infrastruktur fuer Community-Beitraege
+Before opening a PR, be clear about:
 
-Diese Dinge sollten spaeter ergaenzt werden:
+- which skills are being introduced
+- which existing skills are prerequisites
+- how the system can later recognize mastery
+- which review mechanism is appropriate for these skills
 
-- JSON-Schema fuer CI
-- automatisierte Graph-Checks in GitHub Actions
-- PR-Template zur Herkunftsbestaetigung von Inhalten
-- Style Guide fuer Sprachstil und didaktische Tiefe
-- Moderationsprozess fuer groessere Content-Pakete
+## Open Infrastructure For Community Contributions
+
+These items should be added later:
+
+- JSON Schema for CI
+- automated graph checks in GitHub Actions
+- PR template for confirming content origin
+- style guide for tone and instructional depth
+- moderation process for larger content packages

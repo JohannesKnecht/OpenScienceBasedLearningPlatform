@@ -1,20 +1,20 @@
 # Content Model
 
-## Ziel
+## Goal
 
-Das Curriculum soll langfristig vollstaendig aus einer zentralen JSON-Datei geladen werden.
+The curriculum should be loaded entirely from one central JSON file over time.
 
-Die Datei ist nicht nur ein Inhaltscontainer, sondern die produktive Beschreibung des Lern-Graphs.
+The file is not just a content container. It is the production description of the learning graph.
 
-## Grundprinzipien
+## Core Principles
 
-1. Skills sind die Kerneinheit.
-2. Lessons erklaeren Skills.
-3. Assessments pruefen Skills.
-4. Reviews stabilisieren Skills ueber Zeit.
-5. Modules und Courses sind kuratierte Perspektiven auf denselben Skill-Graph.
+1. Skills are the core unit.
+2. Lessons explain skills.
+3. Assessments test skills.
+4. Reviews stabilize skills over time.
+5. Modules and courses are curated views of the same skill graph.
 
-## Top-Level-Struktur
+## Top-Level Structure
 
 ```json
 {
@@ -31,23 +31,23 @@ Die Datei ist nicht nur ein Inhaltscontainer, sondern die produktive Beschreibun
 }
 ```
 
-## Entitaeten
+## Entities
 
 ### tracks
 
-Oberste kuratierte Ebene.
+The highest curated level.
 
-Beispiel:
+Examples:
 
-- Informatik Grundlagen
-- Datenstrukturen
-- Algorithmen
+- Computer Science Foundations
+- Data Structures
+- Algorithms
 
 ### courses
 
-Ein zusammenhaengender Lernpfad innerhalb eines Tracks.
+A coherent learning path inside a track.
 
-Beispiel:
+Examples:
 
 - Computational Thinking Core
 - Python Foundations
@@ -55,9 +55,9 @@ Beispiel:
 
 ### modules
 
-Didaktische Gruppen innerhalb eines Kurses.
+Instructional groups inside a course.
 
-Beispiel:
+Examples:
 
 - Program State
 - Control Flow
@@ -65,39 +65,39 @@ Beispiel:
 
 ### skills
 
-Die wichtigste fachliche Einheit.
+The most important subject-matter unit.
 
-Jeder Skill braucht:
+Every skill needs:
 
 - `id`
 - `title`
 - `description`
 - `prerequisiteSkillIds`
-- Referenzen auf passende Lessons, Assessments und Reviews
+- references to matching lessons, assessments, and reviews
 
 ### lessons
 
-Lessons erklaeren ein kleines Cluster aus Skills, idealerweise sehr fokussiert.
+Lessons explain a small cluster of skills and should usually be tightly focused.
 
-Jede Lesson sollte enthalten:
+Every lesson should contain:
 
-- Lernziel
-- prerequisiteSkillIds
-- erklaerende Abschnitte
-- Worked Examples
-- genau einen Einstiegspunkt in ein Assessment
+- a learning objective
+- `prerequisiteSkillIds`
+- explanatory sections
+- worked examples
+- exactly one entry point into an assessment
 
 ### assessments
 
-Assessments pruefen Skills explizit.
+Assessments explicitly test skills.
 
-Aktuelle Typen:
+Current types:
 
 - `diagnostic`
 - `lesson-check`
 - `review`
 
-Spaeter moeglich:
+Possible future types:
 
 - `module-check`
 - `course-exam`
@@ -105,56 +105,56 @@ Spaeter moeglich:
 
 ### reviews
 
-Reviews verbinden einen Skill mit einem Review-Assessment und einem Intervall.
+Reviews connect one skill to one review assessment and one interval.
 
-Das macht den Retention-Loop explizit im Curriculum sichtbar.
+This makes the retention loop explicit in the curriculum.
 
 ## Prerequisites
 
-Prerequisites werden immer auf Skill-Ebene modelliert.
+Prerequisites are always modeled at the skill level.
 
-Nicht empfohlen:
+Not recommended:
 
-- Lesson A prerequisite fuer Lesson B
+- Lesson A as a prerequisite for Lesson B
 
-Empfohlen:
+Recommended:
 
-- Skill X prerequisite fuer Skill Y
-- Lesson B referenziert Skill Y
+- Skill X as a prerequisite for Skill Y
+- Lesson B references Skill Y
 
-Das ist stabiler und wiederverwendbarer.
+This is more stable and reusable.
 
 ## IDs
 
-IDs muessen:
+IDs must be:
 
-- stabil sein
-- eindeutig sein
-- slug-artig sein
-- nie fuer andere Inhalte wiederverwendet werden
+- stable
+- unique
+- slug-like
+- never reused for different content
 
-## Validierung
+## Validation
 
-Aktuell wird das Curriculum beim Laden validiert.
+The curriculum is currently validated when it is loaded.
 
-Geprueft werden unter anderem:
+Checks include:
 
-- doppelte IDs
-- fehlende Referenzen
-- prerequisite-Zyklen
+- duplicate IDs
+- missing references
+- prerequisite cycles
 
-Die Validierung liegt in:
+Validation lives in:
 
 - `frontend/AnkiAICardCreationFrontend/src/content/validate.ts`
 
-## Weiterentwicklung
+## Future Model Work
 
-Langfristig sollte das Modell um diese Felder erweitert werden:
+The model should eventually be extended with:
 
-- lokalisierte Texte
-- Schwierigkeitsmetadaten pro Item
-- Hints in mehreren Stufen
-- Fehlermuster / misconceptions
-- Rich content blocks
-- mathematische oder codebasierte Antworttypen
-- Versionierung und Review-Metadaten fuer Contributor
+- localized text
+- difficulty metadata per item
+- multi-step hints
+- misconceptions and error patterns
+- rich content blocks
+- mathematical or code-based answer types
+- versioning and review metadata for contributors
