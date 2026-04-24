@@ -306,8 +306,8 @@ export function useLearningProgress() {
 
     return {
       type: 'complete' as const,
-      title: 'Example curriculum completed',
-      description: 'The sample JSON is done. The next step is adding more community-authored content.',
+      title: 'CS1 course completed',
+      description: 'The introductory programming course is complete. Keep reviews clear to retain the skills.',
       route: '/learn',
     }
   })

@@ -34,7 +34,7 @@ The repository currently contains a local frontend prototype that already includ
 - a review queue
 - a simple `Learn` view and a full zoomable `Graph` view
 
-The current content is only example content for informatics. The structure is more important than the amount of content at this stage.
+The current content is a Python-first CS1 course built on the central curriculum graph. The structure is designed so the course can keep expanding through reviewed content contributions.
 
 ## Repository Structure
 
@@ -187,7 +187,7 @@ More details:
 - central JSON curriculum
 - simple prerequisite-aware learning interface
 - local learner progress
-- example informatics content
+- complete Python-first CS1 curriculum content
 
 ### Phase 2
 
