@@ -8,6 +8,10 @@ Die wichtigste Arbeitsflaeche dafuer ist aktuell:
 
 - `frontend/AnkiAICardCreationFrontend/src/content/curriculum.json`
 
+Fuer groessere Curriculum-Aenderungen bitte auch lesen:
+
+- `docs/curriculum-workflow.md`
+
 ## Grundregeln
 
 1. Keine kopierten proprietaeren Inhalte einreichen.
@@ -44,6 +48,10 @@ Da aktuell alles in einer grossen Datei liegt, bitte:
 - IDs konsistent benennen
 - bestehende Sortierung respektieren
 - keine unnoetigen Umformatierungen machen
+- keine sehr grossen JSON-Patches oder langen Inline-Heredocs verwenden
+- fuer alle registrierten Generatoren `npm run content:generate` und danach `npm run content:validate` im Frontend-Verzeichnis ausfuehren
+- fuer reine CS1-Generatoraenderungen kann gezielt `npm run content:generate-cs1` verwendet werden
+- neue Domaenen wie ML sollen eigene Generatoren oder kleine Patch-Sequenzen bekommen, nicht einen riesigen JSON-Patch
 
 ## Inhaltliche Leitfragen fuer Contributor
 
