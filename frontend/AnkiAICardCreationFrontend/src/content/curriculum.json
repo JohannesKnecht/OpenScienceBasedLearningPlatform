@@ -13,7 +13,8 @@
       "tagline": "Open-source mastery learning for computational thinking.",
       "description": "An initial open computer science curriculum with a prerequisite graph, lesson checks, reviews, and local mastery state.",
       "courseIds": [
-        "computational-thinking-core"
+        "computational-thinking-core",
+        "cs1-introduction"
       ],
       "tags": [
         "informatics",
@@ -37,6 +38,22 @@
       "entryAssessmentId": "diagnostic-computational-thinking",
       "dailyXpGoal": 30,
       "weeklyStudyDays": 4
+    },
+    {
+      "id": "cs1-introduction",
+      "trackId": "informatics-foundations",
+      "title": "CS1: Introduction to Programming",
+      "tagline": "Data types, functions, lists, and your first algorithms.",
+      "description": "A first programming course that builds from values and operators up through functions, lists, and algorithmic thinking. All examples use language-neutral pseudocode.",
+      "moduleIds": [
+        "data-types-and-values",
+        "functions-and-abstraction",
+        "lists-and-iteration",
+        "algorithms-and-problem-solving"
+      ],
+      "entryAssessmentId": "diagnostic-cs1",
+      "dailyXpGoal": 30,
+      "weeklyStudyDays": 5
     }
   ],
   "modules": [
@@ -81,6 +98,66 @@
       ],
       "skillIds": [
         "isolate-bug-with-hypothesis"
+      ]
+    },
+    {
+      "id": "data-types-and-values",
+      "courseId": "cs1-introduction",
+      "badge": "Module 01",
+      "title": "Data Types and Values",
+      "summary": "Understand how programs represent numbers, text, and logical truth values.",
+      "lessonIds": [
+        "data-types-overview",
+        "arithmetic-operators-lesson"
+      ],
+      "skillIds": [
+        "identify-data-types",
+        "use-arithmetic-operators"
+      ]
+    },
+    {
+      "id": "functions-and-abstraction",
+      "courseId": "cs1-introduction",
+      "badge": "Module 02",
+      "title": "Functions and Abstraction",
+      "summary": "Package repeated logic into named, reusable blocks with clear inputs and outputs.",
+      "lessonIds": [
+        "defining-functions-lesson",
+        "parameters-and-return-lesson"
+      ],
+      "skillIds": [
+        "define-and-call-functions",
+        "use-parameters-and-return"
+      ]
+    },
+    {
+      "id": "lists-and-iteration",
+      "courseId": "cs1-introduction",
+      "badge": "Module 03",
+      "title": "Lists and Iteration",
+      "summary": "Store multiple values together and process them systematically with loops.",
+      "lessonIds": [
+        "lists-and-indexing-lesson",
+        "iterating-lists-lesson"
+      ],
+      "skillIds": [
+        "create-and-index-lists",
+        "iterate-over-lists"
+      ]
+    },
+    {
+      "id": "algorithms-and-problem-solving",
+      "courseId": "cs1-introduction",
+      "badge": "Module 04",
+      "title": "Algorithms and Problem Solving",
+      "summary": "Express solutions as precise sequences of steps and analyze simple search strategies.",
+      "lessonIds": [
+        "algorithm-steps-lesson",
+        "linear-search-lesson"
+      ],
+      "skillIds": [
+        "describe-algorithm-steps",
+        "apply-linear-search"
       ]
     }
   ],
@@ -205,6 +282,210 @@
         "tags": [
           "debugging",
           "workflow"
+        ]
+      }
+    },
+    {
+      "id": "identify-data-types",
+      "title": "Identify basic data types",
+      "description": "Can recognize and distinguish integers, floats, strings, and booleans in a program.",
+      "prerequisiteSkillIds": [
+        "read-sequential-program"
+      ],
+      "lessonIds": [
+        "data-types-overview"
+      ],
+      "masteryAssessmentIds": [
+        "assessment-data-types-overview"
+      ],
+      "reviewIds": [
+        "review-identify-data-types"
+      ],
+      "metadata": {
+        "domain": "data-types",
+        "difficulty": 0.20,
+        "tags": [
+          "types",
+          "values"
+        ]
+      }
+    },
+    {
+      "id": "use-arithmetic-operators",
+      "title": "Apply arithmetic operators",
+      "description": "Can evaluate expressions using addition, subtraction, multiplication, division, and remainder on numeric values.",
+      "prerequisiteSkillIds": [
+        "identify-data-types",
+        "track-variable-state"
+      ],
+      "lessonIds": [
+        "arithmetic-operators-lesson"
+      ],
+      "masteryAssessmentIds": [
+        "assessment-arithmetic-operators"
+      ],
+      "reviewIds": [
+        "review-use-arithmetic-operators"
+      ],
+      "metadata": {
+        "domain": "data-types",
+        "difficulty": 0.30,
+        "tags": [
+          "operators",
+          "arithmetic"
+        ]
+      }
+    },
+    {
+      "id": "define-and-call-functions",
+      "title": "Define and call functions",
+      "description": "Can write a named block of code and invoke it from other parts of the program.",
+      "prerequisiteSkillIds": [
+        "use-arithmetic-operators"
+      ],
+      "lessonIds": [
+        "defining-functions-lesson"
+      ],
+      "masteryAssessmentIds": [
+        "assessment-defining-functions"
+      ],
+      "reviewIds": [
+        "review-define-and-call-functions"
+      ],
+      "metadata": {
+        "domain": "functions",
+        "difficulty": 0.40,
+        "tags": [
+          "functions",
+          "abstraction"
+        ]
+      }
+    },
+    {
+      "id": "use-parameters-and-return",
+      "title": "Use parameters and return values",
+      "description": "Can write functions that accept input via parameters and send a result back via a return value.",
+      "prerequisiteSkillIds": [
+        "define-and-call-functions"
+      ],
+      "lessonIds": [
+        "parameters-and-return-lesson"
+      ],
+      "masteryAssessmentIds": [
+        "assessment-parameters-and-return"
+      ],
+      "reviewIds": [
+        "review-use-parameters-and-return"
+      ],
+      "metadata": {
+        "domain": "functions",
+        "difficulty": 0.48,
+        "tags": [
+          "parameters",
+          "return"
+        ]
+      }
+    },
+    {
+      "id": "create-and-index-lists",
+      "title": "Create and index lists",
+      "description": "Can create an ordered collection of values and retrieve individual elements by their zero-based index.",
+      "prerequisiteSkillIds": [
+        "track-variable-state"
+      ],
+      "lessonIds": [
+        "lists-and-indexing-lesson"
+      ],
+      "masteryAssessmentIds": [
+        "assessment-lists-and-indexing"
+      ],
+      "reviewIds": [
+        "review-create-and-index-lists"
+      ],
+      "metadata": {
+        "domain": "lists",
+        "difficulty": 0.35,
+        "tags": [
+          "lists",
+          "indexing"
+        ]
+      }
+    },
+    {
+      "id": "iterate-over-lists",
+      "title": "Iterate over lists",
+      "description": "Can use a loop to visit each element in a list and apply an operation to it.",
+      "prerequisiteSkillIds": [
+        "create-and-index-lists",
+        "trace-simple-loops"
+      ],
+      "lessonIds": [
+        "iterating-lists-lesson"
+      ],
+      "masteryAssessmentIds": [
+        "assessment-iterating-lists"
+      ],
+      "reviewIds": [
+        "review-iterate-over-lists"
+      ],
+      "metadata": {
+        "domain": "lists",
+        "difficulty": 0.45,
+        "tags": [
+          "lists",
+          "loops",
+          "iteration"
+        ]
+      }
+    },
+    {
+      "id": "describe-algorithm-steps",
+      "title": "Describe algorithm steps precisely",
+      "description": "Can express a computational solution as a finite, ordered sequence of unambiguous steps.",
+      "prerequisiteSkillIds": [
+        "use-parameters-and-return",
+        "iterate-over-lists"
+      ],
+      "lessonIds": [
+        "algorithm-steps-lesson"
+      ],
+      "masteryAssessmentIds": [
+        "assessment-algorithm-steps"
+      ],
+      "reviewIds": [
+        "review-describe-algorithm-steps"
+      ],
+      "metadata": {
+        "domain": "algorithms",
+        "difficulty": 0.50,
+        "tags": [
+          "algorithms",
+          "problem-solving"
+        ]
+      }
+    },
+    {
+      "id": "apply-linear-search",
+      "title": "Apply linear search",
+      "description": "Can trace and implement a sequential scan through a list to find a target value.",
+      "prerequisiteSkillIds": [
+        "describe-algorithm-steps"
+      ],
+      "lessonIds": [
+        "linear-search-lesson"
+      ],
+      "masteryAssessmentIds": [
+        "assessment-linear-search"
+      ],
+      "reviewIds": [
+        "review-apply-linear-search"
+      ],
+      "metadata": {
+        "domain": "algorithms",
+        "difficulty": 0.55,
+        "tags": [
+          "search",
+          "linear-search"
         ]
       }
     }
@@ -411,6 +692,427 @@
       "metadata": {
         "author": "core-team",
         "status": "example"
+      }
+    },
+    {
+      "id": "data-types-overview",
+      "moduleId": "data-types-and-values",
+      "title": "Data types in programs",
+      "summary": "Every value in a program belongs to a type that shapes what you can do with it.",
+      "objective": "After this lesson you can identify integers, floats, strings, and booleans and explain why the type of a value matters.",
+      "estimatedMinutes": 10,
+      "skillIds": [
+        "identify-data-types"
+      ],
+      "prerequisiteSkillIds": [
+        "read-sequential-program"
+      ],
+      "sections": [
+        {
+          "id": "dtype-what",
+          "title": "Values have types",
+          "body": [
+            "A program works with values: numbers, text, truth values. Every value belongs to a type.",
+            "The type determines which operations make sense. Adding two integers gives a predictable numeric result; combining a number with a piece of text has no self-evident meaning and causes an error in most languages."
+          ],
+          "checkpoint": "Why would mixing incompatible types cause a problem in a program?"
+        },
+        {
+          "id": "dtype-four",
+          "title": "The four primitive types",
+          "body": [
+            "Integer: a whole number without a decimal point. Examples: 0, 5, -12.",
+            "Float: a number with a decimal point used to represent fractional values. Examples: 3.14, -0.5.",
+            "String: a sequence of characters enclosed in quotes, used to represent text. Examples: \"hello\", \"42\".",
+            "Boolean: a value that is either true or false, used to represent a logical state."
+          ]
+        }
+      ],
+      "workedExamples": [
+        {
+          "id": "dtype-ex-1",
+          "prompt": "Classify each value: 7, 3.5, \"open\", false",
+          "steps": [
+            "7 has no decimal point and is a whole number → integer.",
+            "3.5 has a decimal point → float.",
+            "\"open\" is text enclosed in quotes → string.",
+            "false is a logical value with no quotes → boolean."
+          ]
+        }
+      ],
+      "assessmentId": "assessment-data-types-overview",
+      "metadata": {
+        "author": "core-team",
+        "status": "draft"
+      }
+    },
+    {
+      "id": "arithmetic-operators-lesson",
+      "moduleId": "data-types-and-values",
+      "title": "Arithmetic operators",
+      "summary": "Operators combine numeric values into new values through computation.",
+      "objective": "After this lesson you can evaluate arithmetic expressions step by step and predict the result, including operator precedence and the remainder operator.",
+      "estimatedMinutes": 12,
+      "skillIds": [
+        "use-arithmetic-operators"
+      ],
+      "prerequisiteSkillIds": [
+        "identify-data-types",
+        "track-variable-state"
+      ],
+      "sections": [
+        {
+          "id": "arith-ops",
+          "title": "Operators transform values",
+          "body": [
+            "An arithmetic operator takes one or more values and produces a new value.",
+            "The five basic operators are: + (addition), - (subtraction), * (multiplication), / (division), % (remainder after integer division).",
+            "Operator precedence: multiplication, division, and remainder are evaluated before addition and subtraction. Parentheses override precedence."
+          ],
+          "checkpoint": "What is the result of 3 + 4 * 2? Explain the order of evaluation."
+        },
+        {
+          "id": "arith-remainder",
+          "title": "The remainder operator",
+          "body": [
+            "The remainder operator (%) gives the leftover after an integer division. For example, 7 % 3 equals 1 because 7 = 2 * 3 + 1.",
+            "Remainder is useful for detecting whether a number is even or odd: if n % 2 equals 0 then n is even, otherwise it is odd."
+          ]
+        }
+      ],
+      "workedExamples": [
+        {
+          "id": "arith-ex-1",
+          "prompt": "Evaluate: 2 + 3 * 4 - 1",
+          "steps": [
+            "Multiplication first: 3 * 4 = 12.",
+            "Left to right from that point: 2 + 12 = 14.",
+            "Final step: 14 - 1 = 13."
+          ]
+        },
+        {
+          "id": "arith-ex-2",
+          "prompt": "Is 18 divisible by 4? Use the remainder operator.",
+          "steps": [
+            "Compute 18 % 4.",
+            "18 = 4 * 4 + 2, so the remainder is 2.",
+            "Because the remainder is not 0, 18 is not divisible by 4."
+          ]
+        }
+      ],
+      "assessmentId": "assessment-arithmetic-operators",
+      "metadata": {
+        "author": "core-team",
+        "status": "draft"
+      }
+    },
+    {
+      "id": "defining-functions-lesson",
+      "moduleId": "functions-and-abstraction",
+      "title": "Defining and calling functions",
+      "summary": "Functions let you name a piece of logic so it can be reused without rewriting it.",
+      "objective": "After this lesson you can write a simple function definition and call it correctly.",
+      "estimatedMinutes": 12,
+      "skillIds": [
+        "define-and-call-functions"
+      ],
+      "prerequisiteSkillIds": [
+        "use-arithmetic-operators"
+      ],
+      "sections": [
+        {
+          "id": "func-why",
+          "title": "Why functions exist",
+          "body": [
+            "Without functions, repeated logic must be written out every time. That leads to duplication, which makes programs harder to fix and understand.",
+            "A function gives a name to a reusable piece of logic. Calling the function by name runs that logic at any point in the program."
+          ],
+          "checkpoint": "What problem does introducing a function solve?"
+        },
+        {
+          "id": "func-anatomy",
+          "title": "Anatomy of a function",
+          "body": [
+            "A function definition has three parts: a name, a body containing the instructions to execute, and an optional list of parameters.",
+            "The name identifies the function so it can be called. The body is the logic that runs when the function is called.",
+            "A call executes the function body at that point in the program."
+          ]
+        }
+      ],
+      "workedExamples": [
+        {
+          "id": "func-ex-1",
+          "prompt": "Define a function named greet with no parameters that outputs the text \"Hello\".",
+          "steps": [
+            "Write: FUNCTION greet",
+            "Inside the function body write: OUTPUT \"Hello\"",
+            "End the function definition.",
+            "Call it anywhere with: greet()"
+          ]
+        }
+      ],
+      "assessmentId": "assessment-defining-functions",
+      "metadata": {
+        "author": "core-team",
+        "status": "draft"
+      }
+    },
+    {
+      "id": "parameters-and-return-lesson",
+      "moduleId": "functions-and-abstraction",
+      "title": "Parameters and return values",
+      "summary": "Parameters let a function accept input; a return value lets it send a result back to the caller.",
+      "objective": "After this lesson you can write a function with parameters and a return value and call it with arguments.",
+      "estimatedMinutes": 14,
+      "skillIds": [
+        "use-parameters-and-return"
+      ],
+      "prerequisiteSkillIds": [
+        "define-and-call-functions"
+      ],
+      "sections": [
+        {
+          "id": "param-input",
+          "title": "Parameters are named inputs",
+          "body": [
+            "A parameter is a named placeholder inside the function definition. When the function is called, the caller supplies an actual value called an argument.",
+            "Inside the function body the parameter behaves like a local variable holding the argument value."
+          ],
+          "checkpoint": "What is the difference between a parameter and an argument?"
+        },
+        {
+          "id": "return-output",
+          "title": "Return values send results back",
+          "body": [
+            "A return statement ends the function and sends a value back to the point where the function was called.",
+            "The returned value can be stored in a variable or used directly in an expression.",
+            "A function that has no return statement produces no usable result."
+          ]
+        }
+      ],
+      "workedExamples": [
+        {
+          "id": "param-ex-1",
+          "prompt": "Write a function double(n) that returns n multiplied by 2. Then call double(5).",
+          "steps": [
+            "FUNCTION double(n)",
+            "  RETURN n * 2",
+            "END FUNCTION",
+            "Call: result = double(5)",
+            "Inside the function n = 5, so n * 2 = 10.",
+            "result now holds 10."
+          ]
+        }
+      ],
+      "assessmentId": "assessment-parameters-and-return",
+      "metadata": {
+        "author": "core-team",
+        "status": "draft"
+      }
+    },
+    {
+      "id": "lists-and-indexing-lesson",
+      "moduleId": "lists-and-iteration",
+      "title": "Lists and indexing",
+      "summary": "A list stores an ordered sequence of values that can be accessed and changed by position.",
+      "objective": "After this lesson you can create a list, access elements by their index, and update a specific element.",
+      "estimatedMinutes": 12,
+      "skillIds": [
+        "create-and-index-lists"
+      ],
+      "prerequisiteSkillIds": [
+        "track-variable-state"
+      ],
+      "sections": [
+        {
+          "id": "list-what",
+          "title": "Lists store ordered sequences",
+          "body": [
+            "A list holds multiple values under a single name. Each value occupies a position called an index.",
+            "Indexes start at 0, so the first element is at index 0, the second at index 1, and so on.",
+            "Accessing an element by its index returns the value at that position without changing the list."
+          ],
+          "checkpoint": "A list has 5 elements. What is the index of the last element?"
+        },
+        {
+          "id": "list-mutation",
+          "title": "Updating elements",
+          "body": [
+            "An element can be replaced by assigning a new value to its index position. This changes only that element; all others remain unchanged.",
+            "The length of a list is the count of elements it currently holds."
+          ]
+        }
+      ],
+      "workedExamples": [
+        {
+          "id": "list-ex-1",
+          "prompt": "scores = [10, 20, 30]. What is scores[1]? Then set scores[0] = 15. What is the list now?",
+          "steps": [
+            "scores[1] accesses index 1 → the value is 20.",
+            "scores[0] = 15 replaces the element at index 0.",
+            "The list is now [15, 20, 30]."
+          ]
+        }
+      ],
+      "assessmentId": "assessment-lists-and-indexing",
+      "metadata": {
+        "author": "core-team",
+        "status": "draft"
+      }
+    },
+    {
+      "id": "iterating-lists-lesson",
+      "moduleId": "lists-and-iteration",
+      "title": "Iterating over lists",
+      "summary": "A for-each loop visits every element in a list in order, making bulk processing concise and safe.",
+      "objective": "After this lesson you can write a loop that processes each element of a list and accumulate a result.",
+      "estimatedMinutes": 13,
+      "skillIds": [
+        "iterate-over-lists"
+      ],
+      "prerequisiteSkillIds": [
+        "create-and-index-lists",
+        "trace-simple-loops"
+      ],
+      "sections": [
+        {
+          "id": "iter-foreach",
+          "title": "For-each loops visit every element",
+          "body": [
+            "A for-each loop sets a loop variable to each element in the list one at a time and runs the body once per element.",
+            "This removes the need to manage an index counter manually and prevents off-by-one errors."
+          ],
+          "checkpoint": "How many times does the loop body execute for a list with 4 elements?"
+        },
+        {
+          "id": "iter-accumulate",
+          "title": "Accumulating a result",
+          "body": [
+            "A common pattern is to start a variable at a neutral value, such as 0 for a sum or 1 for a product, and update it inside the loop.",
+            "After the loop ends, the accumulator variable holds the combined result across all elements."
+          ]
+        }
+      ],
+      "workedExamples": [
+        {
+          "id": "iter-ex-1",
+          "prompt": "values = [3, 7, 2]. Compute the sum using a loop.",
+          "steps": [
+            "Start: total = 0.",
+            "Iteration 1: element = 3, total = 0 + 3 = 3.",
+            "Iteration 2: element = 7, total = 3 + 7 = 10.",
+            "Iteration 3: element = 2, total = 10 + 2 = 12.",
+            "Final result: total = 12."
+          ]
+        }
+      ],
+      "assessmentId": "assessment-iterating-lists",
+      "metadata": {
+        "author": "core-team",
+        "status": "draft"
+      }
+    },
+    {
+      "id": "algorithm-steps-lesson",
+      "moduleId": "algorithms-and-problem-solving",
+      "title": "Describing algorithm steps",
+      "summary": "An algorithm is a finite, ordered set of instructions that solves a specific problem for any valid input.",
+      "objective": "After this lesson you can describe a simple algorithm as numbered steps that another person could follow without ambiguity.",
+      "estimatedMinutes": 11,
+      "skillIds": [
+        "describe-algorithm-steps"
+      ],
+      "prerequisiteSkillIds": [
+        "use-parameters-and-return",
+        "iterate-over-lists"
+      ],
+      "sections": [
+        {
+          "id": "algo-def",
+          "title": "What makes a set of steps an algorithm?",
+          "body": [
+            "An algorithm has three essential properties: it is finite (it eventually stops), it is precise (every step is unambiguous), and it is effective (each step can actually be carried out).",
+            "A vague instruction such as 'figure out the answer' is not a valid algorithm step because it is not precise."
+          ],
+          "checkpoint": "Which property ensures that an algorithm will always terminate?"
+        },
+        {
+          "id": "algo-write",
+          "title": "Writing algorithm steps",
+          "body": [
+            "Good algorithm steps use specific action words: SET, READ, COMPUTE, COMPARE, OUTPUT.",
+            "Each step should accomplish exactly one action. If a step needs a decision, it becomes a conditional step.",
+            "Testing an algorithm on a small example is the fastest way to discover missing or incorrect steps."
+          ]
+        }
+      ],
+      "workedExamples": [
+        {
+          "id": "algo-ex-1",
+          "prompt": "Write an algorithm to find the larger of two numbers a and b.",
+          "steps": [
+            "Step 1: READ a and b.",
+            "Step 2: IF a > b THEN SET larger = a ELSE SET larger = b.",
+            "Step 3: OUTPUT larger.",
+            "Trace with a = 5, b = 9: 9 > 5 is false so larger = 9. Output: 9."
+          ]
+        }
+      ],
+      "assessmentId": "assessment-algorithm-steps",
+      "metadata": {
+        "author": "core-team",
+        "status": "draft"
+      }
+    },
+    {
+      "id": "linear-search-lesson",
+      "moduleId": "algorithms-and-problem-solving",
+      "title": "Linear search",
+      "summary": "Linear search checks each element of a list one by one until the target is found or the list is exhausted.",
+      "objective": "After this lesson you can trace linear search on a given list and state its best-case and worst-case behavior.",
+      "estimatedMinutes": 13,
+      "skillIds": [
+        "apply-linear-search"
+      ],
+      "prerequisiteSkillIds": [
+        "describe-algorithm-steps"
+      ],
+      "sections": [
+        {
+          "id": "lsearch-idea",
+          "title": "The idea behind linear search",
+          "body": [
+            "Linear search works on any list regardless of order. It begins at index 0 and compares each element to the target.",
+            "If the current element matches the target, the search succeeds and returns the index. If the entire list is exhausted without a match, the search reports failure."
+          ],
+          "checkpoint": "In what situation does linear search examine every element of the list?"
+        },
+        {
+          "id": "lsearch-complexity",
+          "title": "Best and worst cases",
+          "body": [
+            "Best case: the target is the first element. Only one comparison is needed.",
+            "Worst case: the target is the last element or not present at all. Every element must be compared.",
+            "On average, linear search examines about half the list. For large lists this can be slow, which motivates more efficient search strategies."
+          ]
+        }
+      ],
+      "workedExamples": [
+        {
+          "id": "lsearch-ex-1",
+          "prompt": "Search for 7 in [4, 9, 7, 1, 3].",
+          "steps": [
+            "Check index 0: 4 ≠ 7. Continue.",
+            "Check index 1: 9 ≠ 7. Continue.",
+            "Check index 2: 7 = 7. Match found.",
+            "Return index 2."
+          ]
+        }
+      ],
+      "assessmentId": "assessment-linear-search",
+      "metadata": {
+        "author": "core-team",
+        "status": "draft"
       }
     }
   ],
@@ -883,6 +1585,734 @@
         "difficulty": 0.34,
         "calculatorAllowed": false
       }
+    },
+    {
+      "id": "diagnostic-cs1",
+      "type": "diagnostic",
+      "title": "CS1 entry diagnostic",
+      "description": "Determines prior knowledge across data types, functions, lists, and basic algorithms.",
+      "skillIds": [
+        "identify-data-types",
+        "use-arithmetic-operators",
+        "define-and-call-functions",
+        "use-parameters-and-return",
+        "create-and-index-lists",
+        "iterate-over-lists",
+        "describe-algorithm-steps",
+        "apply-linear-search"
+      ],
+      "items": [
+        {
+          "id": "diag-cs1-dtype-1",
+          "skillId": "identify-data-types",
+          "type": "multiple-choice",
+          "prompt": "Which of the following values is a string?",
+          "options": [
+            "42",
+            "\"hello\"",
+            "true"
+          ],
+          "correctAnswer": "\"hello\"",
+          "explanation": "A string is a sequence of characters enclosed in quotes."
+        },
+        {
+          "id": "diag-cs1-arith-1",
+          "skillId": "use-arithmetic-operators",
+          "type": "text",
+          "prompt": "What is the result of 10 % 3?",
+          "placeholder": "Result",
+          "acceptedAnswers": [
+            "1"
+          ],
+          "explanation": "10 = 3 * 3 + 1, so the remainder is 1."
+        },
+        {
+          "id": "diag-cs1-func-1",
+          "skillId": "define-and-call-functions",
+          "type": "multiple-choice",
+          "prompt": "What does calling a function do?",
+          "options": [
+            "Deletes the function definition",
+            "Executes the function body at that point in the program",
+            "Creates a new variable"
+          ],
+          "correctAnswer": "Executes the function body at that point in the program",
+          "explanation": "A function call transfers execution to the function body."
+        },
+        {
+          "id": "diag-cs1-param-1",
+          "skillId": "use-parameters-and-return",
+          "type": "text",
+          "prompt": "A function double(n) returns n * 2. What does double(6) return?",
+          "placeholder": "Return value",
+          "acceptedAnswers": [
+            "12"
+          ],
+          "explanation": "6 * 2 = 12."
+        },
+        {
+          "id": "diag-cs1-list-1",
+          "skillId": "create-and-index-lists",
+          "type": "text",
+          "prompt": "List colors = [\"red\", \"green\", \"blue\"]. What is colors[1]?",
+          "placeholder": "Element value",
+          "acceptedAnswers": [
+            "green",
+            "\"green\""
+          ],
+          "explanation": "Index 1 refers to the second element, which is \"green\"."
+        },
+        {
+          "id": "diag-cs1-iter-1",
+          "skillId": "iterate-over-lists",
+          "type": "text",
+          "prompt": "A loop sums all elements of [2, 4, 6]. What is the final sum?",
+          "placeholder": "Sum",
+          "acceptedAnswers": [
+            "12"
+          ],
+          "explanation": "2 + 4 + 6 = 12."
+        },
+        {
+          "id": "diag-cs1-algo-1",
+          "skillId": "describe-algorithm-steps",
+          "type": "multiple-choice",
+          "prompt": "Which property is required for a set of steps to be an algorithm?",
+          "options": [
+            "It must run in less than one second",
+            "Each step must be precise and unambiguous",
+            "It must contain at least one loop"
+          ],
+          "correctAnswer": "Each step must be precise and unambiguous",
+          "explanation": "Precision is essential; ambiguous steps cannot be reliably executed."
+        },
+        {
+          "id": "diag-cs1-search-1",
+          "skillId": "apply-linear-search",
+          "type": "text",
+          "prompt": "Linear search looks for 5 in [8, 3, 5, 1]. Which index is returned?",
+          "placeholder": "Index",
+          "acceptedAnswers": [
+            "2"
+          ],
+          "explanation": "Index 0 is 8, index 1 is 3, index 2 is 5. The match is at index 2."
+        }
+      ],
+      "passRule": {
+        "minCorrect": 5,
+        "maxAttemptsBeforeReview": 1
+      },
+      "metadata": {
+        "difficulty": 0.30,
+        "calculatorAllowed": false
+      }
+    },
+    {
+      "id": "assessment-data-types-overview",
+      "type": "lesson-check",
+      "title": "Lesson check: Data types",
+      "description": "Checks whether the four primitive data types can be identified.",
+      "skillIds": [
+        "identify-data-types"
+      ],
+      "lessonId": "data-types-overview",
+      "items": [
+        {
+          "id": "dtype-check-1",
+          "skillId": "identify-data-types",
+          "type": "multiple-choice",
+          "prompt": "Which type best describes the value 3.14?",
+          "options": [
+            "Integer",
+            "Float",
+            "String",
+            "Boolean"
+          ],
+          "correctAnswer": "Float",
+          "explanation": "3.14 contains a decimal point, which makes it a float."
+        },
+        {
+          "id": "dtype-check-2",
+          "skillId": "identify-data-types",
+          "type": "order",
+          "prompt": "Place the type of each value in order: first the type of 42, then the type of true, then the type of \"sky\".",
+          "options": [
+            "Boolean",
+            "Integer",
+            "String"
+          ],
+          "correctOrder": [
+            "Integer",
+            "Boolean",
+            "String"
+          ],
+          "explanation": "42 is an integer, true is a boolean, and \"sky\" is a string."
+        }
+      ],
+      "passRule": {
+        "minCorrect": 2,
+        "maxAttemptsBeforeReview": 2
+      },
+      "metadata": {
+        "difficulty": 0.20,
+        "calculatorAllowed": false
+      }
+    },
+    {
+      "id": "assessment-arithmetic-operators",
+      "type": "lesson-check",
+      "title": "Lesson check: Arithmetic operators",
+      "description": "Checks whether arithmetic expressions can be evaluated step by step.",
+      "skillIds": [
+        "use-arithmetic-operators"
+      ],
+      "lessonId": "arithmetic-operators-lesson",
+      "items": [
+        {
+          "id": "arith-check-1",
+          "skillId": "use-arithmetic-operators",
+          "type": "text",
+          "prompt": "Evaluate: 5 + 2 * 3",
+          "placeholder": "Result",
+          "acceptedAnswers": [
+            "11"
+          ],
+          "explanation": "Multiplication first: 2 * 3 = 6. Then addition: 5 + 6 = 11."
+        },
+        {
+          "id": "arith-check-2",
+          "skillId": "use-arithmetic-operators",
+          "type": "text",
+          "prompt": "What is 17 % 5?",
+          "placeholder": "Result",
+          "acceptedAnswers": [
+            "2"
+          ],
+          "explanation": "17 = 5 * 3 + 2, so the remainder is 2."
+        }
+      ],
+      "passRule": {
+        "minCorrect": 2,
+        "maxAttemptsBeforeReview": 2
+      },
+      "metadata": {
+        "difficulty": 0.30,
+        "calculatorAllowed": false
+      }
+    },
+    {
+      "id": "assessment-defining-functions",
+      "type": "lesson-check",
+      "title": "Lesson check: Defining and calling functions",
+      "description": "Checks whether function definitions and calls are understood.",
+      "skillIds": [
+        "define-and-call-functions"
+      ],
+      "lessonId": "defining-functions-lesson",
+      "items": [
+        {
+          "id": "func-check-1",
+          "skillId": "define-and-call-functions",
+          "type": "multiple-choice",
+          "prompt": "Which part of a function contains the instructions that run when it is called?",
+          "options": [
+            "The function name",
+            "The function body",
+            "The call site"
+          ],
+          "correctAnswer": "The function body",
+          "explanation": "The body holds the instructions that execute when the function is called."
+        },
+        {
+          "id": "func-check-2",
+          "skillId": "define-and-call-functions",
+          "type": "multiple-choice",
+          "prompt": "Why would you replace repeated code with a function?",
+          "options": [
+            "To make the program run slower",
+            "To eliminate duplication and create a single named reusable unit",
+            "Because functions are required by all programs"
+          ],
+          "correctAnswer": "To eliminate duplication and create a single named reusable unit",
+          "explanation": "Functions remove the need to copy logic, making programs easier to update."
+        }
+      ],
+      "passRule": {
+        "minCorrect": 2,
+        "maxAttemptsBeforeReview": 2
+      },
+      "metadata": {
+        "difficulty": 0.40,
+        "calculatorAllowed": false
+      }
+    },
+    {
+      "id": "assessment-parameters-and-return",
+      "type": "lesson-check",
+      "title": "Lesson check: Parameters and return values",
+      "description": "Checks whether parameters and return values are understood.",
+      "skillIds": [
+        "use-parameters-and-return"
+      ],
+      "lessonId": "parameters-and-return-lesson",
+      "items": [
+        {
+          "id": "param-check-1",
+          "skillId": "use-parameters-and-return",
+          "type": "text",
+          "prompt": "FUNCTION add(a, b): RETURN a + b. What does add(3, 4) return?",
+          "placeholder": "Return value",
+          "acceptedAnswers": [
+            "7"
+          ],
+          "explanation": "a = 3 and b = 4, so a + b = 7."
+        },
+        {
+          "id": "param-check-2",
+          "skillId": "use-parameters-and-return",
+          "type": "multiple-choice",
+          "prompt": "What is the role of a parameter in a function definition?",
+          "options": [
+            "It stores the final output permanently",
+            "It is a named placeholder that receives the argument value when the function is called",
+            "It defines how many times the function will run"
+          ],
+          "correctAnswer": "It is a named placeholder that receives the argument value when the function is called",
+          "explanation": "Parameters are bound to the argument values at the moment of the call."
+        }
+      ],
+      "passRule": {
+        "minCorrect": 2,
+        "maxAttemptsBeforeReview": 2
+      },
+      "metadata": {
+        "difficulty": 0.48,
+        "calculatorAllowed": false
+      }
+    },
+    {
+      "id": "assessment-lists-and-indexing",
+      "type": "lesson-check",
+      "title": "Lesson check: Lists and indexing",
+      "description": "Checks whether list creation and element access are understood.",
+      "skillIds": [
+        "create-and-index-lists"
+      ],
+      "lessonId": "lists-and-indexing-lesson",
+      "items": [
+        {
+          "id": "list-check-1",
+          "skillId": "create-and-index-lists",
+          "type": "text",
+          "prompt": "items = [10, 20, 30, 40]. What is items[2]?",
+          "placeholder": "Value",
+          "acceptedAnswers": [
+            "30"
+          ],
+          "explanation": "Indexes start at 0. Index 2 holds the third element, which is 30."
+        },
+        {
+          "id": "list-check-2",
+          "skillId": "create-and-index-lists",
+          "type": "multiple-choice",
+          "prompt": "A list has 6 elements. What is the index of the last element?",
+          "options": [
+            "5",
+            "6",
+            "0"
+          ],
+          "correctAnswer": "5",
+          "explanation": "Indexes go from 0 to length minus 1. For 6 elements the last index is 5."
+        }
+      ],
+      "passRule": {
+        "minCorrect": 2,
+        "maxAttemptsBeforeReview": 2
+      },
+      "metadata": {
+        "difficulty": 0.35,
+        "calculatorAllowed": false
+      }
+    },
+    {
+      "id": "assessment-iterating-lists",
+      "type": "lesson-check",
+      "title": "Lesson check: Iterating over lists",
+      "description": "Checks whether for-each loops and accumulation are understood.",
+      "skillIds": [
+        "iterate-over-lists"
+      ],
+      "lessonId": "iterating-lists-lesson",
+      "items": [
+        {
+          "id": "iter-check-1",
+          "skillId": "iterate-over-lists",
+          "type": "text",
+          "prompt": "A loop accumulates the product of [2, 3, 4], starting from 1. What is the final product?",
+          "placeholder": "Result",
+          "acceptedAnswers": [
+            "24"
+          ],
+          "explanation": "1 * 2 = 2, then 2 * 3 = 6, then 6 * 4 = 24."
+        },
+        {
+          "id": "iter-check-2",
+          "skillId": "iterate-over-lists",
+          "type": "multiple-choice",
+          "prompt": "How many times does the loop body execute for the list [5, 10, 15, 20]?",
+          "options": [
+            "3",
+            "4",
+            "5"
+          ],
+          "correctAnswer": "4",
+          "explanation": "The loop visits each of the 4 elements exactly once."
+        }
+      ],
+      "passRule": {
+        "minCorrect": 2,
+        "maxAttemptsBeforeReview": 2
+      },
+      "metadata": {
+        "difficulty": 0.45,
+        "calculatorAllowed": false
+      }
+    },
+    {
+      "id": "assessment-algorithm-steps",
+      "type": "lesson-check",
+      "title": "Lesson check: Algorithm steps",
+      "description": "Checks whether the properties of an algorithm and step-based thinking are understood.",
+      "skillIds": [
+        "describe-algorithm-steps"
+      ],
+      "lessonId": "algorithm-steps-lesson",
+      "items": [
+        {
+          "id": "algo-check-1",
+          "skillId": "describe-algorithm-steps",
+          "type": "multiple-choice",
+          "prompt": "Which of the following is NOT a required property of an algorithm?",
+          "options": [
+            "Finite",
+            "Precise",
+            "Written in a specific programming language"
+          ],
+          "correctAnswer": "Written in a specific programming language",
+          "explanation": "Algorithms are language-independent; they describe logic, not syntax."
+        },
+        {
+          "id": "algo-check-2",
+          "skillId": "describe-algorithm-steps",
+          "type": "order",
+          "prompt": "Put the steps for finding the larger of a and b in the correct order.",
+          "options": [
+            "OUTPUT larger",
+            "READ a and b",
+            "IF a > b SET larger = a ELSE SET larger = b"
+          ],
+          "correctOrder": [
+            "READ a and b",
+            "IF a > b SET larger = a ELSE SET larger = b",
+            "OUTPUT larger"
+          ],
+          "explanation": "Input comes first, then the decision, then the output."
+        }
+      ],
+      "passRule": {
+        "minCorrect": 2,
+        "maxAttemptsBeforeReview": 2
+      },
+      "metadata": {
+        "difficulty": 0.50,
+        "calculatorAllowed": false
+      }
+    },
+    {
+      "id": "assessment-linear-search",
+      "type": "lesson-check",
+      "title": "Lesson check: Linear search",
+      "description": "Checks whether linear search can be traced and its behavior understood.",
+      "skillIds": [
+        "apply-linear-search"
+      ],
+      "lessonId": "linear-search-lesson",
+      "items": [
+        {
+          "id": "lsearch-check-1",
+          "skillId": "apply-linear-search",
+          "type": "text",
+          "prompt": "Linear search looks for 4 in [6, 2, 4, 8]. How many comparisons are made before the match is found?",
+          "placeholder": "Number of comparisons",
+          "acceptedAnswers": [
+            "3"
+          ],
+          "explanation": "Comparison 1: 6 ≠ 4. Comparison 2: 2 ≠ 4. Comparison 3: 4 = 4. Three comparisons total."
+        },
+        {
+          "id": "lsearch-check-2",
+          "skillId": "apply-linear-search",
+          "type": "multiple-choice",
+          "prompt": "When does linear search perform the most comparisons?",
+          "options": [
+            "When the target is the first element",
+            "When the target is the last element or not present",
+            "When the list is sorted"
+          ],
+          "correctAnswer": "When the target is the last element or not present",
+          "explanation": "In the worst case every element must be examined."
+        }
+      ],
+      "passRule": {
+        "minCorrect": 2,
+        "maxAttemptsBeforeReview": 2
+      },
+      "metadata": {
+        "difficulty": 0.55,
+        "calculatorAllowed": false
+      }
+    },
+    {
+      "id": "review-assessment-identify-data-types",
+      "type": "review",
+      "title": "Review: Identify data types",
+      "description": "Short review for recognizing primitive data types.",
+      "skillIds": [
+        "identify-data-types"
+      ],
+      "items": [
+        {
+          "id": "review-dtype-1",
+          "skillId": "identify-data-types",
+          "type": "multiple-choice",
+          "prompt": "Which type does the value \"false\" (with quotes) belong to?",
+          "options": [
+            "Boolean",
+            "String",
+            "Integer"
+          ],
+          "correctAnswer": "String",
+          "explanation": "Quotes make any sequence of characters a string, regardless of content."
+        }
+      ],
+      "passRule": {
+        "minCorrect": 1
+      },
+      "metadata": {
+        "difficulty": 0.20,
+        "calculatorAllowed": false
+      }
+    },
+    {
+      "id": "review-assessment-use-arithmetic-operators",
+      "type": "review",
+      "title": "Review: Arithmetic operators",
+      "description": "Short review for evaluating arithmetic expressions.",
+      "skillIds": [
+        "use-arithmetic-operators"
+      ],
+      "items": [
+        {
+          "id": "review-arith-1",
+          "skillId": "use-arithmetic-operators",
+          "type": "text",
+          "prompt": "Evaluate: (3 + 5) * 2",
+          "placeholder": "Result",
+          "acceptedAnswers": [
+            "16"
+          ],
+          "explanation": "Parentheses first: 3 + 5 = 8. Then 8 * 2 = 16."
+        }
+      ],
+      "passRule": {
+        "minCorrect": 1
+      },
+      "metadata": {
+        "difficulty": 0.30,
+        "calculatorAllowed": false
+      }
+    },
+    {
+      "id": "review-assessment-define-and-call-functions",
+      "type": "review",
+      "title": "Review: Define and call functions",
+      "description": "Short review for function definitions and calls.",
+      "skillIds": [
+        "define-and-call-functions"
+      ],
+      "items": [
+        {
+          "id": "review-func-1",
+          "skillId": "define-and-call-functions",
+          "type": "multiple-choice",
+          "prompt": "What happens when a function is called?",
+          "options": [
+            "The function definition is deleted",
+            "The function body executes",
+            "A new variable is automatically created"
+          ],
+          "correctAnswer": "The function body executes",
+          "explanation": "Calling a function transfers control to the function body."
+        }
+      ],
+      "passRule": {
+        "minCorrect": 1
+      },
+      "metadata": {
+        "difficulty": 0.40,
+        "calculatorAllowed": false
+      }
+    },
+    {
+      "id": "review-assessment-use-parameters-and-return",
+      "type": "review",
+      "title": "Review: Parameters and return values",
+      "description": "Short review for function parameters and return values.",
+      "skillIds": [
+        "use-parameters-and-return"
+      ],
+      "items": [
+        {
+          "id": "review-param-1",
+          "skillId": "use-parameters-and-return",
+          "type": "text",
+          "prompt": "FUNCTION square(n): RETURN n * n. What does square(7) return?",
+          "placeholder": "Return value",
+          "acceptedAnswers": [
+            "49"
+          ],
+          "explanation": "7 * 7 = 49."
+        }
+      ],
+      "passRule": {
+        "minCorrect": 1
+      },
+      "metadata": {
+        "difficulty": 0.48,
+        "calculatorAllowed": false
+      }
+    },
+    {
+      "id": "review-assessment-create-and-index-lists",
+      "type": "review",
+      "title": "Review: Create and index lists",
+      "description": "Short review for list access by index.",
+      "skillIds": [
+        "create-and-index-lists"
+      ],
+      "items": [
+        {
+          "id": "review-list-1",
+          "skillId": "create-and-index-lists",
+          "type": "text",
+          "prompt": "nums = [5, 10, 15]. What is nums[0]?",
+          "placeholder": "Value",
+          "acceptedAnswers": [
+            "5"
+          ],
+          "explanation": "Index 0 holds the first element, which is 5."
+        }
+      ],
+      "passRule": {
+        "minCorrect": 1
+      },
+      "metadata": {
+        "difficulty": 0.35,
+        "calculatorAllowed": false
+      }
+    },
+    {
+      "id": "review-assessment-iterate-over-lists",
+      "type": "review",
+      "title": "Review: Iterate over lists",
+      "description": "Short review for for-each iteration.",
+      "skillIds": [
+        "iterate-over-lists"
+      ],
+      "items": [
+        {
+          "id": "review-iter-1",
+          "skillId": "iterate-over-lists",
+          "type": "multiple-choice",
+          "prompt": "A for-each loop over [1, 2, 3, 4, 5] runs the body how many times?",
+          "options": [
+            "4",
+            "5",
+            "6"
+          ],
+          "correctAnswer": "5",
+          "explanation": "The body runs once per element; there are 5 elements."
+        }
+      ],
+      "passRule": {
+        "minCorrect": 1
+      },
+      "metadata": {
+        "difficulty": 0.45,
+        "calculatorAllowed": false
+      }
+    },
+    {
+      "id": "review-assessment-describe-algorithm-steps",
+      "type": "review",
+      "title": "Review: Algorithm steps",
+      "description": "Short review for algorithm properties.",
+      "skillIds": [
+        "describe-algorithm-steps"
+      ],
+      "items": [
+        {
+          "id": "review-algo-1",
+          "skillId": "describe-algorithm-steps",
+          "type": "multiple-choice",
+          "prompt": "Which word describes an algorithm that always terminates?",
+          "options": [
+            "Infinite",
+            "Finite",
+            "Recursive"
+          ],
+          "correctAnswer": "Finite",
+          "explanation": "A finite algorithm reaches a stopping point for every valid input."
+        }
+      ],
+      "passRule": {
+        "minCorrect": 1
+      },
+      "metadata": {
+        "difficulty": 0.50,
+        "calculatorAllowed": false
+      }
+    },
+    {
+      "id": "review-assessment-apply-linear-search",
+      "type": "review",
+      "title": "Review: Linear search",
+      "description": "Short review for linear search behavior.",
+      "skillIds": [
+        "apply-linear-search"
+      ],
+      "items": [
+        {
+          "id": "review-lsearch-1",
+          "skillId": "apply-linear-search",
+          "type": "multiple-choice",
+          "prompt": "Linear search finds 3 in [7, 3, 9]. What is the index of 3?",
+          "options": [
+            "0",
+            "1",
+            "2"
+          ],
+          "correctAnswer": "1",
+          "explanation": "Index 0 is 7, index 1 is 3. The match is at index 1."
+        }
+      ],
+      "passRule": {
+        "minCorrect": 1
+      },
+      "metadata": {
+        "difficulty": 0.55,
+        "calculatorAllowed": false
+      }
     }
   ],
   "reviews": [
@@ -919,6 +2349,62 @@
       "skillId": "isolate-bug-with-hypothesis",
       "title": "Review for debugging hypotheses",
       "assessmentId": "review-assessment-isolate-bug-with-hypothesis",
+      "initialIntervalDays": 4
+    },
+    {
+      "id": "review-identify-data-types",
+      "skillId": "identify-data-types",
+      "title": "Review for data types",
+      "assessmentId": "review-assessment-identify-data-types",
+      "initialIntervalDays": 2
+    },
+    {
+      "id": "review-use-arithmetic-operators",
+      "skillId": "use-arithmetic-operators",
+      "title": "Review for arithmetic operators",
+      "assessmentId": "review-assessment-use-arithmetic-operators",
+      "initialIntervalDays": 3
+    },
+    {
+      "id": "review-define-and-call-functions",
+      "skillId": "define-and-call-functions",
+      "title": "Review for function definitions",
+      "assessmentId": "review-assessment-define-and-call-functions",
+      "initialIntervalDays": 3
+    },
+    {
+      "id": "review-use-parameters-and-return",
+      "skillId": "use-parameters-and-return",
+      "title": "Review for parameters and return values",
+      "assessmentId": "review-assessment-use-parameters-and-return",
+      "initialIntervalDays": 3
+    },
+    {
+      "id": "review-create-and-index-lists",
+      "skillId": "create-and-index-lists",
+      "title": "Review for list indexing",
+      "assessmentId": "review-assessment-create-and-index-lists",
+      "initialIntervalDays": 3
+    },
+    {
+      "id": "review-iterate-over-lists",
+      "skillId": "iterate-over-lists",
+      "title": "Review for list iteration",
+      "assessmentId": "review-assessment-iterate-over-lists",
+      "initialIntervalDays": 4
+    },
+    {
+      "id": "review-describe-algorithm-steps",
+      "skillId": "describe-algorithm-steps",
+      "title": "Review for algorithm steps",
+      "assessmentId": "review-assessment-describe-algorithm-steps",
+      "initialIntervalDays": 4
+    },
+    {
+      "id": "review-apply-linear-search",
+      "skillId": "apply-linear-search",
+      "title": "Review for linear search",
+      "assessmentId": "review-assessment-apply-linear-search",
       "initialIntervalDays": 4
     }
   ],
