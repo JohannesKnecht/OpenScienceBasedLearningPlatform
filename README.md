@@ -34,7 +34,7 @@ The repository currently contains a local frontend prototype that already includ
 - a review queue
 - a simple `Learn` view and a full zoomable `Graph` view
 
-The current content is a Python-first CS1 course built on the central curriculum graph. The structure is designed so the course can keep expanding through reviewed content contributions.
+The current content includes a Python-first CS1 course and a math-ready ML1 foundations course built on the central curriculum graph. The structure is designed so the curriculum can keep expanding through reviewed content contributions.
 
 ## Repository Structure
 
@@ -188,6 +188,7 @@ More details:
 - simple prerequisite-aware learning interface
 - local learner progress
 - complete Python-first CS1 curriculum content
+- ML1 foundations curriculum content
 
 ### Phase 2
 

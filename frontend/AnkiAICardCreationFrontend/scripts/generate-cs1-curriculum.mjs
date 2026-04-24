@@ -46,9 +46,15 @@ const lessonFocus = {
   'integration-project-planning': ['Integration project planning', 'Plan a multi-function program before writing the full implementation.', 'A small project combines data representation, helper functions, main flow, and tests.', 'A grade summary program reads rows, parses scores, computes totals, and reports results.', ['Choose how each row becomes structured data.', 'Write helpers for parsing and summarizing.', 'Test each helper before connecting the full flow.']]
 }
 
-const lessonToModule = new Map(curriculum.modules.flatMap((module) => module.lessonIds.map((id) => [id, module.id])))
+const cs1Course = curriculum.courses.find((course) => course.id === 'computational-thinking-core')
+const cs1ModuleIds = new Set(cs1Course?.moduleIds ?? [])
+const cs1Modules = curriculum.modules.filter((module) => cs1ModuleIds.has(module.id))
+const cs1SkillIds = new Set(cs1Modules.flatMap((module) => module.skillIds))
+const cs1Skills = curriculum.skills.filter((skill) => cs1SkillIds.has(skill.id))
+
+const lessonToModule = new Map(cs1Modules.flatMap((module) => module.lessonIds.map((id) => [id, module.id])))
 const skillsByLesson = new Map()
-for (const skill of curriculum.skills) {
+for (const skill of cs1Skills) {
   for (const lessonId of skill.lessonIds) {
     skillsByLesson.set(lessonId, [...(skillsByLesson.get(lessonId) ?? []), skill])
   }
@@ -66,7 +72,7 @@ function assessmentIdForLesson(lessonId) {
   return specialAssessmentIds[lessonId] ?? `assessment-${lessonId}`
 }
 
-const lessons = curriculum.modules.flatMap((module) => module.lessonIds.map((lessonId) => {
+const lessons = cs1Modules.flatMap((module) => module.lessonIds.map((lessonId) => {
   const [title, objective, focus, example, steps] = lessonFocus[lessonId]
   const summary = focus
   const skills = skillsByLesson.get(lessonId) ?? []
@@ -139,7 +145,7 @@ assessments[trackingIndex] = {
 }
 
 const reviews = []
-for (const skill of curriculum.skills) {
+for (const skill of cs1Skills) {
   const assessmentId = `review-assessment-${skill.id}`
   assessments.push({
     id: assessmentId,
@@ -154,7 +160,14 @@ for (const skill of curriculum.skills) {
   reviews.push({ id: skill.reviewIds[0], skillId: skill.id, title: `Review for ${skill.title}`, assessmentId, initialIntervalDays: Math.max(2, Math.round(2 + skill.metadata.difficulty * 5)) })
 }
 
-curriculum.lessons = lessons
-curriculum.assessments = assessments
-curriculum.reviews = reviews
+const ownedLessonIds = new Set(lessons.map((lesson) => lesson.id))
+const ownedAssessmentIds = new Set(assessments.map((assessment) => assessment.id))
+const ownedReviewIds = new Set(reviews.map((review) => review.id))
+
+curriculum.lessons = [...curriculum.lessons.filter((lesson) => !ownedLessonIds.has(lesson.id)), ...lessons]
+curriculum.assessments = [
+  ...curriculum.assessments.filter((assessment) => !ownedAssessmentIds.has(assessment.id)),
+  ...assessments,
+]
+curriculum.reviews = [...curriculum.reviews.filter((review) => !ownedReviewIds.has(review.id)), ...reviews]
 writeFileSync(path, `${JSON.stringify(curriculum, null, 2)}\n`)

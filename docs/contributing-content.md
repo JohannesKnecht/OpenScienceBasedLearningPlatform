@@ -51,7 +51,8 @@ Because the curriculum currently lives in one large file:
 - do not use very large JSON patches or long inline heredocs
 - for all registered generators, run `npm run content:generate` and then `npm run content:validate` from the frontend directory
 - for CS1-only generator changes, `npm run content:generate-cs1` can be used directly
-- new domains such as ML should get their own generators or small patch sequences, not one giant JSON patch
+- for ML1-only generator changes, `npm run content:generate-ml1` can be used directly
+- new domains should get their own generators or small patch sequences, not one giant JSON patch
 
 ## Content Questions For Contributors
 
