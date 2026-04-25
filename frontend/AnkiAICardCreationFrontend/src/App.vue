@@ -8,9 +8,9 @@ const route = useRoute()
 <template>
   <main class="app-shell" :class="{ 'app-shell--fullscreen': route.name === 'graph' }">
     <header class="app-header">
-      <RouterLink class="app-identity" to="/" aria-label="Open Mastery Graph home">
-        <span class="app-identity__mark">OM</span>
-        <span>Open Mastery Graph</span>
+      <RouterLink class="app-identity" to="/" aria-label="OpenScienceBasedLearningPlatform home">
+        <span class="app-identity__mark">OS</span>
+        <span>OpenScienceBasedLearningPlatform</span>
       </RouterLink>
 
       <nav class="app-nav" aria-label="Primary navigation">
