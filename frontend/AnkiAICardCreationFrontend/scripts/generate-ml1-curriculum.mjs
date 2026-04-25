@@ -93,7 +93,7 @@ const lessons = {
     example: 'A hospital wants to estimate appointment no-show risk before reminder messages are sent.',
     steps: ['The example unit is an appointment.', 'Features may include prior attendance, appointment time, and lead time.', 'The label is whether the patient missed the appointment.'],
     skills: [
-      ['ml1-identify-learning-problem', 'Identify machine-learning problem types', 'Can decide whether a situation is suitable for supervised, unsupervised, or non-ML analysis.', ['plan-multi-function-program'], 0.42, ['framing', 'task-selection']],
+      ['ml1-identify-learning-problem', 'Identify machine-learning problem types', 'Can decide whether a situation is suitable for supervised, unsupervised, or non-ML analysis.', [], 0.42, ['framing', 'task-selection']],
       ['ml1-map-examples-features-labels', 'Map examples, features, and labels', 'Can identify the example unit, input features, and target label in a supervised-learning task.', ['ml1-identify-learning-problem'], 0.44, ['features', 'labels']]
     ]
   },

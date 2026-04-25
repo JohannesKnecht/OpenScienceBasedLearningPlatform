@@ -129,7 +129,8 @@ function submitAssessment(): void {
   display: grid;
   gap: 0.85rem;
   padding: 1rem;
-  border-radius: 1.2rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.35rem;
   background: var(--color-surface-subtle);
 }
 
@@ -142,7 +143,7 @@ function submitAssessment(): void {
 .assessment-runner__head h2 {
   color: var(--color-heading);
   font-size: 1.05rem;
-  font-weight: 650;
+  font-weight: 800;
 }
 
 .assessment-runner__head small {
@@ -161,21 +162,24 @@ function submitAssessment(): void {
   gap: 0.7rem;
   align-items: center;
   background: white;
-  border-radius: 1rem;
-  padding: 0.8rem 0.9rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.35rem;
+  min-height: 2.85rem;
+  padding: 0.75rem 0.9rem;
 }
 
 .assessment-runner input[type='text'] {
   width: 100%;
   border: 1px solid var(--color-border);
-  border-radius: 0.95rem;
+  border-radius: 0.35rem;
+  min-height: 2.85rem;
   padding: 0.85rem 1rem;
   font: inherit;
   background: white;
 }
 
 .assessment-runner__feedback {
-  border-radius: 1rem;
+  border-radius: 0.35rem;
   padding: 0.9rem 1rem;
   display: grid;
   gap: 0.35rem;
@@ -200,12 +204,13 @@ function submitAssessment(): void {
 
 .assessment-runner__button {
   border: 0;
-  border-radius: 999px;
-  padding: 0.9rem 1.15rem;
-  background: var(--color-heading);
+  border-radius: 0.35rem;
+  min-height: 2.85rem;
+  padding: 0.75rem 1rem;
+  background: var(--color-accent);
   color: white;
   font-size: 0.98rem;
-  font-weight: 600;
+  font-weight: 800;
   cursor: pointer;
 }
 

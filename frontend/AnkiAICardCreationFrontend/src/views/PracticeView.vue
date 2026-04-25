@@ -2,21 +2,21 @@
 import { computed, ref, watch, watchEffect } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import AssessmentRunner from '../components/AssessmentRunner.vue'
-import LessonSidebar from '../components/LessonSidebar.vue'
-import ProgressPanel from '../components/ProgressPanel.vue'
-import { getAssessment, getLesson, getLessonModule, getNextLesson } from '../content'
+import { getAssessment, getLesson } from '../content'
 import type { AssessmentRunResult } from '../content/model'
 import { useLearningProgress } from '../lib/progress'
 
 const route = useRoute()
 const router = useRouter()
-const { touchLesson, completeAssessment, isLessonUnlocked } = useLearningProgress()
+const { touchLesson, completeAssessment, isLessonUnlocked, nextRecommendedAction } = useLearningProgress()
 
 const lessonId = computed(() => route.params.lessonSlug as string)
 const lesson = computed(() => getLesson(lessonId.value))
-const module = computed(() => getLessonModule(lessonId.value))
 const assessment = computed(() => (lesson.value ? getAssessment(lesson.value.assessmentId) : undefined))
-const nextLesson = computed(() => (module.value && lesson.value ? getNextLesson(module.value.courseId, lesson.value.id) : undefined))
+const nextLessonRoute = computed(() => {
+  const recommendation = nextRecommendedAction.value
+  return recommendation.type === 'lesson' ? recommendation.route : null
+})
 const lastResult = ref<AssessmentRunResult | null>(null)
 
 watch(
@@ -27,7 +27,7 @@ watch(
 )
 
 watchEffect(() => {
-  if (!lesson.value || !module.value || !assessment.value) {
+  if (!lesson.value || !assessment.value) {
     router.replace('/learn')
     return
   }
@@ -46,9 +46,7 @@ function handleComplete(result: AssessmentRunResult): void {
 </script>
 
 <template>
-  <main v-if="lesson && module && assessment" class="practice-layout">
-    <LessonSidebar :current-lesson-id="lesson.id" />
-
+  <main v-if="lesson && assessment" class="practice-layout">
     <section class="practice-main">
       <article class="practice-card">
         <div class="practice-card__header">
@@ -81,39 +79,37 @@ function handleComplete(result: AssessmentRunResult): void {
           </p>
           <p v-else>The learner model recorded this attempt. Review the explanations and try again.</p>
           <RouterLink
-            v-if="lastResult.passed && nextLesson"
+            v-if="lastResult.passed && nextLessonRoute"
             class="practice-card__button practice-card__button--primary"
-            :to="`/learn/${nextLesson.moduleId}/${nextLesson.id}`"
+            :to="nextLessonRoute"
           >
-            Open next lesson
+            Open recommended lesson
           </RouterLink>
         </div>
 
         <footer class="practice-card__footer">
-          <RouterLink class="practice-card__button practice-card__button--secondary" :to="`/learn/${module.id}/${lesson.id}`">
+          <RouterLink class="practice-card__button practice-card__button--secondary" :to="`/learn/${lesson.id}`">
             Back to lesson
           </RouterLink>
         </footer>
       </article>
     </section>
-
-    <ProgressPanel />
   </main>
 </template>
 
 <style scoped>
 .practice-layout {
   display: grid;
-  grid-template-columns: minmax(17rem, 0.9fr) minmax(0, 1.5fr) minmax(18rem, 0.85fr);
+  max-width: 900px;
+  margin: 0 auto;
   gap: 1rem;
-  align-items: start;
 }
 
 .practice-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 1.75rem;
-  padding: 1.7rem;
+  border-radius: 0.45rem;
+  padding: 1.5rem;
   box-shadow: var(--shadow-soft);
   display: grid;
   gap: 1.2rem;
@@ -128,16 +124,17 @@ function handleComplete(result: AssessmentRunResult): void {
 
 .practice-card__eyebrow {
   text-transform: uppercase;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.08em;
   font-size: 0.76rem;
   color: var(--color-accent);
-  font-weight: 700;
+  font-weight: 800;
   margin-bottom: 0.4rem;
 }
 
 .practice-card h1 {
   color: var(--color-heading);
-  font-weight: 680;
+  font-weight: 800;
+  letter-spacing: -0.03em;
 }
 
 .practice-card__summary,
@@ -151,8 +148,9 @@ function handleComplete(result: AssessmentRunResult): void {
   display: grid;
   gap: 0.65rem;
   padding: 1rem;
-  border-radius: 1.2rem;
-  background: linear-gradient(135deg, #f8fbff, #eef5ff);
+  border: 1px solid var(--color-border);
+  border-radius: 0.35rem;
+  background: var(--color-surface-subtle);
 }
 
 .practice-result strong,
@@ -164,20 +162,23 @@ function handleComplete(result: AssessmentRunResult): void {
   display: flex;
   gap: 0.8rem;
   flex-wrap: wrap;
+  border-top: 1px solid var(--color-border);
+  padding-top: 1rem;
 }
 
 .practice-card__button {
   border: 0;
   text-decoration: none;
-  padding: 0.9rem 1.15rem;
-  border-radius: 999px;
+  min-height: 2.85rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.35rem;
   font-size: 0.98rem;
-  font-weight: 600;
+  font-weight: 800;
   cursor: pointer;
 }
 
 .practice-card__button--primary {
-  background: var(--color-heading);
+  background: var(--color-accent);
   color: white;
 }
 
@@ -186,9 +187,14 @@ function handleComplete(result: AssessmentRunResult): void {
   color: var(--color-heading);
 }
 
-@media (max-width: 1240px) {
-  .practice-layout {
-    grid-template-columns: 1fr;
+@media (max-width: 620px) {
+  .practice-card {
+    padding: 1.1rem;
+  }
+
+  .practice-card__header {
+    display: grid;
+    align-items: start;
   }
 }
 </style>

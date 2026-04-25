@@ -3,11 +3,11 @@ import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import AcademyShell from '../components/AcademyShell.vue'
 import AssessmentRunner from '../components/AssessmentRunner.vue'
-import { getEntryAssessmentForCourse, primaryCourse } from '../content'
+import { primaryEntryAssessment } from '../content'
 import type { AssessmentRunResult } from '../content/model'
 import { useLearningProgress } from '../lib/progress'
 
-const assessment = primaryCourse ? getEntryAssessmentForCourse(primaryCourse.id) : undefined
+const assessment = primaryEntryAssessment
 const { completeAssessment, nextRecommendedAction } = useLearningProgress()
 const lastResult = ref<AssessmentRunResult | null>(null)
 
@@ -25,7 +25,7 @@ function handleComplete(result: AssessmentRunResult): void {
   <AcademyShell
     eyebrow="Placement"
     title="Entry diagnostic"
-    subtitle="The diagnostic marks already-stable skills and prevents the course from feeling artificially linear."
+    subtitle="The diagnostic marks already-stable skills before the system builds paths toward selected lesson nodes."
   >
     <section class="diagnostic-layout">
       <article class="diagnostic-card" v-if="assessment">
@@ -64,8 +64,8 @@ function handleComplete(result: AssessmentRunResult): void {
 .diagnostic-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 1.75rem;
-  padding: 1.7rem;
+  border-radius: 0.45rem;
+  padding: 1.5rem;
   box-shadow: var(--shadow-soft);
   display: grid;
   gap: 1.2rem;
@@ -79,15 +79,16 @@ function handleComplete(result: AssessmentRunResult): void {
 
 .diagnostic-card__eyebrow {
   text-transform: uppercase;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.08em;
   font-size: 0.76rem;
   color: var(--color-accent);
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .diagnostic-card h2,
 .diagnostic-card strong {
   color: var(--color-heading);
+  font-weight: 800;
 }
 
 .diagnostic-card p {
@@ -97,9 +98,11 @@ function handleComplete(result: AssessmentRunResult): void {
 .diagnostic-card__button {
   justify-self: start;
   text-decoration: none;
-  padding: 0.9rem 1.15rem;
-  border-radius: 999px;
-  background: var(--color-heading);
+  min-height: 2.85rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.35rem;
+  background: var(--color-accent);
   color: white;
+  font-weight: 800;
 }
 </style>

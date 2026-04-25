@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest'
 import router from '../index'
 
 describe('router', () => {
-  it('has 7 routes', () => {
-    expect(router.getRoutes()).toHaveLength(7)
+  it('has 9 routes', () => {
+    expect(router.getRoutes()).toHaveLength(9)
   })
 
   it('has a home route at /', () => {
@@ -32,14 +32,24 @@ describe('router', () => {
   })
 
   it('has a lesson route with params', () => {
-    const route = router.getRoutes().find((item) => item.path === '/learn/:moduleSlug/:lessonSlug')
+    const route = router.getRoutes().find((item) => item.path === '/learn/:lessonSlug')
     expect(route?.name).toBe('lesson')
     expect(typeof route?.components?.default).toBe('function')
   })
 
   it('has a practice route with params', () => {
-    const route = router.getRoutes().find((item) => item.path === '/practice/:moduleSlug/:lessonSlug')
+    const route = router.getRoutes().find((item) => item.path === '/practice/:lessonSlug')
     expect(route?.name).toBe('practice')
     expect(typeof route?.components?.default).toBe('function')
+  })
+
+  it('keeps legacy lesson routes with module params', () => {
+    const route = router.getRoutes().find((item) => item.path === '/learn/:moduleSlug/:lessonSlug')
+    expect(route?.name).toBe('lesson-legacy')
+  })
+
+  it('keeps legacy practice routes with module params', () => {
+    const route = router.getRoutes().find((item) => item.path === '/practice/:moduleSlug/:lessonSlug')
+    expect(route?.name).toBe('practice-legacy')
   })
 })
