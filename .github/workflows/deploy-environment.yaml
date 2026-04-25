@@ -244,7 +244,7 @@ jobs:
           cache-to: type=registry,ref=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.FE_IMAGE_NAME }}:${{ env.CACHE_TAG }},mode=max
       - name: Deploy FE to Cloud Run
         run: |
-          gcloud run deploy "$SERVICE_NAME" \
+          gcloud run services update "$SERVICE_NAME" \
             --image "${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.FE_IMAGE_NAME }}:${{ env.IMAGE_TAG }}" \
             --region "${{ vars.LOCATION }}"
 
@@ -302,7 +302,7 @@ jobs:
           printf "%s" "$OPENAI_API_KEY" | gcloud secrets versions add openai --data-file=- --project="${{ vars.PROJECT }}"
       - name: Deploy BE to Cloud Run
         run: |
-          gcloud run deploy "$SERVICE_NAME" \
+          gcloud run services update "$SERVICE_NAME" \
             --image "${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:${{ env.IMAGE_TAG }}" \
             --update-secrets=OPENAI_API_KEY=openai:latest \
             --region "${{ vars.LOCATION }}"
