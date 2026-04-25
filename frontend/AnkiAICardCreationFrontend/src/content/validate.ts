@@ -100,6 +100,30 @@ export function validateCurriculum(document: CurriculumDocument): void {
     if (!assessmentIds.has(lesson.assessmentId)) {
       throw new Error(`Lesson ${lesson.id} references missing assessment: ${lesson.assessmentId}`)
     }
+
+    if (lesson.sections.length !== 1 || lesson.sections[0]?.title !== 'Lesson') {
+      throw new Error(`Lesson ${lesson.id} must use exactly one section titled Lesson`)
+    }
+
+    if (lesson.sections[0].body.length !== 1 || lesson.sections[0].body[0].trim().length === 0) {
+      throw new Error(`Lesson ${lesson.id} must have exactly one Lesson body`)
+    }
+
+    if (!lesson.sections[0].body[0].includes('To solve')) {
+      throw new Error(`Lesson ${lesson.id} must teach the solving procedure needed for its question`)
+    }
+
+    if (lesson.sections[0].checkpoint) {
+      throw new Error(`Lesson ${lesson.id} must not include checkpoints in the exact lesson format`)
+    }
+
+    if (lesson.workedExamples.length !== 1) {
+      throw new Error(`Lesson ${lesson.id} must include exactly one worked example`)
+    }
+
+    if (lesson.workedExamples[0].prompt.trim().length === 0 || lesson.workedExamples[0].steps.length !== 1 || lesson.workedExamples[0].steps[0].trim().length === 0) {
+      throw new Error(`Lesson ${lesson.id} must include exactly one worked example solution`)
+    }
   })
 
   document.assessments.forEach((assessment) => {
@@ -107,6 +131,21 @@ export function validateCurriculum(document: CurriculumDocument): void {
 
     if (assessment.lessonId && !lessonIds.has(assessment.lessonId)) {
       throw new Error(`Assessment ${assessment.id} references missing lesson: ${assessment.lessonId}`)
+    }
+
+    if (assessment.type === 'lesson-check') {
+      if (!assessment.lessonId || assessment.items.length !== 1) {
+        throw new Error(`Lesson check ${assessment.id} must be linked to a lesson and include exactly one question`)
+      }
+
+      const item = assessment.items[0]
+      if (item.type !== 'multiple-choice' || item.prompt.trim().length === 0 || item.explanation.trim().length === 0) {
+        throw new Error(`Lesson check ${assessment.id} must use a multiple-choice Question with a Solution explanation`)
+      }
+
+      if (item.options.length < 3 || !item.options.includes(item.correctAnswer)) {
+        throw new Error(`Lesson check ${assessment.id} must include at least three options and one correct answer`)
+      }
     }
 
     assessment.items.forEach((item) => {

@@ -51,11 +51,8 @@ describe('PracticeView', () => {
       },
     })
 
-    const textInput = wrapper.find('input[type="text"]')
-    await textInput.setValue('6')
-
     const radios = wrapper.findAll('input[type="radio"]')
-    await radios[1]?.setValue(true)
+    await radios[0]?.setValue(true)
 
     await wrapper.get('button').trigger('click')
 

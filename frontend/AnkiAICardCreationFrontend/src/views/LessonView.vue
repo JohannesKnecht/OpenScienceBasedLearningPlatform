@@ -2,7 +2,7 @@
 import { computed, watchEffect } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import LessonSidebar from '../components/LessonSidebar.vue'
-import { getLesson, getLessonPrerequisites, getSkill } from '../content'
+import { getLesson, getLessonPrerequisites } from '../content'
 import { useLearningProgress } from '../lib/progress'
 
 const route = useRoute()
@@ -41,13 +41,6 @@ watchEffect(() => {
           <span class="lesson-card__duration">{{ lesson.estimatedMinutes }} min</span>
         </div>
 
-        <p class="lesson-card__summary">{{ lesson.summary }}</p>
-
-        <div class="lesson-card__objective">
-          <span>Goal</span>
-          <strong>{{ lesson.objective }}</strong>
-        </div>
-
         <div v-if="!isLessonUnlocked(lesson.id)" class="lesson-card__blocked">
           <span>Locked by prerequisites</span>
           <p>
@@ -59,39 +52,19 @@ watchEffect(() => {
         </div>
 
         <template v-else>
-          <div class="lesson-card__chips">
+          <section class="lesson-format">
             <div>
-              <span>Skills taught</span>
-              <ul>
-                <li v-for="skillId in lesson.skillIds" :key="skillId">{{ getSkill(skillId)?.title }}</li>
-              </ul>
+              <h2>Lesson:</h2>
+              <p>{{ lesson.sections[0]?.body[0] }}</p>
             </div>
             <div>
-              <span>Prerequisites</span>
-              <ul>
-                <li v-if="lesson.prerequisiteSkillIds.length === 0">None</li>
-                <li v-for="skillId in lesson.prerequisiteSkillIds" :key="skillId">{{ getSkill(skillId)?.title }}</li>
-              </ul>
+              <h2>Worked example:</h2>
+              <p>{{ lesson.workedExamples[0]?.prompt }}</p>
             </div>
-          </div>
-
-          <section v-for="section in lesson.sections" :key="section.id" class="lesson-section">
-            <h2>{{ section.title }}</h2>
-            <p v-for="paragraph in section.body" :key="paragraph">{{ paragraph }}</p>
-            <div v-if="section.checkpoint" class="lesson-section__checkpoint">
-              <span>Checkpoint</span>
-              <p>{{ section.checkpoint }}</p>
+            <div>
+              <h2>Solution:</h2>
+              <p>{{ lesson.workedExamples[0]?.steps[0] }}</p>
             </div>
-          </section>
-
-          <section v-if="lesson.workedExamples.length > 0" class="lesson-examples">
-            <h2>Worked examples</h2>
-            <article v-for="example in lesson.workedExamples" :key="example.id">
-              <h3>{{ example.prompt }}</h3>
-              <ol>
-                <li v-for="step in example.steps" :key="step">{{ step }}</li>
-              </ol>
-            </article>
           </section>
         </template>
 
@@ -161,7 +134,8 @@ watchEffect(() => {
 
 .lesson-card h1,
 .lesson-section h2,
-.lesson-examples h2 {
+.lesson-examples h2,
+.lesson-format h2 {
   color: var(--color-heading);
   font-weight: 800;
 }
@@ -184,6 +158,7 @@ watchEffect(() => {
 .lesson-card__summary,
 .lesson-section p,
 .lesson-examples li,
+.lesson-format p,
 .lesson-card__blocked p {
   color: var(--color-text-soft);
 }
@@ -191,7 +166,8 @@ watchEffect(() => {
 .lesson-card__objective,
 .lesson-card__chips,
 .lesson-card__blocked,
-.lesson-examples article {
+.lesson-examples article,
+.lesson-format {
   background: var(--color-surface-subtle);
   border: 1px solid var(--color-border);
   border-radius: 0.35rem;
@@ -202,6 +178,10 @@ watchEffect(() => {
 
 .lesson-card__chips {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.lesson-format {
+  gap: 1rem;
 }
 
 .lesson-card__chips span,

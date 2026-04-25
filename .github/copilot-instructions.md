@@ -12,3 +12,4 @@
 - After curriculum or generator edits, run `npm run content:validate` from `frontend/AnkiAICardCreationFrontend`.
 - Curriculum content must be original. External syllabi may be used only for topic coverage and sequencing research; do not copy lesson text, examples, exercises, prompts, or proprietary material.
 - Do not add curriculum-level licensing metadata such as `contentLicense` unless explicitly requested.
+- Every lesson must use exactly this format and must not deviate: `Lesson: <instructional content>`, `Worked example: <example question>`, `Solution: <worked solution>`, `Question: <multiple-choice user question>`, `Solution: <correct answer explanation>`. The lesson must explicitly teach the procedure needed to solve the multiple-choice question, and the lesson, worked example, question, and both solutions must all address the same objective and reasoning chain. Do not use exact-match freeform text inputs for generated lesson checks.

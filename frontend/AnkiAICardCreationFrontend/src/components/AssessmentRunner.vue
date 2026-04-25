@@ -78,9 +78,10 @@ function submitAssessment(): void {
   <section class="assessment-runner">
     <article v-for="item in assessment.items" :key="item.id" class="assessment-runner__item">
       <div class="assessment-runner__head">
-        <h2>{{ item.prompt }}</h2>
-        <small>{{ item.type }}</small>
+        <h2>Question:</h2>
       </div>
+
+      <p class="assessment-runner__question">{{ item.prompt }}</p>
 
       <div v-if="item.type === 'multiple-choice'" class="assessment-runner__options">
         <label v-for="option in item.options" :key="option" class="assessment-runner__option">
@@ -103,7 +104,7 @@ function submitAssessment(): void {
         class="assessment-runner__feedback"
         :class="feedback[item.id] ? 'is-correct' : 'is-wrong'"
       >
-        <strong>{{ feedback[item.id] ? 'Correct' : 'Not yet' }}</strong>
+        <strong>Solution:</strong>
         <p>{{ item.explanation }}</p>
       </div>
     </article>
@@ -134,21 +135,14 @@ function submitAssessment(): void {
   background: var(--color-surface-subtle);
 }
 
-.assessment-runner__head {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
 .assessment-runner__head h2 {
   color: var(--color-heading);
   font-size: 1.05rem;
   font-weight: 800;
 }
 
-.assessment-runner__head small {
-  color: var(--color-text-muted);
-  text-transform: capitalize;
+.assessment-runner__question {
+  color: var(--color-text-soft);
 }
 
 .assessment-runner__options,
