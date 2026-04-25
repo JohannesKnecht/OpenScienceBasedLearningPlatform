@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0",
   "metadata": {
-    "projectName": "Open Mastery Graph",
+    "projectName": "OpenScienceBasedLearningPlatform",
     "defaultLocale": "en",
     "contributionModel": "Public GitHub pull requests against a single curriculum JSON"
   },
