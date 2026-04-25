@@ -23,6 +23,7 @@ export const allAssessments = curriculum.assessments
 export const allReviews = curriculum.reviews
 export const xpConfig = curriculum.xp
 export const curriculumMetadata = curriculum.metadata
+export const primaryEntryAssessment = curriculum.assessments.find((assessment) => assessment.type === 'diagnostic')
 
 export const primaryTrack = curriculum.tracks[0]
 export const primaryCourse = primaryTrack ? getCourse(primaryTrack.courseIds[0]) : undefined
@@ -223,6 +224,46 @@ export function getLessonGraphPredecessors(lessonId: string): LessonGraphNode[] 
         .map((prerequisiteLessonId) => getLessonGraphNode(prerequisiteLessonId))
         .filter(Boolean) as LessonGraphNode[]
     : []
+}
+
+export function getLessonGraphAncestorIds(lessonId: string): string[] {
+  const visited = new Set<string>()
+
+  function visit(currentLessonId: string): void {
+    const node = getLessonGraphNode(currentLessonId)
+    node?.prerequisiteLessonIds.forEach((prerequisiteLessonId) => {
+      if (visited.has(prerequisiteLessonId)) {
+        return
+      }
+
+      visited.add(prerequisiteLessonId)
+      visit(prerequisiteLessonId)
+    })
+  }
+
+  visit(lessonId)
+
+  return [...visited].sort((left, right) => {
+    const leftNode = getLessonGraphNode(left)
+    const rightNode = getLessonGraphNode(right)
+    return (leftNode?.order ?? 0) - (rightNode?.order ?? 0)
+  })
+}
+
+export function getLessonGraphPathLessonIds(targetLessonIds: string[]): string[] {
+  const pathLessonIds = new Set<string>()
+
+  targetLessonIds.forEach((lessonId) => {
+    getLessonGraphAncestorIds(lessonId).forEach((ancestorLessonId) => {
+      pathLessonIds.add(ancestorLessonId)
+    })
+    pathLessonIds.add(lessonId)
+  })
+
+  return lessonGraphNodes
+    .filter((node) => pathLessonIds.has(node.lessonId))
+    .sort((left, right) => left.level - right.level || left.order - right.order)
+    .map((node) => node.lessonId)
 }
 
 export { curriculum }

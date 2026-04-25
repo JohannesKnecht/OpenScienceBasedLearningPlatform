@@ -68,3 +68,19 @@ npm run test:e2e
 ```sh
 npm run lint
 ```
+
+## Curriculum Lesson Criteria
+
+Every lesson must use exactly this format and must not deviate:
+
+```text
+Lesson: <instructional content that teaches the solving procedure>
+Worked example: <example question>
+Solution: <worked solution>
+Question: <multiple-choice user question>
+Solution: <correct answer explanation>
+```
+
+The lesson, worked example, question, and both solutions must all target the same objective and use the same reasoning chain. Generated lesson checks must be multiple-choice; do not use exact-match freeform text inputs for these checks.
+
+For generated curriculum, make this relationship explicit in the generator so regenerated `src/content/curriculum.json` keeps the criteria intact.

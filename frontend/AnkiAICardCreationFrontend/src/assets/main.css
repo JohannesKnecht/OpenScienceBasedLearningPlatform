@@ -1,17 +1,13 @@
 @import './base.css';
 
 #app {
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 1.25rem 1.25rem 2.5rem;
+  min-height: 100vh;
 }
 
 a {
   color: inherit;
 }
 
-@media (max-width: 720px) {
-  #app {
-    padding-inline: 0.9rem;
-  }
+button {
+  touch-action: manipulation;
 }

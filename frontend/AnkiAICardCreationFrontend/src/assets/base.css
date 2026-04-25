@@ -1,15 +1,17 @@
 :root {
-  --color-background: #f5f7fb;
-  --color-surface: rgba(255, 255, 255, 0.95);
-  --color-surface-subtle: #f7f9fc;
-  --color-surface-strong: #eaf0fb;
-  --color-border: rgba(24, 38, 67, 0.1);
-  --color-heading: #182643;
-  --color-text: #26354f;
-  --color-text-soft: #5d6b82;
-  --color-text-muted: #7d8aa0;
-  --color-accent: #4b74ff;
-  --shadow-soft: 0 24px 60px rgba(31, 51, 88, 0.08);
+  --color-background: #fbfbfa;
+  --color-surface: #ffffff;
+  --color-surface-subtle: #f7f7f5;
+  --color-surface-strong: #eeeeec;
+  --color-border: #dededb;
+  --color-heading: #201d52;
+  --color-text: #3f3f42;
+  --color-text-soft: #6f7075;
+  --color-text-muted: #929397;
+  --color-accent: #1478c9;
+  --color-accent-strong: #0f5fa3;
+  --color-progress: #ffd200;
+  --shadow-soft: none;
 }
 
 *,
@@ -26,10 +28,7 @@ html {
 body {
   min-height: 100vh;
   color: var(--color-text);
-  background:
-    radial-gradient(circle at top, rgba(104, 135, 255, 0.12), transparent 34%),
-    radial-gradient(circle at 80% 10%, rgba(128, 240, 255, 0.11), transparent 24%),
-    linear-gradient(180deg, #f7f9fd 0%, #eef3fb 100%);
+  background: var(--color-background);
   line-height: 1.6;
   font-family:
     Inter,
@@ -54,4 +53,9 @@ button,
 input,
 textarea {
   font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
 }

@@ -92,8 +92,11 @@ const lessons = {
     core: 'A machine-learning problem is not just a dataset. It needs a target behavior, examples, inputs, outputs, and a reason the learned pattern will be useful on future cases.',
     example: 'A hospital wants to estimate appointment no-show risk before reminder messages are sent.',
     steps: ['The example unit is an appointment.', 'Features may include prior attendance, appointment time, and lead time.', 'The label is whether the patient missed the appointment.'],
+    method: ['Identify the example unit the model will make one prediction or grouping decision about.', 'List only the input information available when the model would be used.', 'Name the output, target label, or pattern the model is supposed to learn.'],
+    question: 'A library wants to predict whether a checked-out book will be returned late. Define the learning problem.',
+    solution: 'The example unit is one checkout. The inputs are borrower history, loan length, due date, and book category. The output is whether the book is returned late.',
     skills: [
-      ['ml1-identify-learning-problem', 'Identify machine-learning problem types', 'Can decide whether a situation is suitable for supervised, unsupervised, or non-ML analysis.', ['plan-multi-function-program'], 0.42, ['framing', 'task-selection']],
+      ['ml1-identify-learning-problem', 'Identify machine-learning problem types', 'Can decide whether a situation is suitable for supervised, unsupervised, or non-ML analysis.', [], 0.42, ['framing', 'task-selection']],
       ['ml1-map-examples-features-labels', 'Map examples, features, and labels', 'Can identify the example unit, input features, and target label in a supervised-learning task.', ['ml1-identify-learning-problem'], 0.44, ['features', 'labels']]
     ]
   },
@@ -103,6 +106,7 @@ const lessons = {
     core: 'Supervised learning uses labels to learn a mapping from inputs to target values. Unsupervised learning looks for useful structure without target labels.',
     example: 'Predicting house price is supervised; grouping homes by similar listing behavior is unsupervised.',
     steps: ['House price prediction has known targets.', 'Grouping homes does not require a target label.', 'The task type controls which methods and metrics make sense.'],
+    method: ['Ask whether each training example has a target answer.', 'Classify labeled prediction as supervised and unlabeled structure-finding as unsupervised.', 'Use the task type to choose suitable methods and metrics.'],
     skills: [['ml1-distinguish-ml-task-types', 'Distinguish ML task types', 'Can classify tasks as regression, classification, clustering, anomaly detection, or non-ML.', ['ml1-map-examples-features-labels'], 0.46, ['supervised', 'unsupervised']]]
   },
   'ml1-model-workflow': {
@@ -369,6 +373,70 @@ const lessons = {
   }
 }
 
+const lessonPractice = {
+  'ml1-define-learning-problems': ['A library wants to predict whether a checked-out book will be returned late. Define the learning problem.', 'The example unit is one checkout. The inputs are borrower history, loan length, due date, and book category. The output is whether the book is returned late.'],
+  'ml1-supervised-unsupervised-tasks': ['A music app predicts whether a listener will skip a song, and separately groups listeners by listening patterns. Which task is supervised and which is unsupervised?', 'Predicting whether a listener will skip a song is supervised because it uses a known target. Grouping listeners by listening patterns is unsupervised because it looks for structure without a target label.'],
+  'ml1-model-workflow': ['A delivery team trains a late-delivery classifier on past orders, predicts on validation orders, and compares predictions with known outcomes. Identify fit, predict, and evaluate.', 'Fit uses the past orders with known outcomes. Predict produces late-delivery predictions for validation orders. Evaluate compares those predictions with the known validation outcomes.'],
+  'ml1-dataset-splits': ['A team trains a model on one split, chooses tree depth on another split, and reports one final score on a third split. Name the role of each split.', 'The training split fits the model. The validation split chooses tree depth. The test split is held back for the final reported score.'],
+  'ml1-feature-representation': ['A churn model uses `last_login_before_prediction` and `cancellation_date`. Which feature leaks information?', '`cancellation_date` leaks information because it is known only after churn. `last_login_before_prediction` can be valid if it is available when the prediction is made.'],
+  'ml1-data-quality': ['A fraud model is trained only on transactions that employees manually reviewed. What data quality risk should you flag?', 'The data may overrepresent suspicious transactions and underrepresent ordinary transactions, creating collection bias and deployment mismatch.'],
+  'ml1-linear-model-predictions': ['A model predicts `10 + 2 * size - 3 * distance`. What is the prediction when `size = 4` and `distance = 1`?', 'The prediction is 10 + 2 * 4 - 3 * 1 = 15.'],
+  'ml1-loss-functions': ['Using squared error, what is the loss when the prediction is 8 and the target is 5?', 'The error is 8 - 5 = 3, so squared error is 3 * 3 = 9.'],
+  'ml1-gradient-descent': ['A weight is 2.0, its gradient is +4, and the learning rate is 0.1. What is the next weight?', 'Gradient descent subtracts learning rate times gradient, so the next weight is 2.0 - 0.1 * 4 = 1.6.'],
+  'ml1-feature-scaling': ['A distance-based model uses age around 30 and income around 80000. What scaling issue appears?', 'Income can dominate distances because its numbers are much larger. Fit scaling values on training data and apply the same transformation to validation and future data.'],
+  'ml1-logistic-model': ['A spam model outputs 0.76 and the decision threshold is 0.5. What class is predicted?', '0.76 is above 0.5, so the model predicts the positive class, spam.'],
+  'ml1-decision-thresholds': ['A model score is 0.62. What happens at threshold 0.70, and what happens if the threshold is lowered to 0.50?', 'At 0.70 the case is predicted negative. Lowering the threshold to 0.50 makes the same case positive and increases positive predictions.'],
+  'ml1-confusion-matrix': ['A classifier predicts positive, but the actual class is negative. What confusion-matrix cell is this?', 'A positive prediction for an actually negative case is a false positive.'],
+  'ml1-classification-metrics': ['For rare disease screening, missing true cases is the most costly error. Which metric should receive special attention?', 'Recall should receive special attention because it measures how many actual positives are found.'],
+  'ml1-overfitting-underfitting': ['A model has 99% training accuracy and 60% validation accuracy. What is the likely diagnosis?', 'The model is likely overfitting because training performance is excellent while validation performance is much worse.'],
+  'ml1-regularization': ['A linear model has very large weights, excellent training fit, and weak validation performance. What regularization change is reasonable?', 'Increase regularization strength to penalize large weights and prefer a simpler model that may generalize better.'],
+  'ml1-cross-validation': ['In five-fold cross-validation, how many validation runs happen and how is validation chosen?', 'Five validation runs happen. Each fold acts as validation once while the other folds are used for training.'],
+  'ml1-hyperparameter-tuning': ['A team wants to choose tree depth and report final performance. Which split chooses depth and which split reports the final score?', 'Validation data chooses tree depth. The untouched test data reports the final score after choices are made.'],
+  'ml1-decision-tree-splits': ['A tree first asks whether missed payments are greater than zero, then routes yes cases to high risk. How is a customer with two missed payments routed?', 'Start at the root, apply the missed-payment test, follow the yes branch, and reach the high-risk prediction.'],
+  'ml1-tree-overfitting': ['A tree keeps splitting until each leaf contains one training customer. What risk does this create?', 'The tree may memorize training details instead of reusable patterns, so it is at high risk of overfitting.'],
+  'ml1-ensemble-intuition': ['Why can averaging many varied trees be more stable than using one tree?', 'Individual tree errors can differ, so averaging many varied trees reduces dependence on any one unstable split pattern.'],
+  'ml1-clustering-framing': ['A retailer wants to group stores by sales mix and visit frequency without target labels. Define the clustering setup.', 'The example unit is one store. The features are sales mix and visit frequency. The clusters are hypotheses about store similarity, not ground truth labels.'],
+  'ml1-kmeans-tracing': ['In k-means, one cluster has points 0 and 2 on a line. Where does its centroid move?', 'The centroid moves to the mean of assigned points, so it moves to (0 + 2) / 2 = 1.'],
+  'ml1-dimensionality-reduction': ['A dataset has 100 product-behavior features and is projected to 2 dimensions for inspection. What is gained and what is lost?', 'The 2D view can make selected structure easier to inspect, but it discards some information from the original 100 features.'],
+  'ml1-anomaly-detection': ['Normal sensor temperature is usually 20 to 25, and a new reading is 40. How should anomaly detection reason about it?', 'The reading is far outside the normal pattern, so it should receive a high anomaly score and may be flagged if it crosses the alert threshold.'],
+  'ml1-neuron-computation': ['A neuron has inputs 2 and 3, weights 0.5 and 1, bias -1, and ReLU activation. What is the output?', 'The weighted sum is 2 * 0.5 + 3 * 1 - 1 = 3. ReLU keeps positive values, so the output is 3.'],
+  'ml1-network-architecture': ['A binary classifier has 10 input features, hidden layers, and one output score. What role does each part play?', 'The input layer receives the 10 features. Hidden layers build intermediate representations. The output layer produces one score for the binary decision.'],
+  'ml1-training-neural-networks': ['A batch passes through a neural network, produces predictions, and then updates weights. Name the training steps.', 'Run a forward pass, compute loss, propagate gradients backward, and update the parameters.'],
+  'ml1-pipelines-and-preprocessing': ['A scaler is used before a model. Which data should fit the scaler, and how should validation data be handled?', 'Fit the scaler on training data only. Transform validation data using the scaler fitted on training data.'],
+  'ml1-model-comparison': ['Two classifiers are compared for missed-positive cost. How should the comparison be made?', 'Choose recall before comparing, evaluate both models on the same validation setup, and select based on that evidence and constraints.'],
+  'ml1-experiment-tracking': ['What must be recorded to make a model result reproducible?', 'Record the data version, split identity, preprocessing, model type, hyperparameters, metric, and conclusion.'],
+  'ml1-dataset-bias': ['A hiring model is trained only on past hires. What bias risk should be checked?', 'The data may encode past screening decisions rather than job-relevant ability, so representation and group performance should be checked.'],
+  'ml1-model-monitoring': ['A demand model was trained before a holiday season and input patterns now shift. What should monitoring do?', 'Track input distributions, predictions, and outcomes, then investigate drift before retraining blindly.'],
+  'ml1-ml-project-plan': ['A support team wants automatic ticket triage. What should the ML project plan specify?', 'Specify the decision the model supports, data and labels, task type, metric, baseline, validation plan, deployment context, monitoring, and review process.']
+}
+
+const practiceDistractors = {
+  'ml1-define-learning-problems': [
+    'The example unit is the entire library. The input is whether the book was late. The label is the borrower history.',
+    'The example unit is one librarian. The inputs are all books in the library. The label is the checkout date.'
+  ],
+  'ml1-supervised-unsupervised-tasks': [
+    'Both tasks are supervised because both use customer behavior data.',
+    'Both tasks are unsupervised because neither task needs examples.'
+  ],
+  'ml1-dataset-splits': [
+    'The test split chooses tree depth, and the validation split reports the final score.',
+    'The same split should be used for training, tuning, and final reporting.'
+  ],
+  'ml1-feature-representation': [
+    '`last_login_before_prediction` leaks information because every date is forbidden.',
+    'No feature can leak information if it improves validation performance.'
+  ],
+  'ml1-confusion-matrix': [
+    'This is a true positive because the model predicted positive.',
+    'This is a false negative because the actual class is negative.'
+  ],
+  'ml1-overfitting-underfitting': [
+    'The model is underfitting because training accuracy is high.',
+    'The model has no validation problem because training accuracy is excellent.'
+  ]
+}
+
 function upsertById(items, item) {
   const index = items.findIndex((candidate) => candidate.id === item.id)
   if (index === -1) return [...items, item]
@@ -429,32 +497,45 @@ const lessonRecords = Object.entries(lessons).map(([id, lesson]) => {
     estimatedMinutes: skillIds.length > 1 ? 18 : 14,
     skillIds,
     prerequisiteSkillIds: prerequisites,
-    sections: [
-      { id: `${id}-core`, title: 'Core idea', body: [lesson.core, 'Use the model workflow lens: what information enters, what is learned, what is predicted, and how the prediction is judged?'], checkpoint: 'Which part of the ML workflow would fail first if this assumption were wrong?' },
-      { id: `${id}-practice`, title: 'Reasoning method', body: ['Name the example unit, available information, learned parameter or representation, and evaluation signal before choosing an algorithm.', 'When comparing alternatives, keep the task, split, metric, and deployment constraint fixed so the comparison is meaningful.'], checkpoint: 'What evidence would make you change the modeling choice?' }
-    ],
-    workedExamples: [{ id: `${id}-example-1`, prompt: lesson.example, steps: lesson.steps }],
+    sections: [{ id: `${id}-lesson`, title: 'Lesson', body: [`${lesson.core} To solve this lesson's questions, use this procedure: ${(lesson.method ?? lesson.steps).join(' ')}`] }],
+    workedExamples: [{ id: `${id}-example-1`, prompt: lesson.example, steps: [lesson.steps.join(' ')] }],
     assessmentId: assessmentIdForLesson(id),
     metadata: { author: 'core-team', status: 'complete' }
   }
 })
 
+function practiceForLesson(lessonId, lesson, title) {
+  return lessonPractice[lessonId] ?? [
+    lesson.question ?? `Which answer correctly applies this lesson to a similar case: ${title}?`,
+    lesson.solution ?? (lesson.method ?? lesson.steps).join(' ')
+  ]
+}
+
+function optionsForPractice(lessonId, solution) {
+  const distractors = practiceDistractors[lessonId] ?? [
+    'Choose the most complex model first and judge it only by training performance.',
+    'Use information that would only be known after the prediction or evaluation is complete.'
+  ]
+  return [solution, ...distractors]
+}
+
 function lessonAssessment(lesson) {
   const skills = lesson.skillIds.map((id) => skillRecords.find((skill) => skill.id === id))
   const primary = skills[0]
-  const secondary = skills[Math.min(1, skills.length - 1)]
+  const source = lessons[lesson.id]
+  const [question, solution] = practiceForLesson(lesson.id, source, lesson.title)
+  const options = optionsForPractice(lesson.id, solution)
   return {
     id: lesson.assessmentId,
     type: 'lesson-check',
     title: `Lesson check: ${lesson.title}`,
-    description: `Checks whether the learner can apply ${skills.map((skill) => skill.title.toLowerCase()).join(' and ')}.`,
+    description: `Choose the answer that applies this lesson's procedure to a new case.`,
     skillIds: lesson.skillIds,
     lessonId: lesson.id,
     items: [
-      { id: `${lesson.id}-check-1`, skillId: primary.id, type: 'multiple-choice', prompt: `Which answer best supports ${primary.title.toLowerCase()}?`, options: ['Tie the choice to the task, data, and evaluation evidence', 'Choose the most complex model first', 'Judge the model only by training performance'], correctAnswer: 'Tie the choice to the task, data, and evaluation evidence', explanation: 'ML decisions should be justified by the task definition, available information, and held-out evidence.' },
-      { id: `${lesson.id}-check-2`, skillId: secondary.id, type: 'text', prompt: 'Which dataset split should be protected for final evaluation?', placeholder: 'Split name', acceptedAnswers: ['test', 'test set', 'test split'], explanation: 'The test split should stay untouched until the final estimate after model selection decisions.' }
+      { id: `${lesson.id}-check-1`, skillId: primary.id, type: 'multiple-choice', prompt: question, options, correctAnswer: solution, explanation: solution }
     ],
-    passRule: { minCorrect: 2, maxAttemptsBeforeReview: 2 },
+    passRule: { minCorrect: 1, maxAttemptsBeforeReview: 2 },
     metadata: { difficulty: Math.max(...skills.map((skill) => skill.metadata.difficulty)), calculatorAllowed: false }
   }
 }

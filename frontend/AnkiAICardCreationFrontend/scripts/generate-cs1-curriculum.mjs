@@ -46,6 +46,49 @@ const lessonFocus = {
   'integration-project-planning': ['Integration project planning', 'Plan a multi-function program before writing the full implementation.', 'A small project combines data representation, helper functions, main flow, and tests.', 'A grade summary program reads rows, parses scores, computes totals, and reports results.', ['Choose how each row becomes structured data.', 'Write helpers for parsing and summarizing.', 'Test each helper before connecting the full flow.']]
 }
 
+const lessonPractice = {
+  'read-sequential-programs': ['What does `print("set"); print("go")` display?', 'The first print displays set. The second print displays go.'],
+  'tracking-variables': ['`coins = 4`; then `coins = coins + 2`. What is the final value?', 'coins = 6'],
+  'expressions-and-types': ['Evaluate `value = 5 * 2; label = "ML" + "1"`.', 'value is the integer 10. label is the string "ML1".'],
+  'console-input-output': ['The user enters `7`; then the program runs `age = int(input()); print(age + 1)`. What is printed?', 'The input text is converted to integer 7, so the program prints 8.'],
+  'program-state-snapshots': ['After `x = 3; y = x + 4; x = 10`, what are `x` and `y`?', 'x is 10 and y is 7 because y does not change when x is reassigned.'],
+  'relational-and-logical-expressions': ['Evaluate `age = 70; age >= 18 and age < 65`.', 'age >= 18 is true, age < 65 is false, so the whole expression is false.'],
+  'boolean-branches': ['For `score = 8`, which branch runs in `if score > 10: print("high") else: print("low")`?', 'score > 10 is false, so the else branch runs and prints low.'],
+  'multi-way-selection': ['For `points = 92`, what grade is assigned by checks for `>= 90` then `>= 80`?', 'The first condition is true, so grade becomes "A" and later checks are skipped.'],
+  'input-validation': ['What should happen when `minutes = -3` and the guard is `if minutes < 0: print("invalid")`?', 'The guard condition is true, so the program prints invalid.'],
+  'loop-tracing': ['Trace `total = 0; for n in [2, 3, 4]: total = total + n`. What is `total`?', 'total becomes 2, then 5, then 9. The final value is 9.'],
+  'counted-loops': ['What values does `for i in range(1, 4): print(i)` print?', 'range starts at 1 and stops before 4, so it prints 1, 2, and 3.'],
+  'accumulators-and-counters': ['For words `["yes", "no", "yes"]`, how many times does a counter increase when counting `"yes"`?', 'The counter increases for the first and third items, so the final count is 2.'],
+  'while-sentinel-loops': ['A sentinel loop reads `"go"` and then `"stop"`. When does it stop?', 'It repeats after "go" and stops when the value becomes "stop".'],
+  'nested-loops': ['How many times does `for row in range(2): for col in range(2): print(row, col)` print?', 'The inner loop runs 2 times for each of 2 rows, so it prints 4 times.'],
+  'calling-builtins': ['What does `length = len("data"); print(length)` display?', 'len("data") returns 4, so print displays 4.'],
+  'defining-functions': ['For `def double(x): return x * 2; result = double(5)`, what is `result`?', 'The call gives x the value 5, returns 10, and stores 10 in result.'],
+  'parameters-and-return-values': ['If `def add_tax(price): return price * 1.1`, what does `add_tax(20)` return?', 'price is 20, so the function returns 22.0.'],
+  'local-scope': ['For `def f(x): y = x + 2; return y; result = f(3)`, what can the caller use?', 'The caller can use result, which is 5. y was local to the function call.'],
+  'function-design': ['For `def is_passing(score): return score >= 60`, what are `is_passing(59)` and `is_passing(60)`?', 'is_passing(59) is False and is_passing(60) is True.'],
+  'strings-indexing': ['What is `word = "python"; word[0:2]`?', 'The slice includes indexes 0 and 1, so the result is "py".'],
+  'string-search-and-parsing': ['For `line = "Grace,99"; name, score = line.split(",")`, what are the fields?', 'name is "Grace" and score is the text "99".'],
+  'list-basics': ['After `scores = [1, 2]; scores.append(3); scores[1] = 9`, what is `scores`?', 'append adds 3, then index 1 is replaced, so scores is [1, 9, 3].'],
+  'traversing-sequences': ['Trace summing `[1, 3, 5]`. What is the final total?', 'The total becomes 1, then 4, then 9. The final total is 9.'],
+  'list-mutation-patterns': ['If `nums = [1, 2, 4]`, what list is built by appending only even values?', '2 and 4 satisfy the condition, so the new list is [2, 4].'],
+  'dictionary-lookup': ['After `ages = {"Ada": 36}; ages["Grace"] = 30`, what is `ages["Grace"]`?', 'The key "Grace" maps to 30, so the lookup returns 30.'],
+  'frequency-tables': ['Build counts for `"abb"`. What are the counts?', 'a appears once and b appears twice, so the counts are {"a": 1, "b": 2}.'],
+  'nested-records': ['For `student = {"name": "Grace", "scores": [8, 9]}`, what does the `scores` field store?', 'The scores field stores the list [8, 9].'],
+  'reading-text-files': ['If a file line is `"Ada\\n"`, what does `line.strip()` produce?', 'strip removes the newline, so the cleaned text is "Ada".'],
+  'parsing-records': ['For `row = "Grace,30"`, what values come from splitting and converting the age?', 'name is "Grace" and the converted age is the integer 30.'],
+  'reading-tracebacks': ['What does `NameError: name total is not defined` usually mean?', 'The program used the name total before Python could find a defined value for it.'],
+  'assertions-and-test-cases': ['What does `assert is_even(6) == True` test?', 'It tests the concrete input 6 and expects the output True.'],
+  'debugging-hypotheses': ['A counter ends at 2 instead of 3. What should you inspect first?', 'Reproduce the smallest failing case and inspect the counter after each update.'],
+  'exceptions-basics': ['If `text = "abc"` and the program tries `int(text)` inside `try`, what happens?', 'int("abc") raises ValueError, so the matching except block handles the failure.'],
+  'edge-case-design': ['Why is `average([])` an edge case?', 'An empty list has no count to divide by, so the function needs a defined policy and a test for it.'],
+  'linear-search': ['For items `[3, 5, 7]` and target `5`, what does linear search return?', 'It checks 3, then finds 5 and returns True.'],
+  'sorting-and-runtime': ['About how many checks can two nested loops over 10 items each perform?', 'The work is about 10 times 10, so about 100 checks.'],
+  'recursion-base-cases': ['Why does `countdown(2)` eventually stop when the base case is `n == 0`?', 'The calls use 2, then 1, then 0, and the base case returns without another recursive call.'],
+  'recursive-tracing': ['What is `fact(4)` when `fact(n)` returns `n * fact(n - 1)` and `fact(1)` is 1?', 'The returns multiply as 1, then 2, then 6, then 24. fact(4) is 24.'],
+  'simple-classes': ['A Counter starts at 0 and `increment` runs twice. What is its value?', 'Each increment adds 1, so the stored value is 2.'],
+  'integration-project-planning': ['For a grade summary program, what pieces should be planned before the full implementation?', 'Plan row parsing, score representation, summary helpers, main flow, and tests before combining them.']
+}
+
 const cs1Course = curriculum.courses.find((course) => course.id === 'computational-thinking-core')
 const cs1ModuleIds = new Set(cs1Course?.moduleIds ?? [])
 const cs1Modules = curriculum.modules.filter((module) => cs1ModuleIds.has(module.id))
@@ -87,32 +130,44 @@ const lessons = cs1Modules.flatMap((module) => module.lessonIds.map((lessonId) =
     estimatedMinutes: skills.length > 1 ? 16 : 12,
     skillIds: [...taught],
     prerequisiteSkillIds: prerequisites,
-    sections: [
-      { id: `${lessonId}-core`, title: 'Core idea', body: [focus, summary], checkpoint: 'Which value or state change determines the next step?' },
-      { id: `${lessonId}-method`, title: 'Reasoning method', body: ['Start with one concrete input or state. Write down intermediate values before deciding the final result.', 'Compare what each statement reads, what it changes, and whether it returns or prints a value.'], checkpoint: 'What intermediate value would catch the most common mistake here?' }
-    ],
-    workedExamples: [{ id: `${lessonId}-example-1`, prompt: example, steps }],
+    sections: [{ id: `${lessonId}-lesson`, title: 'Lesson', body: [`${focus} To solve this kind of question, use the concrete value or program state given in the question, apply the rule shown in the worked example one step at a time, and choose the answer that matches the final traced result.`] }],
+    workedExamples: [{ id: `${lessonId}-example-1`, prompt: example, steps: [steps.join(' ')] }],
     assessmentId: assessmentIdForLesson(lessonId),
     metadata: { author: 'core-team', status: 'complete' }
   }
 }))
 
+function practiceForLesson(lesson) {
+  return lessonPractice[lesson.id] ?? [
+    `Which answer correctly applies this lesson objective: ${lesson.objective}`,
+    lesson.workedExamples[0].steps[0]
+  ]
+}
+
+function optionsForPractice(solution) {
+  return [
+    solution,
+    'This answer skips the concrete trace and guesses from names only.',
+    'This answer changes an unrelated value instead of following the worked-example rule.'
+  ]
+}
+
 function lessonAssessment(lesson) {
   const skills = lesson.skillIds.map((id) => curriculum.skills.find((skill) => skill.id === id))
   const primary = skills[0]
-  const secondary = skills[Math.min(1, skills.length - 1)]
+  const [question, solution] = practiceForLesson(lesson)
+  const options = optionsForPractice(solution)
   return {
     id: lesson.assessmentId,
     type: 'lesson-check',
     title: `Lesson check: ${lesson.title}`,
-    description: `Checks whether the learner can apply ${skills.map((skill) => skill.title.toLowerCase()).join(' and ')}.`,
+    description: `Choose the answer that applies this lesson's procedure to a new case.`,
     skillIds: lesson.skillIds,
     lessonId: lesson.id,
     items: [
-      { id: `${lesson.id}-check-1`, skillId: primary.id, type: 'multiple-choice', prompt: `Which habit best supports ${primary.title.toLowerCase()}?`, options: ['Trace concrete values step by step', 'Guess from variable names only', 'Change unrelated code until output changes'], correctAnswer: 'Trace concrete values step by step', explanation: 'Concrete tracing keeps reasoning tied to actual execution.' },
-      { id: `${lesson.id}-check-2`, skillId: secondary.id, type: 'text', prompt: 'What should you record when predicting the next statement?', placeholder: 'One word', acceptedAnswers: ['state', 'value', 'values'], explanation: 'Recording state or values makes each step checkable.' }
+      { id: `${lesson.id}-check-1`, skillId: primary.id, type: 'multiple-choice', prompt: question, options, correctAnswer: solution, explanation: solution }
     ],
-    passRule: { minCorrect: 2, maxAttemptsBeforeReview: 2 },
+    passRule: { minCorrect: 1, maxAttemptsBeforeReview: 2 },
     metadata: { difficulty: Math.max(...skills.map((skill) => skill.metadata.difficulty)), calculatorAllowed: false }
   }
 }
@@ -133,16 +188,6 @@ const assessments = [{
   passRule: { minCorrect: 3, maxAttemptsBeforeReview: 1 },
   metadata: { difficulty: 0.28, calculatorAllowed: false }
 }, ...lessons.map(lessonAssessment)]
-
-const trackingIndex = assessments.findIndex((assessment) => assessment.id === 'assessment-tracking-variables')
-assessments[trackingIndex] = {
-  id: 'assessment-tracking-variables', type: 'lesson-check', title: 'Lesson check: Track variable state', description: 'Checks whether assignments can be read as state changes.', skillIds: ['track-variable-state'], lessonId: 'tracking-variables',
-  items: [
-    { id: 'var-assess-1', skillId: 'track-variable-state', type: 'text', prompt: '`coins = 4`; then `coins = coins + 2`. What is the final value?', placeholder: 'Final value', acceptedAnswers: ['6'], explanation: '4 is read, 2 is added, and 6 is stored.' },
-    { id: 'var-assess-2', skillId: 'track-variable-state', type: 'multiple-choice', prompt: 'Which statement correctly describes `score = score + 1`?', options: ['An invalid equation', 'The variable value increases by 1', 'The variable is deleted'], correctAnswer: 'The variable value increases by 1', explanation: 'The old value is read, one is added, and the result is stored again.' }
-  ],
-  passRule: { minCorrect: 2, maxAttemptsBeforeReview: 2 }, metadata: { difficulty: 0.28, calculatorAllowed: false }
-}
 
 const reviews = []
 for (const skill of cs1Skills) {

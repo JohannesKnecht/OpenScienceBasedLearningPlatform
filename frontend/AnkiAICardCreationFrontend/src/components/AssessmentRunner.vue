@@ -78,9 +78,10 @@ function submitAssessment(): void {
   <section class="assessment-runner">
     <article v-for="item in assessment.items" :key="item.id" class="assessment-runner__item">
       <div class="assessment-runner__head">
-        <h2>{{ item.prompt }}</h2>
-        <small>{{ item.type }}</small>
+        <h2>Question:</h2>
       </div>
+
+      <p class="assessment-runner__question">{{ item.prompt }}</p>
 
       <div v-if="item.type === 'multiple-choice'" class="assessment-runner__options">
         <label v-for="option in item.options" :key="option" class="assessment-runner__option">
@@ -103,7 +104,7 @@ function submitAssessment(): void {
         class="assessment-runner__feedback"
         :class="feedback[item.id] ? 'is-correct' : 'is-wrong'"
       >
-        <strong>{{ feedback[item.id] ? 'Correct' : 'Not yet' }}</strong>
+        <strong>Solution:</strong>
         <p>{{ item.explanation }}</p>
       </div>
     </article>
@@ -129,25 +130,19 @@ function submitAssessment(): void {
   display: grid;
   gap: 0.85rem;
   padding: 1rem;
-  border-radius: 1.2rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.35rem;
   background: var(--color-surface-subtle);
-}
-
-.assessment-runner__head {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
 }
 
 .assessment-runner__head h2 {
   color: var(--color-heading);
   font-size: 1.05rem;
-  font-weight: 650;
+  font-weight: 800;
 }
 
-.assessment-runner__head small {
-  color: var(--color-text-muted);
-  text-transform: capitalize;
+.assessment-runner__question {
+  color: var(--color-text-soft);
 }
 
 .assessment-runner__options,
@@ -161,21 +156,24 @@ function submitAssessment(): void {
   gap: 0.7rem;
   align-items: center;
   background: white;
-  border-radius: 1rem;
-  padding: 0.8rem 0.9rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.35rem;
+  min-height: 2.85rem;
+  padding: 0.75rem 0.9rem;
 }
 
 .assessment-runner input[type='text'] {
   width: 100%;
   border: 1px solid var(--color-border);
-  border-radius: 0.95rem;
+  border-radius: 0.35rem;
+  min-height: 2.85rem;
   padding: 0.85rem 1rem;
   font: inherit;
   background: white;
 }
 
 .assessment-runner__feedback {
-  border-radius: 1rem;
+  border-radius: 0.35rem;
   padding: 0.9rem 1rem;
   display: grid;
   gap: 0.35rem;
@@ -200,12 +198,13 @@ function submitAssessment(): void {
 
 .assessment-runner__button {
   border: 0;
-  border-radius: 999px;
-  padding: 0.9rem 1.15rem;
-  background: var(--color-heading);
+  border-radius: 0.35rem;
+  min-height: 2.85rem;
+  padding: 0.75rem 1rem;
+  background: var(--color-accent);
   color: white;
   font-size: 0.98rem;
-  font-weight: 600;
+  font-weight: 800;
   cursor: pointer;
 }
 

@@ -27,8 +27,8 @@ describe('App', () => {
       global: { plugins: [router] },
     })
 
-    expect(wrapper.text()).toContain('Simple daily learning')
-    expect(wrapper.text()).toContain('Open the next lesson')
+    expect(wrapper.text()).toContain('Work toward target lessons')
+    expect(wrapper.text()).toContain('Choose one or more lesson targets')
   })
 
   it('renders the learn dashboard route content', async () => {
@@ -44,8 +44,8 @@ describe('App', () => {
       global: { plugins: [router] },
     })
 
-    expect(wrapper.text()).toContain('Simple daily learning')
-    expect(wrapper.text()).toContain('Next lesson')
+    expect(wrapper.text()).toContain('Work toward target lessons')
+    expect(wrapper.text()).toContain('Target queue')
   })
 
   it('renders the diagnostic route content', async () => {
