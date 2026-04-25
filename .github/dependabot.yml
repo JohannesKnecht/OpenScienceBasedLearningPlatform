@@ -4,7 +4,6 @@ version: 2
 
 multi-ecosystem-groups:
   all-dependencies:
-    target-branch: "develop"
     schedule:
       interval: "daily"
       time: "18:00"
