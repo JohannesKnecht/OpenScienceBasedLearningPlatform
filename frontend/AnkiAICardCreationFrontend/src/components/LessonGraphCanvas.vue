@@ -26,6 +26,10 @@ const nodeHeight = 62
 const columnGap = 34
 const rowGap = 112
 const graphPadding = 56
+const minScale = 0.45
+const maxScale = 2.8
+const zoomButtonStep = 0.1
+const wheelZoomSensitivity = 0.0008
 
 const laidOutNodes = computed(() => {
   const nodesByLevel = new Map<number, LessonGraphNode[]>()
@@ -91,8 +95,30 @@ function getEdgePath(edge: LessonGraphEdge): string {
   return `M ${startX} ${startY} C ${startX} ${startY + controlOffset}, ${endX} ${endY - controlOffset}, ${endX} ${endY}`
 }
 
+function clampScale(value: number): number {
+  return Math.min(maxScale, Math.max(minScale, value))
+}
+
+function zoomTo(nextScale: number, origin?: { x: number; y: number }): void {
+  const currentScale = scale.value
+  const clampedScale = clampScale(nextScale)
+
+  if (clampedScale === currentScale) {
+    return
+  }
+
+  if (origin) {
+    const graphX = (origin.x - offsetX.value) / currentScale
+    const graphY = (origin.y - offsetY.value) / currentScale
+    offsetX.value = origin.x - graphX * clampedScale
+    offsetY.value = origin.y - graphY * clampedScale
+  }
+
+  scale.value = Number(clampedScale.toFixed(3))
+}
+
 function zoomBy(delta: number): void {
-  scale.value = Math.min(2.8, Math.max(0.45, Number((scale.value + delta).toFixed(2))))
+  zoomTo(scale.value + delta)
 }
 
 function resetView(): void {
@@ -103,7 +129,21 @@ function resetView(): void {
 
 function handleWheel(event: WheelEvent): void {
   event.preventDefault()
-  zoomBy(event.deltaY < 0 ? 0.12 : -0.12)
+  const viewport = viewportRef.value
+  const rect = viewport?.getBoundingClientRect()
+  const deltaMultiplier =
+    event.deltaMode === WheelEvent.DOM_DELTA_LINE
+      ? 16
+      : event.deltaMode === WheelEvent.DOM_DELTA_PAGE
+        ? (viewport?.clientHeight ?? 800)
+        : 1
+  const normalizedDelta = event.deltaY * deltaMultiplier
+  const nextScale = scale.value * Math.exp(-normalizedDelta * wheelZoomSensitivity)
+
+  zoomTo(
+    nextScale,
+    rect ? { x: event.clientX - rect.left, y: event.clientY - rect.top } : undefined,
+  )
 }
 
 let startPointerX = 0
@@ -140,8 +180,8 @@ function selectLesson(lessonId: string): void {
 <template>
   <section class="graph-canvas">
     <div class="graph-canvas__toolbar">
-      <button type="button" @click="zoomBy(0.12)">+</button>
-      <button type="button" @click="zoomBy(-0.12)">-</button>
+      <button type="button" @click="zoomBy(zoomButtonStep)">+</button>
+      <button type="button" @click="zoomBy(-zoomButtonStep)">-</button>
       <button type="button" @click="resetView">Reset</button>
       <p>Scroll to zoom. Drag to pan. Tap a lesson to preview.</p>
     </div>
