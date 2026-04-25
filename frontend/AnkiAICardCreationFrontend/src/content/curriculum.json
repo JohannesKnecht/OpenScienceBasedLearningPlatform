@@ -1609,9 +1609,7 @@
       "id": "ml1-identify-learning-problem",
       "title": "Identify machine-learning problem types",
       "description": "Can decide whether a situation is suitable for supervised, unsupervised, or non-ML analysis.",
-      "prerequisiteSkillIds": [
-        "plan-multi-function-program"
-      ],
+      "prerequisiteSkillIds": [],
       "lessonIds": [
         "ml1-define-learning-problems"
       ],
@@ -4594,9 +4592,7 @@
         "ml1-identify-learning-problem",
         "ml1-map-examples-features-labels"
       ],
-      "prerequisiteSkillIds": [
-        "plan-multi-function-program"
-      ],
+      "prerequisiteSkillIds": [],
       "sections": [
         {
           "id": "ml1-define-learning-problems-core",

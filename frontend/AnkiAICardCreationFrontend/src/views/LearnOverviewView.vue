@@ -1,14 +1,29 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import AcademyShell from '../components/AcademyShell.vue'
+import LessonPreviewCard from '../components/LessonPreviewCard.vue'
 import ProgressPanel from '../components/ProgressPanel.vue'
-import { allLessons, getLessonModule, getReviewAssessmentForSkill, getSkill } from '../content'
+import { allLessons, getLesson, getLessonGraphNode, getLessonPrerequisites, getReviewAssessmentForSkill, getSkill } from '../content'
 import { useLearningProgress } from '../lib/progress'
 
 const progress = useLearningProgress()
 const diagnosticCompleted = computed(() => progress.progressState.diagnosticCompleted)
-const { nextRecommendedAction, getLessonState, dueReviewSkillIds } = progress
+const {
+  getLessonState,
+  dueReviewSkillIds,
+  nextRecommendedAction,
+  targetLessons,
+  targetPathLessons,
+  targetPathCompletedLessonCount,
+  targetPathTotalLessonCount,
+  isSkillMastered,
+  isLessonUnlocked,
+  isTargetLesson,
+  setTargetLesson,
+  removeTargetLesson,
+} = progress
+const previewLessonId = ref<string | null>(null)
 
 interface ReviewCard {
   skillId: string
@@ -17,12 +32,61 @@ interface ReviewCard {
   route: string
 }
 
-const nextLesson = computed(() =>
-  allLessons.find((lesson) => {
-    const state = getLessonState(lesson.id)
-    return state === 'ready' || state === 'learning'
-  }),
+const recommendedLesson = computed(() => {
+  const recommendation = nextRecommendedAction.value
+  if (recommendation.type !== 'lesson') {
+    return null
+  }
+
+  const segments = recommendation.route.split('/')
+  const lessonId = segments[segments.length - 1]
+  return lessonId ? getLesson(lessonId) ?? null : null
+})
+
+const pathPreviewLessons = computed(() => targetPathLessons.value.slice(0, 5))
+const selectedPreviewLesson = computed(() => (previewLessonId.value ? getLesson(previewLessonId.value) : null))
+const selectedPreviewNode = computed(() =>
+  selectedPreviewLesson.value ? getLessonGraphNode(selectedPreviewLesson.value.id) : undefined,
 )
+const selectedPreviewStatus = computed(() =>
+  selectedPreviewLesson.value ? getLessonState(selectedPreviewLesson.value.id) : 'locked',
+)
+const selectedPreviewStatusLabel = computed(() => {
+  const labels = {
+    locked: 'Locked',
+    ready: 'Ready',
+    learning: 'In progress',
+    mastered: 'Mastered',
+  }
+
+  return labels[selectedPreviewStatus.value]
+})
+const selectedPreviewMissingPrerequisites = computed(() =>
+  selectedPreviewLesson.value
+    ? getLessonPrerequisites(selectedPreviewLesson.value.id).filter((skill) => !isSkillMastered(skill.id))
+    : [],
+)
+const selectedPreviewIsTarget = computed(() =>
+  selectedPreviewLesson.value ? isTargetLesson(selectedPreviewLesson.value.id) : false,
+)
+
+function previewLesson(lessonId: string): void {
+  previewLessonId.value = lessonId
+}
+
+function togglePreviewTarget(): void {
+  const lesson = selectedPreviewLesson.value
+  if (!lesson) {
+    return
+  }
+
+  if (selectedPreviewIsTarget.value) {
+    removeTargetLesson(lesson.id)
+    return
+  }
+
+  setTargetLesson(lesson.id)
+}
 
 const reviewCards = computed<ReviewCard[]>(() =>
   dueReviewSkillIds.value
@@ -54,19 +118,70 @@ const recentLessons = computed(() =>
 <template>
   <AcademyShell
     eyebrow="Learn"
-    title="Simple daily learning"
-    subtitle="Open the next lesson, clear reviews when they are due, and use the full graph only when you want the big picture."
+    title="Work toward target lessons"
+    subtitle="Pick lesson nodes from the graph, then clear the recommended prerequisites until those targets are reachable."
   >
     <section class="learn-layout">
       <ProgressPanel />
 
       <div class="learn-feed">
+        <div class="learn-feed__header">
+          <p>Today</p>
+          <h2>Target queue</h2>
+        </div>
+
+        <article v-if="targetLessons.length === 0" class="task-card task-card--primary">
+          <div>
+            <p class="task-card__eyebrow">Target nodes</p>
+            <h2>Choose one or more lesson targets</h2>
+            <p>The graph will turn selected lesson nodes into a prerequisite path.</p>
+          </div>
+          <span class="task-card__xp">Required</span>
+          <RouterLink class="task-card__button" to="/graph">Pick targets</RouterLink>
+        </article>
+
+        <article v-else class="target-card">
+          <div class="target-card__head">
+            <div>
+              <p class="task-card__eyebrow">Selected targets</p>
+              <h2>{{ targetPathCompletedLessonCount }}/{{ targetPathTotalLessonCount }} path nodes mastered</h2>
+            </div>
+            <RouterLink class="task-card__button task-card__button--subtle" to="/graph">Edit targets</RouterLink>
+          </div>
+          <div class="target-card__list">
+            <button v-for="lesson in targetLessons" :key="lesson.id" type="button" @click="previewLesson(lesson.id)">
+              {{ lesson.title }}
+            </button>
+          </div>
+          <div class="target-card__path" v-if="pathPreviewLessons.length > 0">
+            <button v-for="lesson in pathPreviewLessons" :key="lesson.id" type="button" @click="previewLesson(lesson.id)">
+              {{ lesson.title }}
+            </button>
+          </div>
+        </article>
+
+        <LessonPreviewCard
+          v-if="selectedPreviewLesson"
+          :lesson="selectedPreviewLesson"
+          :status-label="selectedPreviewStatusLabel"
+          :status-tone="selectedPreviewStatus"
+          :node-level="selectedPreviewNode?.level"
+          :is-target="selectedPreviewIsTarget"
+          :missing-prerequisites="selectedPreviewMissingPrerequisites"
+          :can-open="isLessonUnlocked(selectedPreviewLesson.id)"
+          :open-route="`/learn/${selectedPreviewLesson.id}`"
+          show-target-action
+          :target-action-label="selectedPreviewIsTarget ? 'Remove target' : 'Set as target'"
+          @toggle-target="togglePreviewTarget"
+        />
+
         <article v-if="!diagnosticCompleted" class="task-card task-card--primary">
           <div>
             <p class="task-card__eyebrow">Diagnostic</p>
             <h2>Run the entry diagnostic</h2>
             <p>Start here so the learner state can unlock lessons from the graph instead of forcing a rigid order.</p>
           </div>
+          <span class="task-card__xp">Placement</span>
           <RouterLink class="task-card__button" to="/diagnostic">Start diagnostic</RouterLink>
         </article>
 
@@ -76,26 +191,33 @@ const recentLessons = computed(() =>
             <h2>{{ review.title }}</h2>
             <p>{{ review.subtitle }}</p>
           </div>
+          <span class="task-card__xp">Due</span>
           <RouterLink class="task-card__button task-card__button--subtle" :to="review.route">Open review</RouterLink>
         </article>
 
-        <article v-if="nextLesson" class="task-card task-card--lesson">
+        <article v-if="recommendedLesson" class="task-card task-card--lesson">
           <div>
-            <p class="task-card__eyebrow">Next lesson</p>
-            <h2>{{ nextLesson.title }}</h2>
-            <p>{{ nextLesson.summary }}</p>
-            <small>{{ getLessonModule(nextLesson.id)?.title }}</small>
+            <p class="task-card__eyebrow">Next path node</p>
+            <h2>{{ recommendedLesson.title }}</h2>
+            <p>{{ recommendedLesson.summary }}</p>
+            <small>{{ getLessonState(recommendedLesson.id) }}</small>
           </div>
-          <RouterLink class="task-card__button" :to="`/learn/${nextLesson.moduleId}/${nextLesson.id}`">
-            Open lesson
-          </RouterLink>
+          <span class="task-card__xp">{{ recommendedLesson.estimatedMinutes }} min</span>
+          <div class="task-card__actions">
+            <button class="task-card__button task-card__button--subtle" type="button" @click="previewLesson(recommendedLesson.id)">
+              Preview
+            </button>
+            <RouterLink class="task-card__button" :to="`/learn/${recommendedLesson.id}`">
+              Open lesson
+            </RouterLink>
+          </div>
         </article>
 
         <article v-if="recentLessons.length > 0" class="history-card">
           <p class="task-card__eyebrow">Recently mastered</p>
           <div v-for="lesson in recentLessons" :key="lesson.id" class="history-card__item">
             <strong>{{ lesson.title }}</strong>
-            <span>{{ getLessonModule(lesson.id)?.title }}</span>
+            <span>Mastered lesson node</span>
           </div>
         </article>
       </div>
@@ -106,50 +228,73 @@ const recentLessons = computed(() =>
 <style scoped>
 .learn-layout {
   display: grid;
-  grid-template-columns: minmax(18rem, 22rem) minmax(0, 1fr);
-  gap: 1.25rem;
+  grid-template-columns: 1fr;
+  gap: 1.1rem;
   align-items: start;
 }
 
 .learn-feed {
   display: grid;
+  gap: 0.9rem;
+}
+
+.learn-feed__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
   gap: 1rem;
+}
+
+.learn-feed__header p {
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.learn-feed__header h2 {
+  color: var(--color-heading);
+  font-size: 1.25rem;
+  font-weight: 800;
 }
 
 .task-card,
 .history-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 1.6rem;
-  padding: 1.5rem;
+  border-radius: 0.4rem;
+  padding: 1.25rem;
   box-shadow: var(--shadow-soft);
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   align-items: center;
-  gap: 1rem;
+  gap: 1.1rem;
 }
 
 .task-card--primary {
-  background: linear-gradient(135deg, #f8fbff 0%, #eef4ff 100%);
+  border-color: rgba(20, 120, 201, 0.36);
+  background: #fbfdff;
 }
 
 .task-card--lesson {
-  border-color: rgba(76, 116, 255, 0.24);
+  border-left: 0.35rem solid var(--color-accent);
 }
 
 .task-card__eyebrow {
   text-transform: uppercase;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.08em;
   font-size: 0.76rem;
   color: var(--color-accent);
-  font-weight: 700;
-  margin-bottom: 0.4rem;
+  font-weight: 800;
+  margin-bottom: 0.2rem;
 }
 
 .task-card h2,
 .history-card strong {
   color: var(--color-heading);
-  font-weight: 680;
+  font-weight: 800;
+  line-height: 1.2;
 }
 
 .task-card p,
@@ -158,13 +303,23 @@ const recentLessons = computed(() =>
   color: var(--color-text-soft);
 }
 
-.task-card__button {
-  text-decoration: none;
-  background: var(--color-heading);
-  color: white;
-  padding: 0.9rem 1.2rem;
-  border-radius: 999px;
+.task-card__xp {
+  color: var(--color-text-soft);
+  font-weight: 800;
   white-space: nowrap;
+}
+
+.task-card__button {
+  border: 1px solid var(--color-accent);
+  text-decoration: none;
+  background: var(--color-accent);
+  color: white;
+  min-height: 2.8rem;
+  padding: 0.72rem 1rem;
+  border-radius: 0.35rem;
+  white-space: nowrap;
+  font-weight: 800;
+  cursor: pointer;
 }
 
 .task-card__button--subtle {
@@ -173,9 +328,63 @@ const recentLessons = computed(() =>
   border: 1px solid var(--color-border);
 }
 
+.task-card__actions {
+  display: flex;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 .history-card {
   display: grid;
+  grid-template-columns: 1fr;
   gap: 0.75rem;
+}
+
+.target-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.4rem;
+  padding: 1.25rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.target-card__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: start;
+}
+
+.target-card h2 {
+  color: var(--color-heading);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.target-card__list,
+.target-card__path {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.target-card__list button,
+.target-card__path button {
+  color: var(--color-heading);
+  border: 1px solid var(--color-border);
+  border-radius: 0.35rem;
+  background: white;
+  padding: 0.4rem 0.6rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.target-card__path button {
+  color: var(--color-text-soft);
+  background: var(--color-surface-subtle);
+  font-size: 0.9rem;
 }
 
 .history-card__item {
@@ -184,13 +393,24 @@ const recentLessons = computed(() =>
 }
 
 @media (max-width: 1080px) {
-  .learn-layout {
-    grid-template-columns: 1fr;
+  .task-card {
+    grid-template-columns: minmax(0, 1fr) auto;
   }
 
+  .task-card__button {
+    justify-self: start;
+  }
+
+  .task-card__actions {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 620px) {
   .task-card {
-    flex-direction: column;
-    align-items: flex-start;
+    grid-template-columns: 1fr;
+    align-items: start;
   }
 }
 </style>

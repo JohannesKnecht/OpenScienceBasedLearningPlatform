@@ -3,12 +3,12 @@ import {
   allLessons,
   allSkills,
   getAssessment,
-  getEntryAssessmentForCourse,
   getLesson,
+  getLessonGraphPathLessonIds,
   getReviewForSkill,
   getReviewAssessmentForSkill,
   getSkill,
-  primaryCourse,
+  primaryEntryAssessment,
   xpConfig,
 } from '../content'
 import type { AssessmentRunResult, LessonState, SkillState } from '../content/model'
@@ -34,6 +34,7 @@ export interface LearningProgress {
   streak: number
   lastActiveDate: string | null
   lastLessonId: string | null
+  targetLessonIds: string[]
   diagnosticCompleted: boolean
   skillProgress: Record<string, SkillProgress>
   assessmentProgress: Record<string, AssessmentProgress>
@@ -46,6 +47,7 @@ const defaultProgress: LearningProgress = {
   streak: 0,
   lastActiveDate: null,
   lastLessonId: null,
+  targetLessonIds: [],
   diagnosticCompleted: false,
   skillProgress: {},
   assessmentProgress: {},
@@ -99,6 +101,7 @@ function loadProgress(): LearningProgress {
       streak: parsed.streak ?? defaultProgress.streak,
       lastActiveDate: parsed.lastActiveDate ?? defaultProgress.lastActiveDate,
       lastLessonId: parsed.lastLessonId ?? defaultProgress.lastLessonId,
+      targetLessonIds: parsed.targetLessonIds?.filter((lessonId) => getLesson(lessonId)) ?? [],
       diagnosticCompleted: parsed.diagnosticCompleted ?? defaultProgress.diagnosticCompleted,
       skillProgress: parsed.skillProgress ?? {},
       assessmentProgress: parsed.assessmentProgress ?? {},
@@ -234,7 +237,19 @@ function initializeSkillRecords(): void {
 initializeSkillRecords()
 
 export function useLearningProgress() {
-  const entryAssessment = primaryCourse ? getEntryAssessmentForCourse(primaryCourse.id) : undefined
+  const entryAssessment = primaryEntryAssessment
+  const targetLessonIds = computed(() => progressState.targetLessonIds.filter((lessonId) => getLesson(lessonId)))
+  const targetLessons = computed(() =>
+    targetLessonIds.value
+      .map((lessonId) => getLesson(lessonId))
+      .filter((lesson): lesson is NonNullable<typeof lesson> => lesson !== undefined),
+  )
+  const targetPathLessonIds = computed(() => getLessonGraphPathLessonIds(targetLessonIds.value))
+  const targetPathLessons = computed(() =>
+    targetPathLessonIds.value
+      .map((lessonId) => getLesson(lessonId))
+      .filter((lesson): lesson is NonNullable<typeof lesson> => lesson !== undefined),
+  )
 
   const masteredSkillCount = computed(() => allSkills.filter((skill) => isSkillMastered(skill.id)).length)
 
@@ -244,6 +259,18 @@ export function useLearningProgress() {
 
   const completionPercentage = computed(() =>
     allSkills.length === 0 ? 0 : Math.round((masteredSkillCount.value / allSkills.length) * 100),
+  )
+
+  const targetPathCompletedLessonCount = computed(
+    () => targetPathLessons.value.filter((lesson) => getLessonState(lesson.id) === 'mastered').length,
+  )
+
+  const targetPathTotalLessonCount = computed(() => targetPathLessons.value.length)
+
+  const targetPathCompletionPercentage = computed(() =>
+    targetPathTotalLessonCount.value === 0
+      ? 0
+      : Math.round((targetPathCompletedLessonCount.value / targetPathTotalLessonCount.value) * 100),
   )
 
   const dueReviewSkillIds = computed(() => {
@@ -272,21 +299,53 @@ export function useLearningProgress() {
   })
 
   const nextRecommendedAction = computed(() => {
-    if (!progressState.diagnosticCompleted && entryAssessment) {
-      return {
-        type: 'diagnostic' as const,
-        title: 'Run the entry diagnostic',
-        description: 'Place the learner on the right starting point before opening more advanced lessons.',
-        route: '/diagnostic',
-      }
-    }
-
     if (dueReviewAssessments.value.length > 0) {
       return {
         type: 'review' as const,
         title: 'Review is due',
         description: `${dueReviewAssessments.value.length} skill review${dueReviewAssessments.value.length === 1 ? '' : 's'} are ready.`,
         route: '/review',
+      }
+    }
+
+    if (targetLessonIds.value.length === 0) {
+      return {
+        type: 'target' as const,
+        title: 'Choose target lessons',
+        description: 'Pick one or more lesson nodes from the graph so the system can build a path toward them.',
+        route: '/graph',
+      }
+    }
+
+    if (!progressState.diagnosticCompleted && entryAssessment) {
+      return {
+        type: 'diagnostic' as const,
+        title: 'Run the entry diagnostic',
+        description: 'Place the learner before working toward the selected target nodes.',
+        route: '/diagnostic',
+      }
+    }
+
+    const nextTargetLesson = targetPathLessons.value.find((lesson) => {
+      const state = getLessonState(lesson.id)
+      return state === 'ready' || state === 'learning'
+    })
+
+    if (nextTargetLesson) {
+      return {
+        type: 'lesson' as const,
+        title: nextTargetLesson.title,
+        description: nextTargetLesson.summary,
+        route: `/learn/${nextTargetLesson.id}`,
+      }
+    }
+
+    if (targetPathLessons.value.length > 0) {
+      return {
+        type: 'complete' as const,
+        title: 'Target path completed',
+        description: 'All lessons required for the selected target nodes are mastered. Pick another target to continue.',
+        route: '/graph',
       }
     }
 
@@ -300,17 +359,40 @@ export function useLearningProgress() {
         type: 'lesson' as const,
         title: nextLesson.title,
         description: nextLesson.summary,
-        route: `/learn/${nextLesson.moduleId}/${nextLesson.id}`,
+        route: `/learn/${nextLesson.id}`,
       }
     }
 
     return {
       type: 'complete' as const,
-      title: 'CS1 course completed',
-      description: 'The introductory programming course is complete. Keep reviews clear to retain the skills.',
+      title: 'All available lessons completed',
+      description: 'Keep reviews clear to retain the mastered skills, or add more lesson nodes to the curriculum.',
       route: '/learn',
     }
   })
+
+  function setTargetLesson(lessonId: string): void {
+    if (!getLesson(lessonId) || progressState.targetLessonIds.includes(lessonId)) {
+      return
+    }
+
+    progressState.targetLessonIds.push(lessonId)
+    persist()
+  }
+
+  function removeTargetLesson(lessonId: string): void {
+    progressState.targetLessonIds = progressState.targetLessonIds.filter((targetLessonId) => targetLessonId !== lessonId)
+    persist()
+  }
+
+  function clearTargetLessons(): void {
+    progressState.targetLessonIds = []
+    persist()
+  }
+
+  function isTargetLesson(lessonId: string): boolean {
+    return progressState.targetLessonIds.includes(lessonId)
+  }
 
   function touchLesson(lessonId: string): void {
     progressState.lastLessonId = lessonId
@@ -413,6 +495,7 @@ export function useLearningProgress() {
     progressState.streak = 0
     progressState.lastActiveDate = null
     progressState.lastLessonId = null
+    progressState.targetLessonIds = []
     progressState.diagnosticCompleted = false
     progressState.skillProgress = {}
     progressState.assessmentProgress = {}
@@ -423,12 +506,23 @@ export function useLearningProgress() {
   return {
     progressState,
     completionPercentage,
+    targetLessonIds,
+    targetLessons,
+    targetPathLessonIds,
+    targetPathLessons,
+    targetPathCompletedLessonCount,
+    targetPathTotalLessonCount,
+    targetPathCompletionPercentage,
     completedLessonCount,
     masteredSkillCount,
     dueReviewSkillIds,
     dueReviewAssessments,
     continueLesson,
     nextRecommendedAction,
+    setTargetLesson,
+    removeTargetLesson,
+    clearTargetLessons,
+    isTargetLesson,
     touchLesson,
     completeAssessment,
     resetProgress,

@@ -8,6 +8,7 @@ const props = defineProps<{
   nodes: LessonGraphNode[]
   edges: LessonGraphEdge[]
   statuses: Record<string, NodeStatus>
+  targetLessonIds?: string[]
 }>()
 
 const emit = defineEmits<{
@@ -16,15 +17,15 @@ const emit = defineEmits<{
 
 const viewportRef = ref<HTMLElement | null>(null)
 const scale = ref(1)
-const offsetX = ref(40)
-const offsetY = ref(40)
+const offsetX = ref(24)
+const offsetY = ref(24)
 const isDragging = ref(false)
 
-const nodeWidth = 196
-const nodeHeight = 56
-const columnGap = 138
-const rowGap = 30
-const graphPadding = 80
+const nodeWidth = 236
+const nodeHeight = 62
+const columnGap = 34
+const rowGap = 112
+const graphPadding = 56
 
 const laidOutNodes = computed(() => {
   const nodesByLevel = new Map<number, LessonGraphNode[]>()
@@ -36,14 +37,14 @@ const laidOutNodes = computed(() => {
   })
 
   const sortedLevels = [...nodesByLevel.keys()].sort((left, right) => left - right)
-  const maxRows = Math.max(...sortedLevels.map((level) => nodesByLevel.get(level)?.length ?? 0), 1)
+  const maxColumns = Math.max(...sortedLevels.map((level) => nodesByLevel.get(level)?.length ?? 0), 1)
 
   return props.nodes.map((node) => {
     const levelNodes = [...(nodesByLevel.get(node.level) ?? [])].sort((left, right) => left.order - right.order)
-    const rowIndex = levelNodes.findIndex((candidate) => candidate.lessonId === node.lessonId)
-    const columnX = graphPadding + node.level * (nodeWidth + columnGap)
-    const centeredStartY = graphPadding + ((maxRows - levelNodes.length) * (nodeHeight + rowGap)) / 2
-    const rowY = centeredStartY + rowIndex * (nodeHeight + rowGap)
+    const columnIndex = levelNodes.findIndex((candidate) => candidate.lessonId === node.lessonId)
+    const centeredStartX = graphPadding + ((maxColumns - levelNodes.length) * (nodeWidth + columnGap)) / 2
+    const columnX = centeredStartX + columnIndex * (nodeWidth + columnGap)
+    const rowY = graphPadding + node.level * (nodeHeight + rowGap)
 
     return {
       ...node,
@@ -81,13 +82,13 @@ function getEdgePath(edge: LessonGraphEdge): string {
     return ''
   }
 
-  const startX = fromNode.x + fromNode.width
-  const startY = fromNode.y + fromNode.height / 2
-  const endX = toNode.x
-  const endY = toNode.y + toNode.height / 2
-  const controlOffset = Math.max(56, (endX - startX) * 0.45)
+  const startX = fromNode.x + fromNode.width / 2
+  const startY = fromNode.y + fromNode.height
+  const endX = toNode.x + toNode.width / 2
+  const endY = toNode.y
+  const controlOffset = Math.max(48, (endY - startY) * 0.45)
 
-  return `M ${startX} ${startY} C ${startX + controlOffset} ${startY}, ${endX - controlOffset} ${endY}, ${endX} ${endY}`
+  return `M ${startX} ${startY} C ${startX} ${startY + controlOffset}, ${endX} ${endY - controlOffset}, ${endX} ${endY}`
 }
 
 function zoomBy(delta: number): void {
@@ -96,8 +97,8 @@ function zoomBy(delta: number): void {
 
 function resetView(): void {
   scale.value = 1
-  offsetX.value = 40
-  offsetY.value = 40
+  offsetX.value = 24
+  offsetY.value = 24
 }
 
 function handleWheel(event: WheelEvent): void {
@@ -142,7 +143,7 @@ function selectLesson(lessonId: string): void {
       <button type="button" @click="zoomBy(0.12)">+</button>
       <button type="button" @click="zoomBy(-0.12)">-</button>
       <button type="button" @click="resetView">Reset</button>
-      <p>Scroll to zoom. Drag to pan.</p>
+      <p>Scroll to zoom. Drag to pan. Tap a lesson to preview.</p>
     </div>
 
     <div
@@ -167,10 +168,13 @@ function selectLesson(lessonId: string): void {
             v-for="node in laidOutNodes"
             :key="node.lessonId"
             class="graph-canvas__node"
-            :class="`graph-canvas__node--${statuses[node.lessonId] ?? 'locked'}`"
+            :class="[
+              `graph-canvas__node--${statuses[node.lessonId] ?? 'locked'}`,
+              { 'graph-canvas__node--target': props.targetLessonIds?.includes(node.lessonId) },
+            ]"
             @click.stop="selectLesson(node.lessonId)"
           >
-            <rect :x="node.x" :y="node.y" :width="node.width" :height="node.height" rx="28" />
+            <rect :x="node.x" :y="node.y" :width="node.width" :height="node.height" rx="7" />
             <text :x="node.x + node.width / 2" :y="node.y + node.height / 2 + 5" text-anchor="middle">
               {{ node.title }}
             </text>
@@ -183,24 +187,37 @@ function selectLesson(lessonId: string): void {
 
 <style scoped>
 .graph-canvas {
-  display: grid;
-  gap: 0.75rem;
+  position: relative;
+  display: block;
+  height: 100%;
 }
 
 .graph-canvas__toolbar {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 5;
   display: flex;
   gap: 0.5rem;
   align-items: center;
   flex-wrap: wrap;
+  max-width: min(32rem, calc(100% - 2rem));
+  padding: 0.55rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
 }
 
 .graph-canvas__toolbar button {
   border: 1px solid var(--color-border);
   background: white;
   color: var(--color-heading);
-  border-radius: 999px;
-  padding: 0.55rem 0.85rem;
+  border-radius: 0.35rem;
+  min-height: 2.6rem;
+  padding: 0.5rem 0.85rem;
   cursor: pointer;
+  font-weight: 800;
 }
 
 .graph-canvas__toolbar p {
@@ -210,14 +227,14 @@ function selectLesson(lessonId: string): void {
 
 .graph-canvas__viewport {
   position: relative;
-  min-height: 74vh;
+  min-height: 72vh;
+  height: 100%;
   overflow: hidden;
-  border-radius: 1.4rem;
+  border-radius: 0.45rem;
   border: 1px solid var(--color-border);
-  background:
-    radial-gradient(circle at top right, rgba(102, 126, 255, 0.08), transparent 22%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(248, 250, 255, 0.94));
+  background: white;
   cursor: grab;
+  touch-action: none;
 }
 
 .graph-canvas__viewport:active {
@@ -231,8 +248,12 @@ function selectLesson(lessonId: string): void {
 
 .graph-canvas__edge {
   fill: none;
-  stroke: rgba(92, 105, 142, 0.35);
+  stroke: rgba(63, 63, 66, 0.24);
   stroke-width: 1.4;
+}
+
+.graph-canvas__node {
+  cursor: pointer;
 }
 
 .graph-canvas__node rect {
@@ -241,8 +262,8 @@ function selectLesson(lessonId: string): void {
 
 .graph-canvas__node text {
   fill: currentColor;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 800;
   pointer-events: none;
 }
 
@@ -291,5 +312,10 @@ function selectLesson(lessonId: string): void {
 .graph-canvas__node--current rect {
   fill: #cadcff;
   stroke: #527fe8;
+}
+
+.graph-canvas__node--target rect {
+  stroke: var(--color-progress);
+  stroke-width: 3;
 }
 </style>

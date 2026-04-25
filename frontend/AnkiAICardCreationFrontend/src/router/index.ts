@@ -33,14 +33,26 @@ const router = createRouter({
       component: ReviewView,
     },
     {
-      path: '/learn/:moduleSlug/:lessonSlug',
+      path: '/learn/:lessonSlug',
       name: 'lesson',
       component: () => import('../views/LessonView.vue'),
       props: true,
     },
     {
-      path: '/practice/:moduleSlug/:lessonSlug',
+      path: '/practice/:lessonSlug',
       name: 'practice',
+      component: () => import('../views/PracticeView.vue'),
+      props: true,
+    },
+    {
+      path: '/learn/:moduleSlug/:lessonSlug',
+      name: 'lesson-legacy',
+      component: () => import('../views/LessonView.vue'),
+      props: true,
+    },
+    {
+      path: '/practice/:moduleSlug/:lessonSlug',
+      name: 'practice-legacy',
       component: () => import('../views/PracticeView.vue'),
       props: true,
     },
