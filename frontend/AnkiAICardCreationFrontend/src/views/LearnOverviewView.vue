@@ -118,7 +118,7 @@ const recentLessons = computed(() =>
 <template>
   <AcademyShell
     eyebrow="Learn"
-    intro="A visual learning map: pick target lessons in the graph and the app will clear recommended prerequisites so those targets become reachable."
+    intro="An open, science-based learning platform that guides you through structured courses one lesson at a time. Complete lessons to master skills, revisit material through spaced-repetition reviews, and use the knowledge graph to see how topics connect and chart your own path through the curriculum."
     title="Work toward target lessons"
     subtitle="Pick lesson nodes from the graph, then clear the recommended prerequisites until those targets are reachable."
   >
