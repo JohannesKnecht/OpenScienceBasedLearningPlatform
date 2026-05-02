@@ -6,9 +6,9 @@ describe('router', () => {
     expect(router.getRoutes()).toHaveLength(9)
   })
 
-  it('has a home route at /', () => {
+  it('redirects / to /learn', () => {
     const homeRoute = router.getRoutes().find((route) => route.path === '/')
-    expect(homeRoute?.name).toBe('home')
+    expect(homeRoute?.redirect).toBe('/learn')
   })
 
   it('has a learn overview route at /learn', () => {
