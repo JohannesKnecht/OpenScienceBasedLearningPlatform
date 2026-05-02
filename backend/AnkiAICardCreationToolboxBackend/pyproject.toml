@@ -1,20 +1,12 @@
 [project]
 name = "ankiaicardcreationtoolboxbackend"
 version = "0.1.0"
-description = "Add your description here"
+description = "Open Science Based Learning Platform backend"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "fastapi[standard]>=0.131.0",
-    #"langchain>=1.2.10",
-    "langchain-openai>=1.1.14",
-    #"langgraph>=1.0.9",
-    "pip>=26.0.1",
-    "deepagents>=0.4.3",
     "python-dotenv>=1.2.1",
-    "requests>=2.32.0",
-    "trafilatura>=2.0.0",
-    "zstandard>=0.22.0",
 ]
 
 
@@ -26,14 +18,6 @@ dev = [
     "ruff>=0.11.0",
     "ty>=0.0.1",
 ]
-
-
-
-[project.scripts]
-ankiaicardcreationtoolboxbackend = "ankiaicardcreationtoolboxbackend:main"
-invoke_best_practices_of_formulating_knowledge = "ankiaicardcreationtoolboxbackend:invoke_best_practices_of_formulating_knowledge"
-invoke_anki_formatting_guidelines = "ankiaicardcreationtoolboxbackend:invoke_anki_formatting_guidelines"
-invoke_knowledge_base_creation = "ankiaicardcreationtoolboxbackend:invoke_knowledge_base_creation"
 
 
 

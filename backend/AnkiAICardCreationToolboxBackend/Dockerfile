@@ -4,7 +4,11 @@ FROM python:3.14-slim
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 # Copy the application into the container.
-COPY . /app
+COPY backend/AnkiAICardCreationToolboxBackend/ /app/
+
+# Copy curriculum JSON (source of truth lives in the frontend package).
+COPY frontend/AnkiAICardCreationFrontend/src/content/curriculum.json \
+     /app/src/ankiaicardcreationtoolboxbackend/curriculum.json
 
 # use nont root
 RUN useradd -m nonroot
