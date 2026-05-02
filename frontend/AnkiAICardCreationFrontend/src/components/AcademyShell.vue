@@ -1,6 +1,7 @@
 <script setup lang="ts">
 defineProps<{
   eyebrow?: string
+  intro?: string
   title: string
   subtitle: string
 }>()
@@ -8,6 +9,7 @@ defineProps<{
 
 <template>
   <div class="academy-shell">
+    <p v-if="intro" class="academy-shell__intro">{{ intro }}</p>
     <section class="academy-shell__hero" aria-labelledby="page-title">
       <p v-if="eyebrow" class="academy-shell__eyebrow">{{ eyebrow }}</p>
       <h1 id="page-title">{{ title }}</h1>
@@ -44,6 +46,13 @@ defineProps<{
   font-size: 0.78rem;
   color: var(--color-accent);
   font-weight: 800;
+}
+
+.academy-shell__intro {
+  font-size: 0.98rem;
+  color: var(--color-text-soft);
+  max-width: 52rem;
+  margin-bottom: 0.4rem;
 }
 
 .academy-shell__subtitle {
