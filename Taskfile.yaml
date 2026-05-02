@@ -7,7 +7,7 @@ tasks:
         vars:
           DOCKER_IMAGE: ankiaicardcreationtoolboxbackend
           DOCKER_FILE_PATH: backend/AnkiAICardCreationToolboxBackend/Dockerfile
-          CONTEXT_PATH: backend/AnkiAICardCreationToolboxBackend/
+          CONTEXT_PATH: ./
 
   build-frontend:
     cmds:
