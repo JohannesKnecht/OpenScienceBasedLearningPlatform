@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
 import type { LessonGraphEdge, LessonGraphNode } from '../content'
 
 type NodeStatus = 'locked' | 'ready' | 'learning' | 'mastered' | 'review' | 'current'
@@ -17,7 +17,7 @@ const emit = defineEmits<{
 
 const viewportRef = ref<HTMLElement | null>(null)
 const scale = ref(1)
-const offsetX = ref(24)
+const offsetX = ref(0)
 const offsetY = ref(24)
 const isDragging = ref(false)
 
@@ -122,10 +122,35 @@ function zoomBy(delta: number): void {
 }
 
 function resetView(): void {
-  scale.value = 1
-  offsetX.value = 24
-  offsetY.value = 24
+  initView()
 }
+
+function initView(): void {
+  const viewport = viewportRef.value
+  if (!viewport || !laidOutNodes.value.length) {
+    offsetX.value = 24
+    offsetY.value = 24
+    scale.value = 1
+    return
+  }
+
+  const vw = viewport.clientWidth
+  const vh = viewport.clientHeight
+  const padding = 24
+
+  const scaleToFitW = (vw - padding * 2) / graphWidth.value
+  const scaleToFitH = (vh - padding * 2) / graphHeight.value
+  const initScale = clampScale(Math.min(1, scaleToFitW, scaleToFitH))
+
+  scale.value = Number(initScale.toFixed(3))
+  offsetX.value = Math.round((vw - graphWidth.value * initScale) / 2)
+  offsetY.value = padding
+}
+
+onMounted(async () => {
+  await nextTick()
+  initView()
+})
 
 function handleWheel(event: WheelEvent): void {
   event.preventDefault()
