@@ -49,9 +49,6 @@ jobs:
         run: uv run ty check
 
       - name: Run Tests
-        env:
-          # PRs run with mocked LLM calls (empty key); pushes use the real API key.
-          OPENAI_API_KEY: ${{ github.event_name == 'push' && secrets.OPENAI_API_KEY || '' }}
         run: uv run pytest
 
   TestFrontend:
@@ -259,7 +256,6 @@ jobs:
     env:
       CACHE_TAG: ${{ inputs.environment == 'prod' && 'buildcache' || format('buildcache-{0}', inputs.environment) }}
       IMAGE_TAG: ${{ inputs.environment == 'prod' && 'latest' || inputs.environment }}
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       SERVICE_NAME: ${{ needs.Terraform.outputs.backend_name }}
     permissions:
       contents: 'read'
@@ -297,14 +293,10 @@ jobs:
           tags: ${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:${{ env.IMAGE_TAG }}
           cache-from: type=registry,ref=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:${{ env.CACHE_TAG }}
           cache-to: type=registry,ref=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:${{ env.CACHE_TAG }},mode=max
-      - name: Add Secret Version in Secret Manager
-        run: |
-          printf "%s" "$OPENAI_API_KEY" | gcloud secrets versions add openai --data-file=- --project="${{ vars.PROJECT }}"
       - name: Deploy BE to Cloud Run
         run: |
           gcloud run services update "$SERVICE_NAME" \
             --image "${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:${{ env.IMAGE_TAG }}" \
-            --update-secrets=OPENAI_API_KEY=openai:latest \
             --region "${{ vars.LOCATION }}"
 
   TestDeployment:
@@ -327,8 +319,4 @@ jobs:
       - name: Test Frontend Deployment
         run: curl --fail --silent --show-error --location --max-time 30 "$FRONTEND_URL"
       - name: Test Backend Deployment
-        run: |
-          curl --fail --show-error --location \
-            -X POST "$BACKEND_URL/create_cards" \
-            -H "Content-Type: application/json" \
-            -d '{"text":"Anki Karten zur Funktionsweise von HTTP"}'
+        run: curl --fail --show-error --location --max-time 30 "$BACKEND_URL/curriculum"
