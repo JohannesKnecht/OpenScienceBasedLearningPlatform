@@ -298,6 +298,7 @@ jobs:
           cache-from: type=registry,ref=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:${{ env.CACHE_TAG }}
           cache-to: type=registry,ref=${{ vars.REGISTRY }}/${{ vars.REPOSITORY }}/${{ env.BE_IMAGE_NAME }}:${{ env.CACHE_TAG }},mode=max
       - name: Add Secret Version in Secret Manager
+        if: ${{ env.OPENAI_API_KEY != '' }}
         run: |
           printf "%s" "$OPENAI_API_KEY" | gcloud secrets versions add openai --data-file=- --project="${{ vars.PROJECT }}"
       - name: Deploy BE to Cloud Run
