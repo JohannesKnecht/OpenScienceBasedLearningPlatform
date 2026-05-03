@@ -1,12 +1,12 @@
-"""FastAPI application for Anki AI card creation."""
+"""FastAPI application for the Open Science Based Learning Platform."""
 
+import json
 import os
+from pathlib import Path
+from typing import Any
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-
-from ankiaicardcreationtoolboxbackend.agent import get_agent_response
 
 app = FastAPI()
 
@@ -24,33 +24,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-class CardRequestData(BaseModel):
-    """Request body for the card creation endpoint."""
-
-    text: str
+_DEFAULT_CURRICULUM_PATH = Path(__file__).parent / "curriculum.json"
+CURRICULUM_PATH = Path(os.environ.get("CURRICULUM_PATH", _DEFAULT_CURRICULUM_PATH))
 
 
-def resource_check() -> None:
-    """Verify that required environment variables are set."""
-    if not os.environ.get("OPENAI_API_KEY"):
-        raise HTTPException(status_code=500, detail="OPENAI_API_KEY not set")
-
-
-@app.post("/create_cards")
-async def create_cards(card_request_data: CardRequestData) -> str:
-    """Create Anki cards from the provided text.
-
-    Args:
-        card_request_data: The request body containing the text to create cards from.
+@app.get("/curriculum")
+async def get_curriculum() -> Any:
+    """Return the curriculum JSON document.
 
     Returns:
-        The generated Anki cards as a string.
+        The parsed curriculum as a JSON-serialisable object.
+
+    Raises:
+        HTTPException: 404 if the curriculum file cannot be found.
     """
-    resource_check()
-
-    text = card_request_data.text
-    if len(text) > 1000:
-        raise HTTPException(status_code=400, detail="text too long")
-
-    return get_agent_response(text)
+    if not CURRICULUM_PATH.exists():
+        raise HTTPException(status_code=404, detail="curriculum not found")
+    with CURRICULUM_PATH.open() as f:
+        return json.load(f)

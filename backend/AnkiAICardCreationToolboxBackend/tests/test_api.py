@@ -1,4 +1,6 @@
-"""Tests for the FastAPI card creation endpoint."""
+"""Tests for the curriculum endpoint."""
+
+import json
 
 from fastapi.testclient import TestClient
 
@@ -7,9 +9,25 @@ from ankiaicardcreationtoolboxbackend.main import app
 client = TestClient(app)
 
 
-def test_read_main():
-    """Verify that the create_cards endpoint returns a successful JSON response."""
-    response = client.post("/create_cards", json={"text": "Anki Karten zur Funktionsweise von HTTP"})
+def test_get_curriculum_ok(tmp_path, monkeypatch):
+    """Verify that /curriculum returns valid JSON when the file exists."""
+    curriculum_file = tmp_path / "curriculum.json"
+    curriculum_file.write_text(json.dumps({"schemaVersion": "1.0", "tracks": []}))
+
+    monkeypatch.setattr("ankiaicardcreationtoolboxbackend.main.CURRICULUM_PATH", curriculum_file)
+
+    response = client.get("/curriculum")
     assert response.status_code == 200
-    response.json()  # test json deocing
-    assert "http" in response.text.lower()
+    data = response.json()
+    assert data["schemaVersion"] == "1.0"
+
+
+def test_get_curriculum_not_found(tmp_path, monkeypatch):
+    """Verify that /curriculum returns 404 when the file is missing."""
+    monkeypatch.setattr(
+        "ankiaicardcreationtoolboxbackend.main.CURRICULUM_PATH",
+        tmp_path / "missing.json",
+    )
+
+    response = client.get("/curriculum")
+    assert response.status_code == 404

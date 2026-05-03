@@ -328,8 +328,4 @@ jobs:
       - name: Test Frontend Deployment
         run: curl --fail --silent --show-error --location --max-time 30 "$FRONTEND_URL"
       - name: Test Backend Deployment
-        run: |
-          curl --fail --show-error --location \
-            -X POST "$BACKEND_URL/create_cards" \
-            -H "Content-Type: application/json" \
-            -d '{"text":"Anki Karten zur Funktionsweise von HTTP"}'
+        run: curl --fail --show-error --location --max-time 30 "$BACKEND_URL/curriculum"
