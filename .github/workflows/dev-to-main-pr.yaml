@@ -40,15 +40,17 @@ jobs:
             }
 
             const commits = context.payload.commits ?? []
+            // Some push payloads can omit commit details, so fall back to a generic message.
             const commitMessage = commits.length > 0 ? commits[commits.length - 1].message : 'Changes pushed to dev'
             const title = 'Promote dev to main'
+            const escapeHtml = (value) =>
+              value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
+            const safeCommitMessage = escapeHtml(commitMessage)
             const body = [
               'Automated pull request created after a push to `dev`.',
               '',
               'Latest commit:',
-              '```',
-              commitMessage,
-              '```',
+              `<pre>${safeCommitMessage}</pre>`,
             ].join('\n')
 
             try {
@@ -63,7 +65,9 @@ jobs:
 
               core.info(`Created pull request #${pullRequest.number}`)
             } catch (error) {
-              if (error.status !== 422) {
+              const errorMessage = error.response?.data?.message ?? error.message ?? ''
+
+              if (error.status !== 422 || !/already exists/i.test(errorMessage)) {
                 throw error
               }
 
