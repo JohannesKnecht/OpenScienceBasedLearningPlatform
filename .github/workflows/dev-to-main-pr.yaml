@@ -19,7 +19,7 @@ jobs:
           script: |
             const owner = context.repo.owner
             const repo = context.repo.repo
-            const head = 'dev'
+            const head = `${owner}:dev`
             const base = 'main'
 
             const { data: pullRequests } = await github.rest.pulls.list({
@@ -35,7 +35,8 @@ jobs:
               return
             }
 
-            const commitMessage = context.payload.head_commit?.message ?? 'Changes pushed to dev'
+            const commits = context.payload.commits ?? []
+            const commitMessage = commits.length > 0 ? commits[commits.length - 1].message : 'Changes pushed to dev'
             const title = 'Promote dev to main'
             const body = [
               'Automated pull request created after a push to `dev`.',
