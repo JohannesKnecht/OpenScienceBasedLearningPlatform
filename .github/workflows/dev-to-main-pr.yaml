@@ -1,0 +1,88 @@
+name: "Open Dev to Main PR"
+
+on:
+  push:
+    branches:
+      - dev
+
+concurrency:
+  group: dev-to-main-pr
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  open-pull-request:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create or reuse pull request
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner
+            const repo = context.repo.repo
+            const head = `${owner}:dev`
+            const base = 'main'
+
+            const { data: pullRequests } = await github.rest.pulls.list({
+              owner,
+              repo,
+              state: 'open',
+              head,
+              base,
+            })
+
+            if (pullRequests.length > 0) {
+              core.info(`Open pull request already exists: #${pullRequests[0].number}`)
+              return
+            }
+
+            const commits = context.payload.commits ?? []
+            // Some push payloads can omit commit details, so fall back to a generic message.
+            const commitMessage = commits.length > 0 ? commits[commits.length - 1].message : 'Changes pushed to dev'
+            const title = 'Promote dev to main'
+            const escapeHtml = (value) =>
+              value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
+            const safeCommitMessage = escapeHtml(commitMessage)
+            const body = [
+              'Automated pull request created after a push to `dev`.',
+              '',
+              'Latest commit:',
+              `<pre>${safeCommitMessage}</pre>`,
+            ].join('\n')
+
+            try {
+              const { data: pullRequest } = await github.rest.pulls.create({
+                owner,
+                repo,
+                head,
+                base,
+                title,
+                body,
+              })
+
+              core.info(`Created pull request #${pullRequest.number}`)
+            } catch (error) {
+              const errorMessage = error.response?.data?.message ?? error.message ?? ''
+
+              if (error.status !== 422 || !/already exists/i.test(errorMessage)) {
+                throw error
+              }
+
+              const { data: existingPullRequests } = await github.rest.pulls.list({
+                owner,
+                repo,
+                state: 'open',
+                head,
+                base,
+              })
+
+              if (existingPullRequests.length > 0) {
+                core.info(`Open pull request already exists: #${existingPullRequests[0].number}`)
+                return
+              }
+
+              throw error
+            }
