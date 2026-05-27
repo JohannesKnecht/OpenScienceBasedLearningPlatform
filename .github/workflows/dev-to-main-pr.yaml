@@ -26,7 +26,7 @@ jobs:
               owner,
               repo,
               state: 'open',
-              head,
+              head: 'dev',
               base,
             })
 
@@ -35,7 +35,7 @@ jobs:
               return
             }
 
-            const commitMessage = context.payload.head_commit?.message ?? 'Merged changes into dev'
+            const commitMessage = context.payload.head_commit?.message ?? 'Changes pushed to dev'
             const title = 'Promote dev to main'
             const body = [
               'Automated pull request created after a push to `dev`.',
