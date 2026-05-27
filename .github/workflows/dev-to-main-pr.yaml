@@ -19,14 +19,14 @@ jobs:
           script: |
             const owner = context.repo.owner
             const repo = context.repo.repo
-            const head = `${owner}:dev`
+            const head = 'dev'
             const base = 'main'
 
             const { data: pullRequests } = await github.rest.pulls.list({
               owner,
               repo,
               state: 'open',
-              head: 'dev',
+              head,
               base,
             })
 
@@ -46,7 +46,7 @@ jobs:
             const { data: pullRequest } = await github.rest.pulls.create({
               owner,
               repo,
-              head: 'dev',
+              head,
               base,
               title,
               body,
