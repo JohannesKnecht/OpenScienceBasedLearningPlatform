@@ -6,7 +6,7 @@ multi-ecosystem-groups:
   all-dependencies:
     schedule:
       interval: "weekly"
-      day: "monday"
+      day: "sunday"
       time: "18:00"
       timezone: "Europe/Berlin"
     assignees:
